@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.local
+.data/
+.logs/
+.freebuff/
+.tooling/
+*.log
+*.tsbuildinfo
+.DS_Store
+.neon
