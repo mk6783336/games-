@@ -2,32 +2,26 @@ import { expect, test, type Page } from "@playwright/test";
 
 const API_ORIGIN = "http://127.0.0.1:8791";
 
-type CycleProbe = {
-  W: number;
-  x: number;
-  y: number;
-  camX: number;
-  camLift: number;
-  world: { spans: { gate: number }[] };
-  hAt: (x: number) => number;
-};
-
 interface MeResponse {
   state: {
-    cycle: {
-      levelsCleared: number[];
-      bestMs: Record<string, number>;
-    };
+    stats: Record<string, { best: number }>;
   } | null;
 }
 
+// The page exposes the engine handle in development only; the E2E uses it to
+// shorten the fuel tank so a run ends deterministically instead of on the
+// server clock. The probe reaches runtime instance fields directly.
 declare global {
   interface Window {
-    __playflixCycle?: CycleProbe;
+    __playflixCycle?: {
+      fuel: number;
+      bike: { x: number };
+      phase: string;
+    };
   }
 }
 
-const canvas = (page: Page) => page.getByLabel(/Cycle mountain-bike game canvas/);
+const canvas = (page: Page) => page.getByLabel(/Cycle hill climb racing game/);
 
 function progressSaved(page: Page) {
   return page.waitForResponse(
@@ -35,75 +29,61 @@ function progressSaved(page: Page) {
       response.url().endsWith("/v1/progress") &&
       response.request().method() === "PUT" &&
       response.status() === 200,
-    { timeout: 25_000 },
+    { timeout: 30_000 },
   );
 }
 
-/**
- * Put the running game just before the next gate. Every road generator keeps
- * its final 760 units hazard-free, so this never skips an obstacle; only the
- * travel time is cut. The gate, the banner and the page's save path all stay
- * untouched.
- */
-async function approachFirstGate(page: Page) {
-  await expect(canvas(page)).toBeVisible();
-  const approach = await page.evaluate(() => {
-    const game = window.__playflixCycle;
-    if (!game) throw new Error("The Cycle engine was not exposed to the test.");
-    const span = game.world.spans[0];
-    game.x = span.gate - 260;
-    game.y = game.hAt(game.x);
-    game.camX = game.x - game.W * 0.33;
-    game.camLift = game.y * 0.68;
-    return { gateX: span.gate, startX: game.x };
-  });
-  expect(approach.startX).toBeLessThan(approach.gateX);
-}
+test.describe("Cycle hill climb", () => {
+  test("five roads, one life: a gas run drains the tank, records the run and persists the best", async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
 
-test.describe("Cycle checkpoints", () => {
-  test("two cleared gates unlock the next roads and both splits survive a reload", async ({ page }) => {
-    test.setTimeout(90_000);
-
-    // Gate 1: Fern Hollow.
     await page.goto("/play/cycle");
 
-    const startFern = page.getByRole("button", { name: /Start at Fern Hollow/ });
-    await expect(startFern).toBeVisible({ timeout: 25_000 });
-    await expect(page.getByText("0 / 5", { exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: /02 Ridgeclimb/ })).toBeDisabled();
+    const startRide = page.getByRole("button", { name: /Start Riding/ });
+    await expect(startRide).toBeVisible({ timeout: 25_000 });
+    await expect(page.getByRole("button", { name: /1 Green Hills/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /5 Volcano Rim/ })).toBeVisible();
 
-    await startFern.click();
+    // Watch for the save before the run can end, so the response cannot race
+    // the assertions below.
+    const saved = progressSaved(page);
+    await startRide.click();
+    await expect(canvas(page)).toBeVisible({ timeout: 10_000 });
 
-    // Watch the save before the gate is reached, so the response cannot race
-    // the assertion below.
-    const fernSaved = progressSaved(page);
-    await approachFirstGate(page);
-    await expect(page.getByText("Road 01 cleared")).toBeVisible({ timeout: 15_000 });
-    await fernSaved;
+    // Shrink the tank: four riding seconds of fuel, then the bike stalls.
+    const state = await page.evaluate(() => {
+      const game = window.__playflixCycle;
+      if (!game) throw new Error("The Cycle engine was not exposed to the test.");
+      game.fuel = 4;
+      return { phase: game.phase, x: game.bike.x };
+    });
+    expect(state.phase).toBe("riding");
+    expect(state.x).toBeGreaterThan(0);
 
+    // Hold gas until the tank is dry, then let the bike roll to a stop so the
+    // engine takes its fuel-depletion crash path. Obstacle bumps and refuel
+    // pickups are part of real runs now, so re-pin the tank low right before the
+    // end to keep the finish deterministic.
+    await page.keyboard.down("ArrowUp");
+    await page.waitForTimeout(2_200);
+    await page.keyboard.up("ArrowUp");
+    await page.evaluate(() => {
+      const game = window.__playflixCycle;
+      if (game) game.fuel = 0.4;
+    });
+
+    await saved;
+    await expect(page.getByRole("button", { name: /Ride again/ })).toBeVisible({
+      timeout: 40_000,
+    });
+
+    // The run is server-authoritative: reload and read the profile back.
     await page.reload();
-
-    await expect(page.getByText("1 / 5", { exact: true })).toBeVisible({ timeout: 25_000 });
-    await expect(page.getByRole("button", { name: /01 Fern Hollow/ })).toContainText("Best split");
-    await expect(page.getByRole("button", { name: /02 Ridgeclimb/ })).toBeEnabled();
-
-    // Gate 2: Ridgeclimb. Starting a run here makes it span 0 of a fresh world.
-    const startRidge = page.getByRole("button", { name: /Start at Ridgeclimb/ });
-    await expect(startRidge).toBeVisible();
-    await startRidge.click();
-
-    const ridgeSaved = progressSaved(page);
-    await approachFirstGate(page);
-    await expect(page.getByText("Road 02 cleared")).toBeVisible({ timeout: 15_000 });
-    await ridgeSaved;
-
-    await page.reload();
-
-    await expect(page.getByText("2 / 5", { exact: true })).toBeVisible({ timeout: 25_000 });
-    await expect(page.getByRole("button", { name: /01 Fern Hollow/ })).toContainText("Best split");
-    await expect(page.getByRole("button", { name: /02 Ridgeclimb/ })).toContainText("Best split");
-    await expect(page.getByRole("button", { name: /03 Aurora Pass/ })).toBeEnabled();
-    await expect(page.getByRole("button", { name: /04 Ember Canyon/ })).toBeDisabled();
+    await expect(page.getByRole("button", { name: /Start Riding/ })).toBeVisible({
+      timeout: 25_000,
+    });
 
     const me = await page.evaluate(async (apiOrigin) => {
       const response = await fetch(`${apiOrigin}/v1/me`, { credentials: "include" });
@@ -111,8 +91,6 @@ test.describe("Cycle checkpoints", () => {
     }, API_ORIGIN);
 
     expect(me.status).toBe(200);
-    expect(me.body.state?.cycle.levelsCleared).toEqual([1, 2]);
-    expect(me.body.state?.cycle.bestMs["1"]).toBeGreaterThan(0);
-    expect(me.body.state?.cycle.bestMs["2"]).toBeGreaterThan(0);
+    expect(me.body.state?.stats?.cycle?.best).toBeGreaterThan(0);
   });
 });

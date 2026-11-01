@@ -1,6 +1,6 @@
-/* PLAYFLIX · cinematic product language
- * near-black paper, bone type, brass signal · sharp 3px surfaces, hairline rules
- * motion: 140–520ms ease-out, no bob, tilt or neon chrome
+/* PLAYFLIX · cinematic brand language
+ * midnight navy surfaces, bone type, brass signal, violet/electric ambience
+ * motion is ON alive: reveals, glows, living artwork — all guarded for reduced motion
  */
 @import "tailwindcss";
 @import "./tokens.css";
@@ -11,6 +11,19 @@
     position: relative;
     z-index: 1;
   }
+  /* cinematic ambience the whole site sits inside */
+  .app-shell::before {
+    content: "";
+    position: fixed;
+    inset: -10%;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(920px 560px at 84% -8%, rgb(141 135 242 / 0.09), transparent 66%),
+      radial-gradient(780px 520px at -10% 108%, rgb(140 180 242 / 0.08), transparent 62%),
+      radial-gradient(520px 380px at 55% 55%, rgb(201 118 163 / 0.04), transparent 70%);
+    animation: ambient-drift 36s var(--ease-out) infinite alternate;
+  }
 
   .container-page {
     width: 100%;
@@ -19,12 +32,13 @@
     padding-inline: var(--gutter);
   }
 
-  /* surfaces: one flat plane, one hairline, no stacked shadows */
+  /* surfaces: navy plane, hairline edge, quiet depth */
   .panel {
-    background: var(--color-paper-2);
+    background: linear-gradient(165deg, color-mix(in oklab, var(--color-paper-3) 88%, var(--color-accent-2) 4%), var(--color-paper-2) 58%);
     border: var(--rule-hair) solid var(--color-rule);
     border-radius: var(--radius-card);
     color: var(--color-ink);
+    box-shadow: var(--shadow-card-sm);
   }
 
   .panel-flat {
@@ -35,8 +49,8 @@
 
   .title-legible { filter: var(--shadow-legible-title); }
   .score-legible { filter: var(--shadow-legible-score); }
-  .glow-gold { box-shadow: none; }
-  .shadow-rim { box-shadow: none; }
+  .glow-gold { box-shadow: var(--shadow-glow-gold); }
+  .shadow-rim { box-shadow: var(--shadow-rim-inset); }
   .shadow-cinema { box-shadow: var(--shadow-cinema-deep); }
 
   .gold-wash { background: radial-gradient(circle at 40% 25%, color-mix(in oklab, var(--color-accent) 16%, transparent), transparent 70%); }
@@ -58,7 +72,7 @@
   .crt { position: relative; isolation: isolate; }
   .crt::after { content: none; }
 
-  /* buttons: solid ink or hairline ghost, no offset posters */
+  /* buttons: solid ink or hairline ghost; primary ignites violet on hover */
   .btn {
     position: relative;
     display: inline-flex;
@@ -83,6 +97,7 @@
       background-color var(--dur-short) var(--ease-out),
       border-color var(--dur-short) var(--ease-out),
       color var(--dur-short) var(--ease-out),
+      box-shadow var(--dur-short) var(--ease-out),
       transform var(--dur-short) var(--ease-out);
   }
   .btn:hover {
@@ -106,9 +121,10 @@
   }
   .btn-primary:hover,
   .btn-gold:hover {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: var(--color-accent-ink);
+    background: linear-gradient(120deg, #8d87f2 0%, #6f8bf5 55%, #8cb4f2 100%);
+    border-color: #9a94ff;
+    color: #05070f;
+    box-shadow: var(--shadow-glow-violet);
   }
   .btn-ghost {
     border-color: color-mix(in oklab, var(--color-ink) 16%, transparent);
@@ -170,11 +186,13 @@
     transition:
       transform var(--dur-short) var(--ease-out),
       border-color var(--dur-short) var(--ease-out),
+      box-shadow var(--dur-short) var(--ease-out),
       opacity var(--dur-short) var(--ease-out);
   }
   .lift:hover {
     transform: translateY(-2px);
-    border-color: color-mix(in oklab, var(--color-ink) 24%, var(--color-rule));
+    border-color: color-mix(in oklab, var(--color-accent-2) 34%, var(--color-rule));
+    box-shadow: var(--shadow-glow-violet);
   }
 
   .rule {
@@ -188,7 +206,7 @@
   }
   .cursor-row:hover,
   .cursor-row[aria-current="true"] {
-    background: color-mix(in oklab, var(--color-ink) 6%, transparent);
+    background: color-mix(in oklab, var(--color-accent-2) 8%, transparent);
     color: var(--color-ink);
   }
 
@@ -266,8 +284,8 @@
     transition: border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
   }
   .text-link:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: var(--color-accent-2);
+    border-color: var(--color-accent-2);
   }
   .hero-frame {
     position: relative;
@@ -291,6 +309,10 @@
         linear-gradient(0deg, var(--color-paper) 0%, color-mix(in oklab, var(--color-shade) 82%, transparent) 34%, color-mix(in oklab, var(--color-shade) 24%, transparent) 66%, color-mix(in oklab, var(--color-shade) 45%, transparent) 100%);
     }
   }
+  /* slow cinematic breathe on hero artwork */
+  .hero-art svg {
+    animation: kenburns 34s var(--ease-out) infinite alternate;
+  }
   .game-tile {
     position: relative;
     overflow: hidden;
@@ -298,7 +320,7 @@
     background: var(--color-paper-2);
   }
   .game-tile img, .game-tile svg { transition: transform 1200ms var(--ease-out), opacity var(--dur-short); }
-  .game-tile:hover svg { transform: scale(1.025); }
+  .game-tile:hover svg { transform: scale(1.03); }
   .numeral {
     font-family: var(--font-serif);
     font-style: italic;
@@ -306,8 +328,19 @@
     line-height: 0.8;
     color: color-mix(in oklab, var(--color-ink) 16%, transparent);
   }
+
+  /* ---- scroll reveal ---- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 700ms var(--ease-out) var(--reveal-delay, 0ms),
+      transform 700ms var(--ease-out) var(--reveal-delay, 0ms);
+  }
+  .reveal.is-in { opacity: 1; transform: none; }
 }
 
+/* ---- utilities: the living layer ---- */
 @layer utilities {
   .animation-delay-1 { animation-delay: 80ms; }
   .animation-delay-2 { animation-delay: 160ms; }
@@ -316,12 +349,16 @@
 
   .fade-up { animation: fade-up 620ms var(--ease-out) both; }
   .fade-in { animation: fade-in 420ms var(--ease-out) both; }
-  .float-slow { animation: none; }
-  .pulse-glow { animation: none; }
-  .spark-drift { animation: none; }
-  .shimmer { animation: none; }
-  .orbit-spin { transform: none; }
-  .marquee-track { animation: none; }
+  .float-slow { animation: float-slow 7s ease-in-out infinite; }
+  .pulse-glow { animation: pulse-glow 4.5s ease-in-out infinite; }
+  .spark-drift { animation: spark-drift 9s ease-in-out infinite; }
+  .shimmer {
+    background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.18) 50%, transparent 70%);
+    background-size: 220% 100%;
+    animation: shimmer 3.4s linear infinite;
+  }
+  .orbit-spin { animation: orbit-spin 24s linear infinite; }
+  .marquee-track { animation: marquee 30s linear infinite; }
   .text-balance { text-wrap: balance; }
 }
 
@@ -332,4 +369,115 @@
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+@keyframes float-slow {
+  0%, 100% { transform: translateY(-4px); }
+  50% { transform: translateY(6px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@keyframes spark-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.4; }
+  50% { transform: translate3d(6px, -10px, 0); opacity: 0.9; }
+}
+@keyframes shimmer {
+  from { background-position: 220% 0; }
+  to { background-position: -20% 0; }
+}
+@keyframes orbit-spin { to { transform: rotate(360deg); } }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes ambient-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-2.5%, -2%, 0) scale(1.06); }
+}
+@keyframes kenburns {
+  0% { transform: scale(1.02) translate3d(0, 0, 0); }
+  100% { transform: scale(1.09) translate3d(-1.2%, -1.4%, 0); }
+}
+
+/* ---- art: animations inside the cover artwork SVGs ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .art-bob { animation: art-bob 3.8s ease-in-out infinite; }
+  .art-bob-slow { animation: art-bob 6.2s ease-in-out infinite; }
+  .art-sway { animation: art-sway 8s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
+  .art-grass { animation: art-grass 6.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
+  .art-clouds { animation: art-clouds 30s linear infinite alternate; }
+  .art-sun { animation: art-glow 8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .art-halo { animation: art-halo 11s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .art-glow { animation: art-glow 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .art-pulse-strong { animation: art-pulse-strong 4.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .art-flicker { animation: art-flicker 3.1s linear infinite; }
+  .art-twinkle { animation: art-twinkle 4.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .art-rain { animation: art-rain 1.05s linear infinite; }
+  .art-rain-fg { animation-duration: 0.85s; opacity: 0.24; }
+  .art-dust { animation: art-dust 9.5s linear infinite; }
+  .art-beam { animation: art-beam 8.5s ease-in-out infinite; }
+  .art-wash { animation: art-wash 7s ease-in-out infinite; }
+}
+@keyframes art-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-2.6px) rotate(0.28deg); }
+  62% { transform: translateY(1.8px) rotate(-0.22deg); }
+}
+@keyframes art-sway {
+  from { transform: skewX(-0.6deg); }
+  to { transform: skewX(0.7deg); }
+}
+@keyframes art-grass {
+  from { transform: skewX(-1.6deg); }
+  to { transform: skewX(1.6deg); }
+}
+@keyframes art-clouds {
+  from { transform: translateX(0); }
+  to { transform: translateX(55px); }
+}
+@keyframes art-glow {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes art-halo {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+@keyframes art-pulse-strong {
+  0%, 100% { opacity: 0.65; transform: scale(0.97); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+@keyframes art-flicker {
+  0%, 100% { opacity: 0.85; }
+  8% { opacity: 0.45; }
+  12% { opacity: 0.9; }
+  34% { opacity: 0.6; }
+  41% { opacity: 1; }
+  67% { opacity: 0.72; }
+  74% { opacity: 0.34; }
+  80% { opacity: 0.88; }
+}
+@keyframes art-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+@keyframes art-rain {
+  0% { transform: translateY(-46px); opacity: 0; }
+  22% { opacity: 1; }
+  100% { transform: translateY(66px); opacity: 0; }
+}
+@keyframes art-dust {
+  0% { transform: translateY(0); opacity: 0; }
+  18% { opacity: 0.75; }
+  82% { opacity: 0.55; }
+  100% { transform: translateY(-92px); opacity: 0; }
+}
+@keyframes art-beam {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+@keyframes art-wash {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }

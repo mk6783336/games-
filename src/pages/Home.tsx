@@ -1,4 +1,5 @@
 import { ArrowRight, ArrowUpRight, Play, Target } from "lucide-react";
+import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { ACHIEVEMENTS } from "../lib/achievements";
 import { getDaily } from "../lib/daily";
@@ -32,7 +33,7 @@ export default function Home() {
     <div>
       {/* HERO — one game, one image, one decision */}
       <section className="hero-frame">
-        <div className="absolute inset-0">
+        <div className="hero-art absolute inset-0">
           <CycleCardArt className="h-full w-full" />
         </div>
         <div className="relative z-[2] flex min-h-[min(74svh,660px)] items-end">
@@ -105,7 +106,7 @@ export default function Home() {
         <div className="mt-10 grid gap-px overflow-hidden border border-rule bg-rule lg:grid-cols-12">
           <Link
             to="/games/impossible-room"
-            className="group relative block min-h-[420px] overflow-hidden bg-paper-2 lg:col-span-7 lg:min-h-[560px]"
+            className="reveal group relative block min-h-[420px] overflow-hidden bg-paper-2 lg:col-span-7 lg:min-h-[560px]"
           >
             <RoomCardArt className="absolute inset-0 h-full w-full transition-transform duration-[1200ms] group-hover:scale-[1.02]" />
             <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(5,5,6,0.94)_0%,rgba(5,5,6,0.55)_36%,transparent_66%)]" />
@@ -133,7 +134,8 @@ export default function Home() {
           <div className="grid gap-px bg-rule lg:col-span-5">
             <Link
               to="/games/one-chance"
-              className="group relative block min-h-[220px] overflow-hidden bg-paper-2"
+              className="reveal group relative block min-h-[220px] overflow-hidden bg-paper-2"
+              style={{ "--reveal-delay": "90ms" } as CSSProperties}
             >
               <RunnerCardArt className="absolute inset-0 h-full w-full transition-transform duration-[1200ms] group-hover:scale-[1.03]" />
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,6,8,0.94)_0%,rgba(5,6,8,0.4)_72%,transparent_100%)]" />
@@ -158,7 +160,8 @@ export default function Home() {
 
             <Link
               to="/games/cycle"
-              className="group relative block min-h-[220px] overflow-hidden bg-paper-2"
+              className="reveal group relative block min-h-[220px] overflow-hidden bg-paper-2"
+              style={{ "--reveal-delay": "180ms" } as CSSProperties}
             >
               <CycleCardArt className="absolute inset-0 h-full w-full transition-transform duration-[1200ms] group-hover:scale-[1.03]" />
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,6,8,0.94)_0%,rgba(5,6,8,0.32)_72%,transparent_100%)]" />
@@ -204,7 +207,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="border border-rule bg-paper px-6 py-7 sm:px-8">
+          <div className="reveal border border-rule bg-paper px-6 py-7 shadow-cinema sm:px-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="label">Today's run</p>
@@ -249,7 +252,7 @@ export default function Home() {
       {/* PLAYER + BOARD */}
       <section className="container-page py-20 sm:py-24">
         <div className="grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-          <div>
+          <div className="reveal">
             <div>
               <p className="eyebrow">Your record</p>
               <h2 className="mt-4">Level {level.level}</h2>
@@ -303,7 +306,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div>
+          <div className="reveal" style={{ "--reveal-delay": "120ms" } as CSSProperties}>
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="eyebrow">Global board</p>

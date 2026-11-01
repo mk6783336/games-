@@ -24,17 +24,17 @@
   --text-lead: clamp(1.0625rem, 1.4vw, 1.25rem);
   --text-figure: clamp(2.25rem, 4.4vw, 3.5rem);
 
-  /* surfaces */
-  --color-paper: #08090b;
-  --color-paper-2: #0c0d10;
-  --color-paper-3: #111317;
-  --color-ink: #f2efe6;
-  --color-ink-2: #c9c4b8;
-  --color-muted: #8e897d;
-  --color-rule: #23252b;
-  --color-shade: #030405;
+  /* surfaces: midnight navy, cinema depth */
+  --color-paper: #05070f;
+  --color-paper-2: #0a0d18;
+  --color-paper-3: #10141f;
+  --color-ink: #eef0fa;
+  --color-ink-2: #c6cadb;
+  --color-muted: #8b90a4;
+  --color-rule: #1e2331;
+  --color-shade: #020409;
 
-  /* brass leads; violet answers only inside game art and tags */
+  /* brass leads; violet answers inside art, chrome and ambience */
   --color-accent: #e5b15f;
   --color-accent-2: #8d87f2;
   --color-accent-ink: #0b0b0d;
@@ -42,29 +42,32 @@
   --color-error: oklch(70% 0.15 27);
   --color-success: oklch(76% 0.12 150);
 
-  --color-ink-950: #08090b;
-  --color-ink-900: #0c0d10;
-  --color-ink-850: #111317;
-  --color-ink-800: #15181d;
-  --color-ink-700: #1d2026;
-  --color-ink-600: #262a31;
+  --color-ink-950: #05070f;
+  --color-ink-900: #0a0d18;
+  --color-ink-850: #10141f;
+  --color-ink-800: #141826;
+  --color-ink-700: #1c2131;
+  --color-ink-600: #262c3c;
   --color-violet-glow: #8d87f2;
   --color-electric: #8cb4f2;
   --color-cyan-glow: #7fb3c4;
   --color-magenta: #c976a3;
   --color-gold: #e5b15f;
-  --color-mist-100: #f2efe6;
-  --color-mist-200: #e2ded4;
-  --color-mist-300: #c9c4b8;
-  --color-mist-400: #aaa497;
-  --color-mist-500: #8e897d;
-  --color-mist-600: #6e6a60;
+  --color-mist-100: #eef0fa;
+  --color-mist-200: #dfe2f0;
+  --color-mist-300: #c6cadb;
+  --color-mist-400: #a4a9bd;
+  --color-mist-500: #8b90a4;
+  --color-mist-600: #6b7085;
 
-  /* no toy shadows; hierarchy comes from hairlines and spacing */
   --radius-card: 3px;
   --radius-pill: 999px;
-  --shadow-card: none;
-  --shadow-card-sm: none;
+  --shadow-card: 0 30px 90px -50px rgb(0 0 0 / 0.9);
+  --shadow-card-sm: 0 12px 40px -24px rgb(0 0 0 / 0.8);
+  --shadow-glow-gold: 0 0 46px -12px rgb(229 177 95 / 0.42);
+  --shadow-glow-violet: 0 0 52px -12px rgb(141 135 242 / 0.5);
+  --shadow-glow-electric: 0 0 48px -12px rgb(140 180 242 / 0.45);
+  --shadow-rim-inset: inset 0 1px 0 rgb(255 255 255 / 0.06);
   --tracking-display: -0.045em;
 }
 :root {
@@ -100,8 +103,6 @@
   --rule-bar: 1px;
   --shadow-legible-title: drop-shadow(0 2px 24px rgb(0 0 0 / 0.72));
   --shadow-legible-score: drop-shadow(0 1px 3px rgb(0 0 0 / 0.65));
-  --shadow-glow-gold: none;
-  --shadow-rim-inset: none;
   --shadow-cinema-deep: 0 40px 120px -50px rgb(0 0 0 / 0.95);
   --display-weight: 700;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
