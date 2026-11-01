@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function NotFound() {
   return (
     <div className="container-page flex min-h-[60vh] flex-col items-center justify-center py-16 text-center">
-      <span className="grid size-16 place-items-center rounded-2xl border border-violet-400/25 bg-violet-500/10 text-violet-300">
+      <span className="grid size-16 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
         <DoorOpen size={28} />
       </span>
       <p className="label mt-5">404, Wrong room</p>

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export function Logo({
   className = "",
-  size = 34,
+  size = 30,
   wordmark = true,
   subtitle = false,
   linkTo = "/",
@@ -17,46 +17,36 @@ export function Logo({
   const rawId = useId();
   const gid = `brand-${rawId.replace(/[^a-zA-Z0-9]/g, "")}`;
   const content = (
-    <span className={`inline-flex items-center gap-2.5 ${className}`}>
+    <span className={`inline-flex items-center gap-3 ${className}`}>
       <span
-        className="relative grid shrink-0 place-items-center"
-        style={{ width: size, height: size }}
+        className="relative grid shrink-0 place-items-center border border-white/15"
+        style={{ width: size, height: size, borderRadius: 2 }}
         aria-hidden="true"
       >
-        <svg viewBox="0 0 44 44" width={size} height={size} className="relative z-10 overflow-visible">
+        <svg viewBox="0 0 32 32" width={size * 0.62} height={size * 0.62}>
           <defs>
-            <clipPath id={`${gid}-clip`}>
-              <rect x="1" y="1" width="42" height="42" rx="8" />
-            </clipPath>
+            <linearGradient id={`${gid}-gold`} x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#f0c984" />
+              <stop offset="1" stopColor="#c99340" />
+            </linearGradient>
           </defs>
-          <g clipPath={`url(#${gid}-clip)`}>
-            <rect x="1" y="1" width="42" height="42" rx="8" className="fill-paper-3" />
-            <path
-              d="M8.5 3.5h26.8c1 0 1.6 1.1 1.1 2L28.3 19.4c-.4.8.2 1.7 1 1.7h3.8c1.7 0 2.5 2 1.3 3.2L14.6 40.1c-1.6 1.5-3.9-.7-2.7-2.5l8-12.4c.5-.8-.1-1.8-1-1.8H7.1c-1.5 0-2.3-1.7-1.3-2.8L7.4 4.6c.2-.6.6-1.1 1.1-1.1Z"
-              className="fill-gold"
-            />
-            <path
-              d="M13 7h17.2l-6.3 10.5H30c.8 0 1.2 1 .6 1.6L17 31.2l4.6-8.4H13.9c-.8 0-1.2-1-.6-1.6L13 7Z"
-              fill="#05070f"
-              opacity="0.28"
-            />
-          </g>
+          <path d="M6 3h13.5L12.4 13.5h5.6L9.4 29l3.4-10H4.6z" fill={`url(#${gid}-gold)`} />
         </svg>
       </span>
       {wordmark && (
         <span className="flex flex-col leading-none">
           <span
-            className="font-display font-extrabold uppercase tracking-[-0.045em] text-white"
-            style={{ fontSize: size * 0.62, transform: "skewX(-6deg)" }}
+            className="font-display font-semibold uppercase text-ink"
+            style={{ fontSize: size * 0.46, letterSpacing: "0.16em" }}
           >
-            PLAY<span className="violet-text">FLIX</span>
+            Playflix
           </span>
           {subtitle && (
             <span
-              className="mt-1 font-semibold text-mist-500"
-              style={{ fontSize: Math.max(8, size * 0.2) }}
+              className="mt-1.5 font-body text-mist-600"
+              style={{ fontSize: Math.max(7, size * 0.17), letterSpacing: "0.22em" }}
             >
-              Play, challenge, compete
+              PLAY · CHALLENGE · COMPETE
             </span>
           )}
         </span>
@@ -72,11 +62,11 @@ export function Logo({
   );
 }
 
+/** A flat monogram. No gradient bubbles, no decorative portraits. */
 export function Avatar({
   name,
   hue = 266,
   size = 40,
-  ring = true,
   className = "",
 }: {
   name: string;
@@ -90,22 +80,23 @@ export function Avatar({
       .split(/[\s_-]+/)
       .filter(Boolean)
       .slice(0, 2)
-      .map((p) => p[0]?.toUpperCase() ?? "")
+      .map((part) => part[0]?.toUpperCase() ?? "")
       .join("") || "P";
 
   return (
     <span
-      className={`relative inline-grid shrink-0 place-items-center overflow-hidden rounded-full font-display font-bold text-white ${className}`}
+      className={`relative inline-grid shrink-0 place-items-center border bg-transparent font-display font-semibold uppercase text-ink ${className}`}
       style={{
         width: size,
         height: size,
-        fontSize: size * 0.36,
-        background: `radial-gradient(120% 120% at 28% 16%, hsl(${hue} 74% 62%) 0%, hsl(${hue} 66% 44%) 46%, hsl(${hue} 70% 24%) 100%)`,
-        boxShadow: ring ? `0 0 0 2px var(--color-paper), 0 0 0 4px hsl(${hue} 70% 55% / 0.35)` : undefined,
+        fontSize: Math.max(9, size * 0.32),
+        letterSpacing: "0.08em",
+        borderRadius: 2,
+        borderColor: `hsl(${hue} 22% 34% / 0.75)`,
       }}
       aria-hidden="true"
     >
-      <span className="relative score-legible">{initials}</span>
+      {initials}
     </span>
   );
 }

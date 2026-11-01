@@ -79,7 +79,7 @@ export default function InfoPage({ kind }: { kind: Kind }) {
       </Link>
 
       <header className="mt-6 max-w-2xl">
-        <span className="grid size-11 place-items-center rounded-xl border border-violet-400/25 bg-violet-500/10 text-violet-300">
+        <span className="grid size-11 place-items-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
           <Icon size={20} />
         </span>
         <p className="label mt-5">{content.eyebrow}</p>
@@ -96,7 +96,7 @@ export default function InfoPage({ kind }: { kind: Kind }) {
                 <details key={item.q} className="group py-4 first:pt-0 last:pb-0">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[13px] font-semibold text-mist-100 marker:hidden">
                     {item.q}
-                    <span className="grid size-6 shrink-0 place-items-center rounded-full border border-white/10 text-mist-500 transition-transform duration-300 motion-reduce:transition-none group-open:rotate-45 group-open:border-violet-400/30 group-open:text-violet-300">+</span>
+                    <span className="grid size-6 shrink-0 place-items-center rounded-full border border-white/10 text-mist-500 transition-transform duration-300 motion-reduce:transition-none group-open:rotate-45 group-open:border-accent/30 group-open:text-accent">+</span>
                   </summary>
                   <p className="mt-2.5 max-w-2xl text-[12px] leading-relaxed text-mist-500">{item.a}</p>
                 </details>
@@ -187,7 +187,7 @@ export default function InfoPage({ kind }: { kind: Kind }) {
             <p className="mt-1.5 text-[11px] leading-relaxed text-mist-500">
               A support inbox and account sync arrive in the next platform milestone. Until then, your profile holds every option to reset or recover play.
             </p>
-            <Link to="/profile" className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold text-violet-300 hover:text-violet-200">
+            <Link to="/profile" className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold text-accent hover:text-accent">
               <span className="inline-flex items-center gap-1.5">Open profile <ArrowRight size={13} aria-hidden="true" />
               </span>
             </Link>
@@ -204,7 +204,7 @@ function LegalSections({ sections }: { sections: { title: string; body: string }
       {sections.map((section, i) => (
         <section key={section.title}>
           <h2 className="flex items-center gap-2 font-display text-base font-bold text-white">
-            <span className="text-[10px] font-bold text-violet-400/70">{String(i + 1).padStart(2, "0")}</span>
+            <span className="text-[10px] font-bold text-accent">{String(i + 1).padStart(2, "0")}</span>
             {section.title}
           </h2>
           <p className="mt-2 pl-6 text-[12px] leading-relaxed text-mist-500">{section.body}</p>

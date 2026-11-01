@@ -97,7 +97,7 @@ export default function Account() {
         <div className="mx-auto max-w-3xl">
           <h1 className="mt-3 font-display text-[clamp(2.4rem,7vw,4.3rem)] font-extrabold leading-[0.94] tracking-[-0.055em] text-white">
             Your run is<br />
-            <span className="violet-text">synced.</span>
+            <span className="gold-text">synced.</span>
           </h1>
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-mist-500">
             This account is the home of your progress. Sign in on another device with the same email and password to continue.
@@ -220,7 +220,7 @@ export default function Account() {
           <div>
             <h1 className="mt-3 font-display text-[clamp(2.5rem,7vw,4.6rem)] font-extrabold leading-[0.93] tracking-[-0.055em] text-white">
               Keep your<br />
-              <span className="violet-text">progress.</span>
+              <span className="gold-text">progress.</span>
             </h1>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-mist-500">
               You are playing as a guest. Your progress is already saved to a secure guest session on this device; create an account to carry it across devices and keep it safe.
@@ -240,7 +240,7 @@ export default function Account() {
                 { icon: Gamepad2, title: "No reset", body: "Nothing in either launch game is wiped by signing up." },
               ].map(({ icon: Icon, title, body }) => (
                 <div key={title} className="rounded-xl border border-white/8 bg-white/[0.02] p-3.5">
-                  <Icon size={15} className="text-violet-300" />
+                  <Icon size={15} className="text-accent" />
                   <p className="mt-2 text-[11px] font-bold text-mist-200">{title}</p>
                   <p className="mt-0.5 text-[10px] leading-relaxed text-mist-600">{body}</p>
                 </div>
@@ -260,7 +260,7 @@ export default function Account() {
                   key={value}
                   onClick={() => { setMode(value); setError(null); }}
                   className={`flex-1 rounded-lg px-3 py-2 text-[11px] font-bold transition ${
-                    mode === value ? "bg-violet-500/20 text-violet-100" : "text-mist-500 hover:text-mist-200"
+                    mode === value ? "bg-accent/20 text-accent" : "text-mist-500 hover:text-mist-200"
                   }`}
                   aria-pressed={mode === value}
                 >
@@ -273,7 +273,7 @@ export default function Account() {
               {mode === "signup" && (
                 <label className="block">
                   <span className="text-[9px] font-semibold text-mist-600">Display name</span>
-                  <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-violet-400/50">
+                  <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-accent/50">
                     <UserRound size={14} className="text-mist-600" />
                     <input
                       value={name}
@@ -289,7 +289,7 @@ export default function Account() {
 
               <label className="block">
                 <span className="text-[9px] font-semibold text-mist-600">Email</span>
-                <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-violet-400/50">
+                <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-accent/50">
                   <Mail size={14} className="text-mist-600" />
                   <input
                     type="email"
@@ -305,7 +305,7 @@ export default function Account() {
 
               <label className="block">
                 <span className="text-[9px] font-semibold text-mist-600">Password</span>
-                <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-violet-400/50">
+                <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-accent/50">
                   <LockKeyhole size={14} className="text-mist-600" />
                   <input
                     type="password"

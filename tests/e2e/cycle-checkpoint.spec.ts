@@ -40,10 +40,10 @@ function progressSaved(page: Page) {
 }
 
 /**
- * Put the running game just before the next gate. Every road generator leaves
- * its last 300 units flat and free of rocks and gaps, so this never skips a
- * hazard; only the travel time is cut. The gate, the banner and the page's
- * save path all stay untouched.
+ * Put the running game just before the next gate. Every road generator keeps
+ * its final 760 units hazard-free, so this never skips an obstacle; only the
+ * travel time is cut. The gate, the banner and the page's save path all stay
+ * untouched.
  */
 async function approachFirstGate(page: Page) {
   await expect(canvas(page)).toBeVisible();

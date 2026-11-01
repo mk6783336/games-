@@ -1,70 +1,71 @@
-/* PLAYFLIX brand values override Arcade's inks and faces (kept at full depth).
- * Arcade dials: colourway ember-role taken by brand gold · screen: grille
+/* PLAYFLIX design tokens — v3 "cinema" language.
+ * Near-black warm paper, bone type, brass as the only loud accent.
+ * Violet and electric survive only as game-specific signals, never as chrome.
  */
 @theme static {
-  /* faces: brand display, brand body, one outlier role (figures only) */
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Sora", "Manrope", ui-sans-serif, sans-serif;
-  --font-outlier: "Silkscreen", ui-monospace, monospace;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", "Instrument Sans", ui-sans-serif, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-outlier: "Instrument Sans", ui-monospace, monospace;
 
-  /* scale: 1.25 ratio from a 16px body */
-  --text-xs: 0.75rem;
+  /* type scale: 1.25 ratio from 16px body */
+  --text-xs: 0.6875rem;
   --text-sm: 0.8125rem;
-  --text-md: 1rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.5625rem;
-  --text-2xl: 1.953rem;
-  --text-3xl: 2.441rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
   --text-title: 1.25rem;
-  --text-section: clamp(1.75rem, 3vw, 2.5rem);
-  --text-display-s: clamp(2.44rem, 5vw, 3.05rem);
-  --text-display: clamp(3.05rem, 8vw, 7rem);
-  --text-lead: 1.0625rem;
-  --text-figure: clamp(2.44rem, 5vw, 3.75rem);
+  --text-section: clamp(1.75rem, 3.2vw, 2.75rem);
+  --text-display-s: clamp(2.5rem, 5vw, 3.5rem);
+  --text-display: clamp(3.25rem, 9vw, 8.5rem);
+  --text-lead: clamp(1.0625rem, 1.4vw, 1.25rem);
+  --text-figure: clamp(2.25rem, 4.4vw, 3.5rem);
 
-  /* arcade-semantic layers, brand hex values */
-  --color-paper: #05070f;
-  --color-paper-2: #070a17;
-  --color-paper-3: #0a0e1e;
-  --color-ink: #f4f5ff;
-  --color-ink-2: #c6cbe6;
-  --color-muted: #8e96b8;
-  --color-rule: #1d2445;
-  --color-accent: #f5c45a;
-  --color-accent-2: #8b5cf6;
-  --color-accent-ink: #05070f;
-  --color-focus: #f5c45a;
-  --color-crt-r: #f5c45a;
-  --color-crt-g: #5b8cff;
-  --color-crt-b: #8b5cf6;
-  --color-crt-c: #8b5cf6;
-  --color-shade: #02030a;
-  --color-error: oklch(72% 0.15 27);
-  --color-success: oklch(76% 0.13 150);
+  /* surfaces */
+  --color-paper: #08090b;
+  --color-paper-2: #0c0d10;
+  --color-paper-3: #111317;
+  --color-ink: #f2efe6;
+  --color-ink-2: #c9c4b8;
+  --color-muted: #8e897d;
+  --color-rule: #23252b;
+  --color-shade: #030405;
 
-  /* the brand ramp: kept names, every untouched screen still reads them */
-  --color-ink-950: #05070f;
-  --color-ink-900: #070a17;
-  --color-ink-850: #0a0e1e;
-  --color-ink-800: #0d1226;
-  --color-ink-700: #141a33;
-  --color-ink-600: #1d2445;
-  --color-violet-glow: #8b5cf6;
-  --color-electric: #5b8cff;
-  --color-cyan-glow: #38bdf8;
-  --color-magenta: #d946ef;
-  --color-gold: #f5c45a;
-  --color-mist-100: #f4f5ff;
-  --color-mist-300: #c6cbe6;
-  --color-mist-500: #8e96b8;
-  --color-mist-600: #6d7596;
+  /* brass leads; violet answers only inside game art and tags */
+  --color-accent: #e5b15f;
+  --color-accent-2: #8d87f2;
+  --color-accent-ink: #0b0b0d;
+  --color-focus: #e5b15f;
+  --color-error: oklch(70% 0.15 27);
+  --color-success: oklch(76% 0.12 150);
 
-  --radius-card: 4px;
-  --radius-pill: 0;
-  --shadow-card: 6px 6px 0 var(--color-accent-2);
-  --shadow-card-sm: 4px 4px 0 var(--color-accent-2);
-  --tracking-display: -0.03em;
+  --color-ink-950: #08090b;
+  --color-ink-900: #0c0d10;
+  --color-ink-850: #111317;
+  --color-ink-800: #15181d;
+  --color-ink-700: #1d2026;
+  --color-ink-600: #262a31;
+  --color-violet-glow: #8d87f2;
+  --color-electric: #8cb4f2;
+  --color-cyan-glow: #7fb3c4;
+  --color-magenta: #c976a3;
+  --color-gold: #e5b15f;
+  --color-mist-100: #f2efe6;
+  --color-mist-200: #e2ded4;
+  --color-mist-300: #c9c4b8;
+  --color-mist-400: #aaa497;
+  --color-mist-500: #8e897d;
+  --color-mist-600: #6e6a60;
+
+  /* no toy shadows; hierarchy comes from hairlines and spacing */
+  --radius-card: 3px;
+  --radius-pill: 999px;
+  --shadow-card: none;
+  --shadow-card-sm: none;
+  --tracking-display: -0.045em;
 }
 :root {
   color-scheme: dark;
@@ -78,15 +79,15 @@
   --space-2xl: 64px;
   --space-3xl: 96px;
   --space-4xl: 144px;
-  --dur-micro: 120ms;
-  --dur-short: 220ms;
-  --dur-long: 420ms;
-  --container: 1440px;
-  --gutter: 64px;
-  --gap-columns: 32px;
-  --section-gap-s: 120px;
-  --section-gap: 144px;
-  --section-gap-l: 176px;
+  --dur-micro: 140ms;
+  --dur-short: 260ms;
+  --dur-long: 520ms;
+  --container: 1320px;
+  --gutter: 56px;
+  --gap-columns: 28px;
+  --section-gap-s: 96px;
+  --section-gap: 128px;
+  --section-gap-l: 160px;
   --z-base: 1;
   --z-raised: 10;
   --z-dropdown: 100;
@@ -96,13 +97,18 @@
   --z-toast: 500;
   --z-tooltip: 600;
   --rule-hair: 1px;
-  --rule-bar: 2px;
-  --shadow-legible-title: drop-shadow(0 2px 16px rgb(0 0 0 / 0.7));
-  --shadow-legible-score: drop-shadow(0 1px 2px rgb(0 0 0 / 0.6));
-  --shadow-glow-gold: 0 0 12px var(--color-accent);
-  --shadow-rim-inset: inset 0 1px 0 color-mix(in oklab, var(--color-ink) 8%, transparent);
-  --shadow-cinema-deep: 0 30px 80px -30px rgb(0 0 0 / 0.95);
-  --display-weight: 800;
+  --rule-bar: 1px;
+  --shadow-legible-title: drop-shadow(0 2px 24px rgb(0 0 0 / 0.72));
+  --shadow-legible-score: drop-shadow(0 1px 3px rgb(0 0 0 / 0.65));
+  --shadow-glow-gold: none;
+  --shadow-rim-inset: none;
+  --shadow-cinema-deep: 0 40px 120px -50px rgb(0 0 0 / 0.95);
+  --display-weight: 700;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
-@media (max-width: 60rem) { :root { --gutter: 24px; --section-gap-s: 80px; --section-gap: 96px; --section-gap-l: 120px; } }
-@media (max-width: 40rem) { :root { --gutter: 16px; --section-gap-s: 56px; --section-gap: 72px; --section-gap-l: 96px; --gap-columns: 16px; } }
+@media (max-width: 60rem) {
+  :root { --gutter: 24px; --section-gap-s: 72px; --section-gap: 88px; --section-gap-l: 104px; }
+}
+@media (max-width: 40rem) {
+  :root { --gutter: 18px; --section-gap-s: 56px; --section-gap: 64px; --section-gap-l: 80px; --gap-columns: 16px; }
+}

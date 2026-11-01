@@ -168,7 +168,7 @@ export function PuzzleModal({
                   <div
                     key={i}
                     className={`grid size-12 place-items-center rounded-xl border font-display text-xl font-bold tabular-nums transition-colors motion-reduce:transition-none ${
-                      digits[i] ? "border-violet-400/40 bg-violet-500/10 text-white" : "border-white/10 bg-black/25 text-mist-600"
+                      digits[i] ? "border-accent/40 bg-accent/10 text-white" : "border-white/10 bg-black/25 text-mist-600"
                     }`}
                   >
                     {digits[i] ?? "·"}
@@ -184,7 +184,7 @@ export function PuzzleModal({
                     className={`grid h-12 place-items-center rounded-xl border text-sm font-bold transition-[color,border-color,transform] motion-reduce:transition-none active:scale-95 ${
                       key === "clear" || key === "back"
                         ? "border-white/8 bg-white/[0.03] text-mist-500 hover:text-white"
-                        : "border-white/10 bg-white/[0.05] text-mist-100 hover:border-violet-400/40 hover:bg-white/[0.08]"
+                        : "border-white/10 bg-white/[0.05] text-mist-100 hover:border-accent/40 hover:bg-white/[0.08]"
                     }`}
                     aria-label={key === "clear" ? "Clear" : key === "back" ? "Delete last digit" : `Digit ${key}`}
                   >
@@ -235,7 +235,7 @@ export function PuzzleModal({
                   <div key={i} className="flex flex-col items-center gap-1.5">
                     <button
                       onClick={() => changeDial(i, 1)}
-                      className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-400 transition-colors motion-reduce:transition-none hover:border-violet-400/40 hover:text-white focus-visible:outline-2 focus-visible:outline-accent"
+                      className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-400 transition-colors motion-reduce:transition-none hover:border-accent/40 hover:text-white focus-visible:outline-2 focus-visible:outline-accent"
                       aria-label={`Increase ring ${i + 1}`}
                     >
                       <ChevronUp size={16} />
@@ -246,7 +246,7 @@ export function PuzzleModal({
                     </div>
                     <button
                       onClick={() => changeDial(i, -1)}
-                      className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-400 transition-colors motion-reduce:transition-none hover:border-violet-400/40 hover:text-white focus-visible:outline-2 focus-visible:outline-accent"
+                      className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-400 transition-colors motion-reduce:transition-none hover:border-accent/40 hover:text-white focus-visible:outline-2 focus-visible:outline-accent"
                       aria-label={`Decrease ring ${i + 1}`}
                     >
                       <ChevronDown size={16} />

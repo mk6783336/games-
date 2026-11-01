@@ -1,0 +1,10 @@
+.env
+.env.local
+.data
+.logs
+dist
+test-results
+playwright-report
+.hallmark
+.vercel
+.claude

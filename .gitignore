@@ -13,3 +13,5 @@ playwright-report/
 *.tsbuildinfo
 .DS_Store
 .neon
+.vercel
+.env*

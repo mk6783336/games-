@@ -46,7 +46,7 @@ export default function Leaderboard() {
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-2xl">
                     <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.6rem)] font-extrabold leading-[0.98] tracking-[-0.05em] text-white">
-            Somebody has<br />to be <span className="violet-text">first.</span>
+            Somebody has<br />to be <span className="gold-text">first.</span>
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-mist-500">
             Your own runs are saved on this device. Pick a board, find your name, then do something about the gap.
@@ -61,7 +61,7 @@ export default function Leaderboard() {
               <span className="ml-1 text-sm font-semibold text-mist-600">/ {rows.length}</span>
             </p>
           </div>
-          <span className="grid size-11 place-items-center rounded-xl border border-violet-400/25 bg-violet-500/10 text-violet-300"><Trophy size={19} /></span>
+          <span className="grid size-11 place-items-center rounded-xl border border-accent/25 bg-accent/10 text-accent"><Trophy size={19} /></span>
         </div>
       </div>
 
@@ -72,11 +72,11 @@ export default function Leaderboard() {
             key={g.id}
             onClick={() => setGame(g.id)}
             className={`flex shrink-0 items-center gap-2.5 rounded-2xl border px-4 py-2.5 text-left transition ${
-              game === g.id ? "border-violet-400/40 bg-violet-500/[0.1]" : "border-white/8 bg-white/[0.02] hover:border-white/20"
+              game === g.id ? "border-accent/40 bg-accent/[0.1]" : "border-white/8 bg-white/[0.02] hover:border-white/20"
             }`}
             aria-pressed={game === g.id}
           >
-            <span className={`font-display text-[10px] font-bold ${game === g.id ? "text-violet-300" : "text-mist-600"}`}>{g.index}</span>
+            <span className={`font-display text-[10px] font-bold ${game === g.id ? "text-accent" : "text-mist-600"}`}>{g.index}</span>
             <span>
               <span className={`block text-[12px] font-bold ${game === g.id ? "text-white" : "text-mist-300"}`}>{g.title}</span>
               <span className="block text-[9px] text-mist-600">{game === g.id ? g.scoreLabel : g.genre}</span>
@@ -127,7 +127,7 @@ export default function Leaderboard() {
                 <select
                   value={state.profile.country}
                   onChange={(e) => updateProfile({ country: e.target.value })}
-                  className="rounded-lg border border-white/10 bg-paper-2 px-2 py-1 text-[10px] text-mist-200 outline-none focus:border-violet-400/50"
+                  className="rounded-lg border border-white/10 bg-paper-2 px-2 py-1 text-[10px] text-mist-200 outline-none focus:border-accent/50"
                   aria-label="Change your country"
                 >
                   {COUNTRIES.map((c) => (
@@ -222,13 +222,13 @@ export default function Leaderboard() {
           <div className="panel p-5">
             <p className="label"><Trophy size={12} className="text-gold" /> Board rules</p>
             <ul className="mt-3 space-y-2.5 text-[11px] leading-relaxed text-mist-500">
-              <li className="flex gap-2"><span className="text-violet-400">01</span> One Chance ranks by highest score. The Impossible Room ranks by fastest full escape.</li>
-              <li className="flex gap-2"><span className="text-violet-400">02</span> Daily runs use the same seed for everyone in the world.</li>
-              <li className="flex gap-2"><span className="text-violet-400">03</span> Ties are settled by who set the score first.</li>
+              <li className="flex gap-2"><span className="text-accent">01</span> One Chance ranks by highest score. The Impossible Room ranks by fastest full escape.</li>
+              <li className="flex gap-2"><span className="text-accent">02</span> Daily runs use the same seed for everyone in the world.</li>
+              <li className="flex gap-2"><span className="text-accent">03</span> Ties are settled by who set the score first.</li>
             </ul>
           </div>
           <div className="panel relative overflow-hidden p-5">
-            <div className="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full bg-violet-600/15 blur-2xl" />
+            <div className="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full bg-accent/15 blur-2xl" />
             <p className="label">Season 01</p>
             <p className="mt-2 font-display text-lg font-bold leading-snug text-white">The top three keep their names in lights until the reset.</p>
             <Link to="/challenges" className="btn btn-ghost mt-4 w-full py-2.5 text-[11px]">

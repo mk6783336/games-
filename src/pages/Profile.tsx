@@ -71,7 +71,7 @@ function Toggle({
         aria-label={label}
         onClick={() => onChange(!checked)}
         className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full border transition-colors motion-reduce:transition-none ${
-          checked ? "border-violet-400/50 bg-violet-500/80" : "border-white/12 bg-white/8"
+          checked ? "border-accent/50 bg-accent/80" : "border-white/12 bg-white/8"
         }`}
       >
         <span
@@ -134,9 +134,9 @@ export default function Profile() {
           <div className="absolute inset-0 hero-wash" />
           <div className="absolute inset-0 opacity-20 grid-lines [background-size:34px_34px]" />
           <div className="absolute right-5 top-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[9px] font-bold text-mist-400 backdrop-blur">
-            <ShieldCheck size={11} className="text-violet-300" /> Player card
+            <ShieldCheck size={11} className="text-accent" /> Player card
           </div>
-          <div className="pointer-events-none absolute -bottom-16 left-1/3 size-48 rounded-full bg-violet-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-16 left-1/3 size-48 rounded-full bg-accent/20 blur-3xl" />
         </div>
 
         <div className="relative px-5 pb-6 sm:px-7">
@@ -150,7 +150,7 @@ export default function Profile() {
                 <p className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-mist-500">
                   <span>{country.name}</span>
                   <span className="text-white/15">·</span>
-                  <span className="text-violet-300">Level {level.level}</span>
+                  <span className="text-accent">Level {level.level}</span>
                   <span className="text-white/15">·</span>
                   <span>Joined {new Date(state.profile.createdAt).toLocaleDateString(undefined, { month: "short", year: "numeric" })}</span>
                 </p>
@@ -203,7 +203,7 @@ export default function Profile() {
               <div>
                                 <h2 className="mt-1.5 font-display text-xl font-bold text-white">Your three campaigns</h2>
               </div>
-              <Link to="/games" className="text-[10px] font-bold text-violet-300 hover:text-violet-200">Library</Link>
+              <Link to="/games" className="text-[10px] font-bold text-accent hover:text-accent">Library</Link>
             </div>
             <div className="mt-4 space-y-2.5">
               {GAME_LIST.map((game) => {
@@ -220,7 +220,7 @@ export default function Profile() {
                       </p>
                       <p className="mt-0.5 text-[9px] text-mist-600">{stat.plays} runs, {stat.coinsEarned.toLocaleString()} coins earned</p>
                     </div>
-                    <Link to={game.route} aria-label={`Play ${game.title}`} className="grid size-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/5 text-mist-200 transition-colors motion-reduce:transition-none hover:border-violet-400/40 hover:text-white">
+                    <Link to={game.route} aria-label={`Play ${game.title}`} className="grid size-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/5 text-mist-200 transition-colors motion-reduce:transition-none hover:border-accent/40 hover:text-white">
                       <Play size={14} fill="currentColor" />
                     </Link>
                   </div>
@@ -336,7 +336,7 @@ export default function Profile() {
                 <select
                   value={state.profile.country}
                   onChange={(e) => updateProfile({ country: e.target.value })}
-                  className="mt-1.5 w-full rounded-lg border border-white/10 bg-paper-3 px-2.5 py-2 text-[11px] text-mist-200 outline-none focus:border-violet-400/50"
+                  className="mt-1.5 w-full rounded-lg border border-white/10 bg-paper-3 px-2.5 py-2 text-[11px] text-mist-200 outline-none focus:border-accent/50"
                   aria-label="Country"
                 >
                   {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name} ({c.code})</option>)}
@@ -403,7 +403,7 @@ export default function Profile() {
               </p>
             )}
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link to="/account" className="chip border-violet-400/25 bg-violet-500/10 text-[9px] text-violet-100">
+              <Link to="/account" className="chip border-accent/25 bg-accent/10 text-[9px] text-accent">
                 {identity?.kind === "account" ? <UserRound size={10} /> : <ArrowRight size={10} />}
                 {identity?.kind === "account" ? "Manage account" : "Create account / sign in"}
               </Link>
@@ -442,7 +442,7 @@ export default function Profile() {
             maxLength={18}
             autoComplete="nickname"
             placeholder="Pick a name"
-            className="w-full rounded-xl border border-white/10 bg-paper-2 px-3.5 py-3 pr-12 text-sm font-semibold text-white outline-none transition placeholder:text-mist-600 focus:border-violet-400/60"
+            className="w-full rounded-xl border border-white/10 bg-paper-2 px-3.5 py-3 pr-12 text-sm font-semibold text-white outline-none transition placeholder:text-mist-600 focus:border-accent/60"
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] tabular-nums text-mist-600">{nameDraft.length}/18</span>
         </div>

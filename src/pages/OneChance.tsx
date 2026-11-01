@@ -262,7 +262,7 @@ export default function OneChance() {
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-shade/70 px-2.5 py-1 text-[9px] font-semibold text-mist-400 backdrop-blur">
-                  <Zap size={10} className="text-violet-300" /> Speed {Math.round(Math.min(100, Math.max(0, ((hud.speed - 0.4) / 0.38) * 100)))}%
+                  <Zap size={10} className="text-accent" /> Speed {Math.round(Math.min(100, Math.max(0, ((hud.speed - 0.4) / 0.38) * 100)))}%
                 </div>
               )}
               <span className="text-[8px] font-semibold text-white/30">{practice ? "Practice, not ranked" : "One life, no retries"}</span>
@@ -276,7 +276,7 @@ export default function OneChance() {
                   e.stopPropagation();
                   slide();
                 }}
-                className="pointer-events-auto grid size-[4.4rem] place-items-center rounded-full border border-fuchsia-400/30 bg-shade/85 text-fuchsia-200 backdrop-blur-md active:scale-95"
+                className="pointer-events-auto grid size-[4.4rem] place-items-center rounded-full border border-accent/45 bg-accent/15 text-accent backdrop-blur-md active:scale-95"
                 aria-label="Slide"
               >
                 <span className="flex flex-col items-center gap-0.5">
@@ -293,7 +293,7 @@ export default function OneChance() {
                   e.stopPropagation();
                   jump();
                 }}
-                className="pointer-events-auto grid size-[4.4rem] place-items-center rounded-full border border-violet-400/40 bg-violet-600/25 text-violet-100 backdrop-blur-md active:scale-95"
+                className="pointer-events-auto grid size-[4.4rem] place-items-center rounded-full border border-accent/40 bg-accent/25 text-accent backdrop-blur-md active:scale-95"
                 aria-label="Jump"
               >
                 <span className="flex flex-col items-center gap-0.5">
@@ -320,14 +320,17 @@ export default function OneChance() {
               <div className="grid w-full gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
                 <div className="fade-up">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="chip border-blue-400/25 bg-blue-500/10 text-blue-200">Game 02, Survival arcade</span>
-                    {mode === "daily" && <span className="chip border-gold/25 bg-gold/10 text-gold"><Target size={10} /> Daily seed</span>}
-                    {mode === "challenge" && challenge && <span className="chip border-violet-400/25 bg-violet-500/10 text-violet-200">From {challenge.from}</span>}
-                    {practice && <span className="chip border-blue-400/25 bg-blue-500/10 text-blue-200"><FlaskConical size={10} /> Practice, unranked</span>}
+                    <span className="chip border-electric/25 text-electric">Game 02 · Survival arcade</span>
+                    {mode === "daily" && <span className="chip border-gold/25 text-gold"><Target size={10} /> Daily seed</span>}
+                    {mode === "challenge" && challenge && <span className="chip border-white/15">From {challenge.from}</span>}
+                    {practice && <span className="chip border-white/15"><FlaskConical size={10} /> Practice, unranked</span>}
                   </div>
-                  <h1 className="mt-4 font-display text-[clamp(3rem,9vw,5.5rem)] font-extrabold uppercase leading-[0.85] tracking-[-0.06em] text-white">
-                    One<br /><span className="violet-text">Chance.</span>
+                  <h1 className="mt-5 font-display text-[clamp(3.4rem,9vw,6rem)] font-medium uppercase leading-[0.82] tracking-[-0.055em] text-ink">
+                    One<br /><span className="text-mist-400">Chance.</span>
                   </h1>
+                  <p className="serif mt-3 text-[clamp(1.15rem,2vw,1.55rem)] text-mist-400">
+                    The city doesn't stop. Neither do you.
+                  </p>
                   <p className="mt-4 max-w-md text-[13px] leading-relaxed text-mist-400">
                     One life. One run. No excuses. The city accelerates with every second; jump the spikes, slide under the lasers, and stay alive long enough to matter.
                   </p>
@@ -343,7 +346,7 @@ export default function OneChance() {
                   {mode === "solo" && (
                     <button
                       onClick={() => startGame(true)}
-                      className="mt-3 flex items-center gap-1.5 text-[10px] font-semibold text-blue-300/80 transition hover:text-blue-200"
+                      className="mt-3 flex items-center gap-1.5 text-[10px] font-medium text-mist-500 transition hover:text-ink"
                     >
                       <FlaskConical size={12} /> Practice run, no records, no leaderboard
                     </button>
@@ -351,18 +354,18 @@ export default function OneChance() {
 
                   <div className="mt-7 flex flex-wrap gap-5">
                     <div>
-                      <p className="text-[8px] font-bold text-mist-600">Personal best</p>
-                      <p className="mt-1 font-display text-lg font-extrabold tabular-nums text-white">{formatScore("one-chance", state.stats["one-chance"].best)}</p>
+                      <p className="label">Personal best</p>
+                      <p className="mt-1.5 font-display text-lg font-medium tabular-nums text-ink">{formatScore("one-chance", state.stats["one-chance"].best)}</p>
                     </div>
                     <div>
-                      <p className="text-[8px] font-bold text-mist-600">Runs</p>
-                      <p className="mt-1 font-display text-lg font-extrabold tabular-nums text-white">{state.stats["one-chance"].plays}</p>
+                      <p className="label">Runs</p>
+                      <p className="mt-1.5 font-display text-lg font-medium tabular-nums text-ink">{state.stats["one-chance"].plays}</p>
                     </div>
                     <div>
-                      <p className="text-[8px] font-bold text-mist-600">
+                      <p className="label">
                         {mode === "daily" ? "Daily target" : mode === "challenge" ? "Target to beat" : "Today's best"}
                       </p>
-                      <p className="mt-1 font-display text-lg font-extrabold tabular-nums text-gold">
+                      <p className="mt-1.5 font-display text-lg font-medium tabular-nums text-accent">
                         {targetScore ? targetScore.toLocaleString() : dailyRecord ? dailyRecord.score.toLocaleString() : "—"}
                       </p>
                     </div>
@@ -384,10 +387,10 @@ export default function OneChance() {
                   )}
                 </div>
 
-                <div className="fade-up animation-delay-2 rounded-2xl border border-white/10 bg-shade/70 p-5 backdrop-blur-xl">
+                <div className="fade-up animation-delay-2 border border-rule bg-paper-2/85 p-6 backdrop-blur-xl">
                   <div className="flex items-center justify-between">
-                    <p className="text-[9px] font-extrabold text-mist-500">Run briefing</p>
-                    <Zap size={14} className="text-blue-300" />
+                    <p className="label">Run briefing</p>
+                    <Zap size={13} className="text-electric" />
                   </div>
                   <div className="mt-4 space-y-2.5">
                     {mode === "daily" ? (
@@ -418,11 +421,11 @@ export default function OneChance() {
         {/* Pause */}
         {screen === "paused" && (
           <div className="absolute inset-0 z-40 flex items-center justify-center overflow-y-auto bg-shade/80 p-4 backdrop-blur-md">
-            <div className="panel panel-glow fade-up w-full max-w-sm p-6">
+            <div className="panel fade-up w-full max-w-sm p-6">
               <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-xl border border-violet-400/25 bg-violet-500/10 text-violet-300"><Pause size={18} /></span>
+                <span className="grid size-10 place-items-center border border-electric/25 text-electric"><Pause size={17} /></span>
                 <div>
-                                    <h2 className="font-display text-xl font-bold text-white">Catch your breath.</h2>
+                                    <h2 className="font-display text-xl font-semibold text-ink">Catch your breath.</h2>
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2">
@@ -431,9 +434,9 @@ export default function OneChance() {
                   ["Coins", String(hud.coins)],
                   ["Distance", `${hud.distance}m`],
                 ].map(([label, value]) => (
-                  <div key={label} className="rounded-lg border border-white/8 bg-white/[0.025] px-2 py-2 text-center">
-                    <p className="text-[8px] font-bold text-mist-600">{label}</p>
-                    <p className="mt-0.5 font-display text-sm font-bold tabular-nums text-white">{value}</p>
+                  <div key={label} className="border border-rule px-2 py-2.5 text-center">
+                    <p className="label !text-[8px]">{label}</p>
+                    <p className="mt-0.5 font-display text-sm font-medium tabular-nums text-ink">{value}</p>
                   </div>
                 ))}
               </div>
@@ -453,32 +456,31 @@ export default function OneChance() {
         {screen === "over" && summary && (
           <div className="absolute inset-0 z-40 overflow-y-auto bg-shade/80 backdrop-blur-md">
             <div className="relative mx-auto flex min-h-full w-full max-w-md items-center px-4 py-6">
-              <div className="panel panel-glow fade-up relative w-full overflow-hidden p-6">
-                <div className="pointer-events-none absolute -top-24 left-1/2 size-56 -translate-x-1/2 rounded-full bg-rose-500/10 blur-3xl" />
+              <div className="panel fade-up relative w-full overflow-hidden p-6">
                 <div className="relative text-center">
-                  <p className={`text-[9px] font-extrabold ${practice ? "text-blue-300/70" : "text-rose-300/70"}`}>{practice ? "Practice run" : "Run ended"}</p>
-                  <h2 className="mt-1 font-display text-3xl font-extrabold tracking-[-0.03em] text-white">{practice ? "No records. Just reps." : runResult?.newBest ? "A new best." : "One chance, spent."}</h2>
+                  <p className={`label ${practice ? "!text-mist-400" : "!text-accent"}`}>{practice ? "Practice run" : "Run ended"}</p>
+                  <h2 className="mt-2 font-display text-[2rem] font-medium tracking-[-0.04em] text-ink">{practice ? "No records. Just reps." : runResult?.newBest ? "A new best." : "One chance, spent."}</h2>
                   <p className="mt-2 text-[11px] text-mist-500">
                     {practice ? "Same city, same hazards. Nothing here touched your records or the boards." : runResult?.newBest ? "You went further than ever. The board noticed." : "The city always wins eventually. The score is what you leave behind."}
                   </p>
 
                   <div className="mt-5">
-                    <p className="text-[9px] font-bold text-mist-600">Final score</p>
-                    <p className="mt-1 font-display text-5xl font-extrabold leading-none tabular-nums text-white">{summary.score.toLocaleString()}</p>
+                    <p className="label">Final score</p>
+                    <p className="mt-2 font-display text-5xl font-medium leading-none tabular-nums text-ink">{summary.score.toLocaleString()}</p>
                   </div>
 
                   <div className="mt-5 grid grid-cols-3 gap-2">
-                    <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-2.5">
-                      <p className="text-[8px] font-bold text-mist-600">Coins</p>
-                      <p className="mt-0.5 font-display text-sm font-bold tabular-nums text-gold">{summary.collectedCoins}</p>
+                    <div className="border border-rule px-2 py-2.5">
+                      <p className="label !text-[8px]">Coins</p>
+                      <p className="mt-0.5 font-display text-sm font-medium tabular-nums text-accent">{summary.collectedCoins}</p>
                     </div>
-                    <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-2.5">
-                      <p className="text-[8px] font-bold text-mist-600">Distance</p>
-                      <p className="mt-0.5 font-display text-sm font-bold tabular-nums text-white">{summary.distance}m</p>
+                    <div className="border border-rule px-2 py-2.5">
+                      <p className="label !text-[8px]">Distance</p>
+                      <p className="mt-0.5 font-display text-sm font-medium tabular-nums text-ink">{summary.distance}m</p>
                     </div>
-                    <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-2.5">
-                      <p className="text-[8px] font-bold text-mist-600">Survived</p>
-                      <p className="mt-0.5 font-display text-sm font-bold tabular-nums text-white">{formatDuration(summary.durationMs)}</p>
+                    <div className="border border-rule px-2 py-2.5">
+                      <p className="label !text-[8px]">Survived</p>
+                      <p className="mt-0.5 font-display text-sm font-medium tabular-nums text-ink">{formatDuration(summary.durationMs)}</p>
                     </div>
                   </div>
 
@@ -556,10 +558,10 @@ export default function OneChance() {
 function Briefing({ icon, title, body }: { icon: ReactNode; title: string; body: string }) {
   return (
     <div className="flex gap-2.5">
-      <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border border-white/8 bg-white/[0.03] text-violet-300">{icon}</span>
+      <span className="mt-0.5 grid size-7 shrink-0 place-items-center border border-rule text-electric">{icon}</span>
       <div>
-        <p className="text-[11px] font-bold text-mist-100">{title}</p>
-        <p className="mt-0.5 text-[10px] leading-relaxed text-mist-600">{body}</p>
+        <p className="text-[11px] font-medium text-ink-2">{title}</p>
+        <p className="mt-0.5 text-[10px] leading-relaxed text-mist-500">{body}</p>
       </div>
     </div>
   );

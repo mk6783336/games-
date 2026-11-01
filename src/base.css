@@ -1,35 +1,87 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { overflow-x: clip; }
-html { scrollbar-color: var(--color-muted) var(--color-paper); scroll-padding-top: var(--space-3xl); background: var(--color-paper); }
-body { margin: 0; min-height: 100dvh; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-md); line-height: 1.55; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; caret-color: var(--color-accent); touch-action: manipulation; }
+html {
+  scrollbar-color: var(--color-rule) var(--color-paper);
+  scroll-padding-top: var(--space-2xl);
+  background: var(--color-paper);
+}
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  caret-color: var(--color-accent);
+  touch-action: manipulation;
+}
 * { -webkit-tap-highlight-color: transparent; }
-::selection { background: color-mix(in oklab, var(--color-accent) 26%, transparent); color: var(--color-ink); }
-:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.16em; }
+::selection { background: color-mix(in oklab, var(--color-accent) 30%, transparent); color: var(--color-ink); }
+:focus-visible { outline: 1px solid var(--color-focus); outline-offset: 4px; }
+a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--color-paper-2); }
-::-webkit-scrollbar-thumb { background: var(--color-rule); border: 3px solid var(--color-paper-2); }
+::-webkit-scrollbar-track { background: var(--color-paper); }
+::-webkit-scrollbar-thumb { background: #24262c; border: 3px solid var(--color-paper); }
 
-/* display face: the brand's Sora in the arcade's capital voice, one RGB split per screen */
+/* display voice: a wide grotesk in sentence case, never a poster all-caps wall */
 h1, .display {
   font-family: var(--font-display);
-  font-weight: var(--display-weight, 800);
+  font-weight: var(--display-weight, 700);
   font-synthesis: none;
-  text-transform: uppercase;
   letter-spacing: var(--tracking-display);
-  line-height: 1.02;
+  line-height: 0.94;
+  overflow-wrap: break-word;
+  min-width: 0;
+  text-wrap: balance;
+  margin: 0;
+}
+h1 { max-width: 18ch; font-size: var(--text-display); }
+.display-caps { text-transform: uppercase; letter-spacing: -0.03em; }
+h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  max-width: 28ch;
+  font-size: var(--text-section);
+  margin: 0;
   overflow-wrap: break-word;
   min-width: 0;
   text-wrap: balance;
 }
-h1 { max-width: 20ch; font-size: var(--text-display); }
-h2 { font-family: var(--font-body); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; max-width: 30ch; font-size: var(--text-section); margin: 0; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
-h3 { font-family: var(--font-body); font-weight: 800; letter-spacing: -0.01em; line-height: 1.25; max-width: 40ch; font-size: var(--text-title); margin: 0; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
-.split { text-shadow: -1.5px 0 0 var(--color-crt-r), 1.5px 0 0 var(--color-crt-c); }
-.label { font-family: var(--font-body); font-size: var(--text-sm); font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--color-muted); }
-.figure { font-family: var(--font-outlier); font-weight: 700; font-variant-numeric: tabular-nums; }
-.lead { font-size: var(--text-lead); line-height: 1.45; max-width: 52ch; }
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  max-width: 40ch;
+  font-size: var(--text-title);
+  margin: 0;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+.serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+.label {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  line-height: 1.4;
+}
+.figure { font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+.lead { font-size: var(--text-lead); line-height: 1.5; max-width: 46ch; color: var(--color-ink-2); }
 p { margin: 0; text-wrap: pretty; }
 p:not([class]) { max-width: 65ch; }
 img, video { max-width: 100%; height: auto; display: block; }
@@ -38,9 +90,27 @@ svg { display: block; }
 .num, td.num { font-variant-numeric: tabular-nums; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* reveal: visible by default, hidden only under the .js class (gate 62) */
-.js .reveal { opacity: 0; transform: translateY(8px); }
-.js .reveal.is-in { animation: reveal-in var(--dur-long) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
+/* 1px hairline with a brass start, used instead of heavy rules */
+.hairline {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--color-accent) 55%, transparent), var(--color-rule) 24%, var(--color-rule) 100%);
+}
+
+/* film grain: one fixed layer, never over live text controls */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* reveal: visible by default, hidden only under the .js class */
+.js .reveal { opacity: 0; transform: translateY(10px); }
+.js .reveal.is-in { animation: reveal-in var(--dur-long) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes reveal-in { to { opacity: 1; transform: translateY(0); } }
 
 @media (prefers-reduced-motion: reduce) {

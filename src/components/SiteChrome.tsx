@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Coins, Instagram, LogIn, MessageCircle, Trophy, Youtube } from "lucide-react";
+import { Coins, LogIn, Trophy } from "lucide-react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { usePlayer } from "../state/player";
 import { achievementById } from "../lib/achievements";
-import { Logo, Avatar } from "./Brand";
+import { Logo } from "./Brand";
 import { MobileNav } from "./MobileNav";
 
 const NAV = [
-  { to: "/", label: "Home", end: true },
   { to: "/games", label: "Games" },
   { to: "/challenges", label: "Challenges" },
   { to: "/leaderboard", label: "Leaderboard" },
@@ -21,7 +20,7 @@ export function Header() {
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
-      setHidden(y > 140 && y > lastY.current);
+      setHidden(y > 160 && y > lastY.current);
       lastY.current = y;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -30,53 +29,52 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 border-b border-rule bg-paper transition-transform duration-300 motion-reduce:transition-none ${
+      className={`sticky top-0 z-40 border-b border-rule/80 bg-paper/92 backdrop-blur-xl transition-transform duration-500 motion-reduce:transition-none ${
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="container-page flex h-16 items-center justify-between gap-3">
-        <Logo size={32} subtitle={false} />
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
-          {NAV.map((item) => (
+      <div className="container-page flex h-[68px] items-center justify-between gap-4">
+        <Logo size={28} subtitle={false} />
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
+          <NavLink
+            to="/games"
+            className={({ isActive }) =>
+              `label transition-colors hover:text-ink ${isActive ? "text-ink" : "text-mist-500"}`
+            }
+          >
+            Games
+          </NavLink>
+          {NAV.slice(1).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.end}
               className={({ isActive }) =>
-                `relative rounded-card px-3 py-2 text-[13px] font-semibold transition-colors ${
-                  isActive ? "text-accent" : "text-mist-500 hover:text-ink"
-                }`
+                `label transition-colors hover:text-ink ${isActive ? "text-ink" : "text-mist-500"}`
               }
             >
-              {({ isActive }) => (
-                <>
-                  {item.label}
-                  {isActive && (
-                    <span className="absolute inset-x-3 -bottom-[7px] h-0.5 bg-accent" aria-hidden="true" />
-                  )}
-                </>
-              )}
+              {item.label}
             </NavLink>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
-          {identity?.kind === "guest" && (
-            <Link to="/account" title="Sign in or create an account" className="btn btn-sm btn-ghost">
-              <LogIn size={14} />
-              <span className="hidden lg:inline">Sign in</span>
-            </Link>
-          )}
+        <div className="flex items-center gap-3 sm:gap-5">
           <Link
             to="/profile"
-            className="chip border-gold/40 text-gold transition-colors hover:border-gold"
+            className="hidden items-center gap-1.5 text-[11px] font-semibold tabular-nums text-mist-400 transition-colors hover:text-accent sm:flex"
             aria-label={`${state.coins.toLocaleString()} coins`}
           >
-            <Coins size={14} />
-            <span className="num">{state.coins.toLocaleString()}</span>
+            <Coins size={12} className="text-accent" />
+            {state.coins.toLocaleString()}
           </Link>
-          <Link to="/profile" aria-label="Open profile" className="rounded-full transition hover:opacity-90">
-            <Avatar name={state.profile.name} hue={state.profile.avatarHue} size={32} />
-          </Link>
+          {identity?.kind === "guest" ? (
+            <Link to="/account" className="label flex items-center gap-1.5 text-mist-400 transition-colors hover:text-ink">
+              <LogIn size={12} className="hidden sm:block" />
+              Sign in
+            </Link>
+          ) : (
+            <Link to="/profile" className="label text-mist-400 transition-colors hover:text-ink">
+              Profile
+            </Link>
+          )}
         </div>
       </div>
     </header>
@@ -85,32 +83,18 @@ export function Header() {
 
 export function Footer() {
   return (
-    <footer className="relative mt-20 border-t border-rule bg-paper-2 pb-24 pt-14 md:pb-10">
+    <footer className="mt-24 border-t border-rule pb-28 pt-16 md:pb-12">
       <div className="container-page">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[1.7fr_1fr_1fr_1fr]">
           <div>
-            <p className="display text-[clamp(1.6rem,3vw,2.1rem)] leading-[1.05] text-ink">
-              Play free. Chase the board.
+            <Logo size={26} />
+            <p className="mt-6 max-w-xs font-display text-[clamp(1.5rem,2.6vw,2rem)] font-medium leading-[1.08] tracking-[-0.03em] text-ink">
+              Three games. One arena.
+              <span className="serif block text-mist-500">No filler.</span>
             </p>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-mist-500">
-              Two exceptional games. One global arena. Play free, chase the board, and bring your friends into the run.
+            <p className="mt-4 max-w-xs text-xs leading-relaxed text-mist-600">
+              A cinematic escape room, a one-life rooftop run and a five-road alpine climb. Free to play, built to be mastered.
             </p>
-            <div className="mt-5 flex gap-2">
-              {[
-                { icon: MessageCircle, label: "Community", to: "/support" },
-                { icon: Instagram, label: "Instagram", to: "/support" },
-                { icon: Youtube, label: "YouTube", to: "/support" },
-              ].map(({ icon: Icon, label, to }) => (
-                <Link
-                  key={label}
-                  to={to}
-                  aria-label={label}
-                  className="grid size-9 place-items-center rounded-card border border-rule bg-paper-3 text-mist-500 transition-colors hover:border-accent-2 hover:text-ink"
-                >
-                  <Icon size={16} />
-                </Link>
-              ))}
-            </div>
           </div>
           <FooterColumn
             title="Play"
@@ -141,12 +125,11 @@ export function Footer() {
             ]}
           />
         </div>
-        <hr className="rule mt-10" />
-        <div className="mt-5 flex flex-col items-start justify-between gap-3 text-xs text-mist-600 sm:flex-row sm:items-center">
+        <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-rule pt-5 text-[10px] text-mist-600 sm:flex-row sm:items-center">
           <p>© 2026 PLAYFLIX. Play, challenge, compete.</p>
-          <p className="flex items-center gap-4">
+          <p className="flex items-center gap-5">
             <span className="inline-flex items-center gap-1.5">
-              <span className="size-1.5 rounded-full bg-success" aria-hidden="true" /> All systems online
+              <span className="size-1 rounded-full bg-success" aria-hidden="true" /> All systems online
             </span>
             <span>Made for players everywhere</span>
           </p>
@@ -160,13 +143,10 @@ function FooterColumn({ title, links }: { title: string; links: { label: string;
   return (
     <div>
       <p className="label">{title}</p>
-      <ul className="mt-4 space-y-2.5">
+      <ul className="mt-5 space-y-2.5">
         {links.map((l) => (
           <li key={l.label}>
-            <Link
-              to={l.to}
-              className="text-sm text-mist-500 transition-colors hover:text-ink hover:underline"
-            >
+            <Link to={l.to} className="text-[12px] text-mist-500 transition-colors hover:text-ink">
               {l.label}
             </Link>
           </li>
@@ -187,15 +167,15 @@ export function AchievementToasts() {
           <button
             key={toast.uid}
             onClick={() => dismissToast(toast.uid)}
-            className="pointer-events-auto fade-up flex w-full max-w-sm items-center gap-3 rounded-card border-2 border-gold/40 bg-paper-3 p-3.5 text-left shadow-card"
+            className="pointer-events-auto fade-up flex w-full max-w-sm items-center gap-3 rounded-[3px] border border-accent/30 bg-paper-2 p-3.5 text-left"
           >
-            <span className="grid size-10 shrink-0 place-items-center text-gold">
-              <Trophy size={18} />
+            <span className="grid size-9 shrink-0 place-items-center border border-accent/25 text-accent">
+              <Trophy size={15} />
             </span>
             <span className="min-w-0">
-              <span className="label block text-gold">Achievement unlocked</span>
-              <span className="block truncate text-sm font-bold text-ink">{def.name}</span>
-              <span className="block text-xs text-mist-500">+50 coins</span>
+              <span className="label block !text-accent">Achievement unlocked</span>
+              <span className="block truncate text-sm font-semibold text-ink">{def.name}</span>
+              <span className="block text-[11px] text-mist-500">+50 coins</span>
             </span>
           </button>
         );
@@ -215,7 +195,7 @@ export function SiteLayout() {
     <div className="app-shell flex min-h-dvh flex-col">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-card focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-accent-ink"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-[2px] focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-accent-ink"
       >
         Skip to content
       </a>

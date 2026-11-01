@@ -64,7 +64,7 @@ function DailyCard({ gameId }: { gameId: GameId }) {
             </span>
             <span className="font-bold tabular-nums text-mist-600">{Math.round(progress)}%</span>
           </div>
-          <ProgressBar value={progress} tone={done ? "gold" : "violet"} className="mt-2" />
+          <ProgressBar value={progress} tone={done ? "gold" : "blue"} className="mt-2" />
         </div>
         <div className="mt-4 flex items-center justify-between gap-3">
           <span className="text-[10px] font-semibold text-mist-600"><Countdown /> remaining</span>
@@ -110,7 +110,7 @@ function ReceivedChallenge({ challenge }: { challenge: ChallengeRecord }) {
         <span className="text-[10px] text-mist-600">
           {challenge.score != null ? `Your result, ${formatScore(challenge.game, challenge.score)}` : "You haven't answered yet."}
         </span>
-        <Link to={path} className="text-[10px] font-bold text-violet-300 transition hover:text-violet-200">
+        <Link to={path} className="text-[10px] font-bold text-accent transition hover:text-accent">
           {challenge.score != null ? "Try again" : "Accept"}
         </Link>
       </div>
@@ -199,7 +199,7 @@ export default function Challenges() {
 
       <section className="mt-10 grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
         <div className="panel panel-glow relative overflow-hidden p-5 sm:p-7">
-          <div className="pointer-events-none absolute -right-24 -top-24 size-64 rounded-full bg-violet-600/15 blur-3xl" />
+          <div className="pointer-events-none absolute -right-24 -top-24 size-64 rounded-full bg-accent/15 blur-3xl" />
           <div className="relative">
                         <h2 className="mt-2 font-display text-2xl font-bold text-white">Send a gauntlet</h2>
             <p className="mt-2 max-w-md text-[12px] leading-relaxed text-mist-600">
@@ -217,12 +217,12 @@ export default function Challenges() {
                   }}
                   className={`rounded-xl border px-3 py-3 text-left transition ${
                     game === g
-                      ? "border-violet-400/40 bg-violet-500/[0.1]"
+                      ? "border-accent/40 bg-accent/[0.1]"
                       : "border-white/8 bg-white/[0.02] hover:border-white/20"
                   }`}
                   aria-pressed={game === g}
                 >
-                  <span className={`text-[9px] font-bold ${game === g ? "text-violet-300" : "text-mist-600"}`}>Game {GAMES[g].index}</span>
+                  <span className={`text-[9px] font-bold ${game === g ? "text-accent" : "text-mist-600"}`}>Game {GAMES[g].index}</span>
                   <span className="mt-1 block text-[12px] font-bold text-white">{GAMES[g].title}</span>
                   <span className="mt-0.5 block truncate text-[10px] text-mist-600">{GAMES[g].short}</span>
                 </button>
@@ -257,7 +257,7 @@ export default function Challenges() {
                   readOnly
                   value={url}
                   onFocus={(e) => e.currentTarget.select()}
-                  className="min-w-0 flex-1 rounded-xl border border-white/10 bg-paper-2 px-3 py-2.5 font-mono text-[10px] text-mist-400 outline-none focus:border-violet-400/50"
+                  className="min-w-0 flex-1 rounded-xl border border-white/10 bg-paper-2 px-3 py-2.5 font-mono text-[10px] text-mist-400 outline-none focus:border-accent/50"
                 />
                 <button onClick={copyLink} className="btn btn-primary shrink-0 px-3.5 py-2.5 text-[11px]" aria-label="Copy challenge link">
                   {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -323,7 +323,7 @@ export default function Challenges() {
                 ["Settle it", "Their score lands here automatically when they finish."],
               ].map(([title, body], i) => (
                 <li key={title} className="flex gap-3">
-                  <span className="grid size-6 shrink-0 place-items-center rounded-full border border-violet-400/25 bg-violet-500/10 font-display text-[10px] font-bold text-violet-300">{i + 1}</span>
+                  <span className="grid size-6 shrink-0 place-items-center rounded-full border border-accent/25 bg-accent/10 font-display text-[10px] font-bold text-accent">{i + 1}</span>
                   <div>
                     <p className="text-[12px] font-bold text-mist-200">{title}</p>
                     <p className="mt-0.5 text-[10px] leading-relaxed text-mist-600">{body}</p>

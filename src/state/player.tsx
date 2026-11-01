@@ -722,7 +722,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
             </>
           ) : (
             <p className="mt-4 flex items-center justify-center gap-2 text-[12px] text-mist-400">
-              <Loader2 size={15} className="animate-spin motion-reduce:animate-none text-violet-300" /> Loading saved progress and identity…
+              <Loader2 size={15} className="animate-spin motion-reduce:animate-none text-accent" /> Loading saved progress and identity…
             </p>
           )}
         </div>

@@ -7,6 +7,7 @@ import {
   Coins,
   Flag,
   Gauge,
+  Ghost,
   Lock,
   Mountain,
   Pause,
@@ -50,6 +51,8 @@ const EMPTY_HUD: CycleHud = {
   roadName: ROADS[0].name,
   roadMs: 0,
   roadsCleared: 0,
+  rivalName: null,
+  rivalGapMs: null,
 };
 
 const bestOf = (levels: number[]) => (levels.length ? Math.max(...levels) : 0);
@@ -85,6 +88,10 @@ export default function Cycle() {
   const [summary, setSummary] = useState<CycleSummary | null>(null);
   const [runResult, setRunResult] = useState<RunResult | null>(null);
   const [banner, setBanner] = useState<{ road: number; timeMs: number; coins: number } | null>(null);
+  const [steerDir, setSteerDir] = useState<-1 | 0 | 1>(0);
+  const [pedalHeld, setPedalHeld] = useState(false);
+  const [brakeHeld, setBrakeHeld] = useState(false);
+  const steerKeys = useRef({ left: false, right: false });
 
   const targetScore = mode === "daily" ? daily.target : mode === "challenge" && challenge ? challenge.target : null;
   const targetProgress = targetScore ? Math.min(100, (hud.score / targetScore) * 100) : 0;
@@ -120,10 +127,7 @@ export default function Cycle() {
       onRoadClear: (clear) => clearRef.current(clear),
       onEnd: (result) => endRef.current(result),
       onCue: (cue) => {
-        if (cue === "hop") {
-          playCue("jump", soundRef.current);
-          haptic("light", hapticsRef.current);
-        } else if (cue === "mote") {
+        if (cue === "mote") {
           playCue("coin", soundRef.current);
           haptic("light", hapticsRef.current);
         } else if (cue === "crash") {
@@ -208,6 +212,10 @@ export default function Cycle() {
     setRunResult(null);
     setBanner(null);
     setHud(EMPTY_HUD);
+    setSteerDir(0);
+    setPedalHeld(false);
+    setBrakeHeld(false);
+    steerKeys.current = { left: false, right: false };
     setScreen("playing");
     const seed =
       mode === "daily"
@@ -222,6 +230,10 @@ export default function Cycle() {
   const pauseGame = () => {
     if (screen !== "playing") return;
     gameRef.current?.pause();
+    setSteerDir(0);
+    setPedalHeld(false);
+    setBrakeHeld(false);
+    steerKeys.current = { left: false, right: false };
     setScreen("paused");
   };
 
@@ -231,38 +243,95 @@ export default function Cycle() {
     setScreen("playing");
   };
 
-  const hop = () => {
-    if (screen === "playing") gameRef.current?.hop();
+  const steer = (direction: -1 | 0 | 1) => {
+    if (screen !== "playing") return;
+    gameRef.current?.setSteer(direction);
+    setSteerDir(direction);
   };
 
-  const tuck = (active: boolean) => {
-    if (screen === "playing") gameRef.current?.setTuck(active);
+  const applySteer = () => {
+    if (screen !== "playing") return;
+    const direction: -1 | 0 | 1 = steerKeys.current.right ? 1 : steerKeys.current.left ? -1 : 0;
+    gameRef.current?.setSteer(direction);
+    setSteerDir(direction);
+  };
+
+  const pedal = (active: boolean) => {
+    if (screen !== "playing") return;
+    gameRef.current?.setPedal(active);
+    setPedalHeld(active);
+  };
+
+  const brake = (active: boolean) => {
+    if (screen !== "playing") return;
+    gameRef.current?.setBrake(active);
+    setBrakeHeld(active);
+  };
+
+  const releaseControls = () => {
+    gameRef.current?.setSteer(0);
+    gameRef.current?.setPedal(false);
+    gameRef.current?.setBrake(false);
+    steerKeys.current = { left: false, right: false };
+    setSteerDir(0);
+    setPedalHeld(false);
+    setBrakeHeld(false);
   };
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
+    const onKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return;
-      if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") {
+      const driveKey = e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space";
+      const brakeKey = e.code === "ArrowDown" || e.code === "KeyS";
+      const leftKey = e.code === "ArrowLeft" || e.code === "KeyA";
+      const rightKey = e.code === "ArrowRight" || e.code === "KeyD";
+
+      if (screen === "playing") {
+        if (driveKey) {
+          e.preventDefault();
+          pedal(true);
+        } else if (brakeKey) {
+          e.preventDefault();
+          brake(true);
+        } else if (leftKey || rightKey) {
+          e.preventDefault();
+          if (leftKey) steerKeys.current.left = true;
+          if (rightKey) steerKeys.current.right = true;
+          applySteer();
+        }
+      } else if (driveKey) {
         e.preventDefault();
-        if (screen === "playing") hop();
-        else if (screen === "menu") startGame(road);
+        if (screen === "menu") startGame(road);
         else if (screen === "over") startGame(Math.min(ROADS.length, bestOf(clearedLevels) + 1));
-      } else if (e.code === "ArrowDown" || e.code === "KeyS") {
-        e.preventDefault();
-        tuck(true);
-      } else if (e.code === "Escape" || e.code === "KeyP") {
+      }
+
+      if (e.code === "Escape" || e.code === "KeyP") {
         if (screen === "playing") pauseGame();
         else if (screen === "paused") resumeGame();
       }
     };
+
     const onKeyUp = (e: KeyboardEvent) => {
-      if (e.code === "ArrowDown" || e.code === "KeyS") tuck(false);
+      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") pedal(false);
+      if (e.code === "ArrowDown" || e.code === "KeyS") brake(false);
+      if (e.code === "ArrowLeft" || e.code === "KeyA") {
+        steerKeys.current.left = false;
+        applySteer();
+      }
+      if (e.code === "ArrowRight" || e.code === "KeyD") {
+        steerKeys.current.right = false;
+        applySteer();
+      }
     };
-    window.addEventListener("keydown", onKey);
+
+    const onBlur = () => releaseControls();
+    window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("blur", onBlur);
     return () => {
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("blur", onBlur);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, road, clearedLevels]);
@@ -271,6 +340,7 @@ export default function Cycle() {
     const onVisibility = () => {
       if (document.hidden && screen === "playing") {
         gameRef.current?.pause();
+        releaseControls();
         setScreen("paused");
       }
     };
@@ -332,11 +402,7 @@ export default function Cycle() {
         <canvas
           ref={canvasRef}
           className="game-canvas absolute inset-0 h-full w-full"
-          onPointerDown={(e) => {
-            e.preventDefault();
-            if (screen === "playing") hop();
-          }}
-          aria-label="Cycle mountain-bike game canvas. Tap to hop, hold the tuck control to stay low and fast."
+          aria-label="Cycle mountain-bike game canvas. Chase-camera ride: steer left and right, brake before rocks and hold the road through each checkpoint."
         />
 
         {(screen === "playing" || screen === "paused") && (
@@ -355,13 +421,18 @@ export default function Cycle() {
               </div>
             </div>
 
-            <div className="absolute right-3 top-3 flex w-40 flex-col items-end gap-2 sm:right-5 sm:top-4 sm:w-56">
+            <div className="absolute right-3 top-3 flex w-44 flex-col items-end gap-2 sm:right-5 sm:top-4 sm:w-56">
+              {brakeHeld && (
+                <span className="rounded-full border border-rose-300/40 bg-rose-950/70 px-2.5 py-1 text-[8px] font-extrabold tracking-wide text-rose-200 backdrop-blur">
+                  Braking
+                </span>
+              )}
               <div className="w-full rounded-xl border border-white/10 bg-shade/70 px-3 py-2.5 backdrop-blur-md">
                 <div className="flex items-baseline justify-between text-[8px] font-bold text-mist-500">
-                  <span className="flex items-center gap-1"><Mountain size={10} className="text-gold" />Road {hud.road}, {hud.roadName}</span>
+                  <span className="flex min-w-0 items-center gap-1 truncate whitespace-nowrap"><Mountain size={10} className="shrink-0 text-gold" />Road {hud.road}, {hud.roadName}</span>
                   <span className="tabular-nums text-mist-300">{Math.round(hud.progress * 100)}%</span>
                 </div>
-                <ProgressBar value={hud.progress * 100} tone="violet" className="mt-1.5" />
+                <ProgressBar value={hud.progress * 100} tone="gold" className="mt-1.5" />
                 <div className="mt-2 flex items-center justify-between">
                   <div className="flex gap-1">
                     {ROADS.map((r) => (
@@ -377,10 +448,20 @@ export default function Cycle() {
                       />
                     ))}
                   </div>
-                  <span className="flex items-center gap-1 text-[9px] font-bold tabular-nums text-mist-300">
+                  <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-[9px] font-bold tabular-nums text-mist-300">
                     <Gauge size={10} className="text-electric" />{hud.speed} km/h
                   </span>
                 </div>
+                {hud.rivalName && hud.rivalGapMs != null && (
+                  <div className="mt-1.5 flex items-center justify-between gap-2 border-t border-white/8 pt-1.5 text-[8px] font-bold">
+                    <span className="flex min-w-0 items-center gap-1 truncate text-mist-500">
+                      <Ghost size={9} className="shrink-0 text-electric" />{hud.rivalName}
+                    </span>
+                    <span className={`shrink-0 tabular-nums ${hud.rivalGapMs >= 0 ? "text-mist-300" : "text-emerald-300"}`}>
+                      {Math.abs(hud.rivalGapMs / 1000).toFixed(1)}s {hud.rivalGapMs >= 0 ? "ahead" : "behind"}
+                    </span>
+                  </div>
+                )}
               </div>
               {targetScore != null ? (
                 <div className="w-full rounded-xl border border-white/10 bg-shade/70 px-3 py-2 backdrop-blur-md">
@@ -395,47 +476,89 @@ export default function Cycle() {
               )}
             </div>
 
-            <div className="game-touch-controls pointer-events-none absolute inset-x-0 bottom-0 items-end justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-              <button
-                onPointerDown={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  tuck(true);
-                }}
-                onPointerUp={() => tuck(false)}
-                onPointerLeave={() => tuck(false)}
-                onPointerCancel={() => tuck(false)}
-                className="pointer-events-auto grid size-[4.4rem] place-items-center rounded-full border border-sky-400/30 bg-shade/85 text-sky-200 backdrop-blur-md active:scale-95"
-                aria-label="Tuck"
-              >
-                <span className="flex flex-col items-center gap-0.5">
-                  <Wind size={18} />
-                  <span className="text-[8px] font-extrabold">Tuck</span>
-                </span>
-              </button>
-              <div className="pointer-events-none pb-2 text-center text-[9px] font-semibold text-white/35">
-                Tap to hop
+            <div className="game-touch-controls pointer-events-none absolute inset-x-0 bottom-0 items-end justify-between gap-2 px-3 pb-[max(0.85rem,env(safe-area-inset-bottom))] touch-none select-none">
+              <div className="pointer-events-auto flex items-end gap-2">
+                <button
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    steer(-1);
+                  }}
+                  onPointerUp={() => steer(0)}
+                  onPointerLeave={() => steer(0)}
+                  onPointerCancel={() => steer(0)}
+                  className={`grid size-[3.9rem] place-items-center rounded-full border backdrop-blur-md transition active:scale-95 ${
+                    steerDir === -1 ? "border-accent/70 bg-accent/25 text-accent" : "border-white/20 bg-shade/75 text-ink"
+                  }`}
+                  aria-label="Steer left"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+                <button
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    steer(1);
+                  }}
+                  onPointerUp={() => steer(0)}
+                  onPointerLeave={() => steer(0)}
+                  onPointerCancel={() => steer(0)}
+                  className={`grid size-[3.9rem] place-items-center rounded-full border backdrop-blur-md transition active:scale-95 ${
+                    steerDir === 1 ? "border-accent/70 bg-accent/25 text-accent" : "border-white/20 bg-shade/75 text-ink"
+                  }`}
+                  aria-label="Steer right"
+                >
+                  <ArrowRight size={20} />
+                </button>
               </div>
-              <button
-                onPointerDown={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  hop();
-                }}
-                className="pointer-events-auto grid size-[4.4rem] place-items-center rounded-full border border-violet-400/40 bg-violet-600/25 text-violet-100 backdrop-blur-md active:scale-95"
-                aria-label="Hop"
-              >
-                <span className="flex flex-col items-center gap-0.5">
-                  <span className="text-lg">⌃</span>
-                  <span className="text-[8px] font-extrabold">Hop</span>
-                </span>
-              </button>
+              <div className="pointer-events-auto flex items-end gap-2">
+                <button
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    pedal(true);
+                  }}
+                  onPointerUp={() => pedal(false)}
+                  onPointerLeave={() => pedal(false)}
+                  onPointerCancel={() => pedal(false)}
+                  className={`grid size-[3.9rem] place-items-center rounded-full border backdrop-blur-md transition active:scale-95 ${
+                    pedalHeld ? "border-accent/60 bg-accent/20 text-accent" : "border-white/20 bg-shade/75 text-ink"
+                  }`}
+                  aria-label="Pedal"
+                >
+                  <span className="flex flex-col items-center gap-0.5">
+                    <Wind size={17} />
+                    <span className="text-[8px] font-extrabold">Pedal</span>
+                  </span>
+                </button>
+                <button
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    brake(true);
+                  }}
+                  onPointerUp={() => brake(false)}
+                  onPointerLeave={() => brake(false)}
+                  onPointerCancel={() => brake(false)}
+                  className={`grid size-[4.35rem] place-items-center rounded-full border backdrop-blur-md transition active:scale-95 ${
+                    brakeHeld ? "border-rose-300/70 bg-rose-400/25 text-rose-100" : "border-rose-300/35 bg-shade/80 text-rose-200"
+                  }`}
+                  aria-label="Brake"
+                >
+                  <span className="flex flex-col items-center gap-0.5">
+                    <span className="text-[13px] font-black leading-none">▽</span>
+                    <span className="text-[8px] font-extrabold">Brake</span>
+                  </span>
+                </button>
+              </div>
             </div>
 
             <div className="absolute inset-x-0 bottom-3 hidden items-center justify-center gap-3 text-[9px] font-semibold text-white/40 sm:flex">
-              <span><kbd className="keycap mr-1">Space</kbd> Hop</span>
+              <span><kbd className="keycap mr-1">←</kbd><kbd className="keycap mr-1">→</kbd> Steer</span>
               <span className="text-white/15">/</span>
-              <span><kbd className="keycap mr-1">↓</kbd> Tuck</span>
+              <span><kbd className="keycap mr-1">↑</kbd> Pedal</span>
+              <span className="text-white/15">/</span>
+              <span><kbd className="keycap mr-1">↓</kbd> Brake</span>
               <span className="text-white/15">/</span>
               <span><kbd className="keycap mr-1">P</kbd> Pause</span>
             </div>
@@ -458,15 +581,18 @@ export default function Cycle() {
             <div className="mx-auto grid min-h-full w-full max-w-6xl items-center gap-8 px-4 py-8 sm:px-8 lg:grid-cols-[1fr_0.95fr]">
               <div className="fade-up">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="chip border-violet-400/25 bg-violet-500/10 text-violet-200">Game 03, Cycling climb</span>
-                  {mode === "daily" && <span className="chip border-gold/25 bg-gold/10 text-gold"><Target size={10} /> Daily seed</span>}
-                  {mode === "challenge" && challenge && <span className="chip border-violet-400/25 bg-violet-500/10 text-violet-200">From {challenge.from}</span>}
+                  <span className="chip border-accent/25 text-accent">Game 03 · Cycling climb</span>
+                  {mode === "daily" && <span className="chip border-gold/25 text-gold"><Target size={10} /> Daily seed</span>}
+                  {mode === "challenge" && challenge && <span className="chip border-white/15">From {challenge.from}</span>}
                 </div>
-                <h1 className="mt-4 font-display text-[clamp(3rem,9vw,5.5rem)] font-extrabold uppercase leading-[0.85] tracking-[-0.06em] text-white">
-                  Cycle<span className="gold-text">.</span>
+                <h1 className="mt-5 font-display text-[clamp(3.4rem,9vw,6rem)] font-medium uppercase leading-[0.82] tracking-[-0.055em] text-ink">
+                  Cycle
                 </h1>
+                <p className="serif mt-3 text-[clamp(1.15rem,2vw,1.55rem)] text-mist-400">
+                  Five roads. One line. No way back down.
+                </p>
                 <p className="mt-4 max-w-md text-[13px] leading-relaxed text-mist-400">
-                  Five roads, one run. Pump the hollow, hold the ridge, cross the aurora, survive the canyon and bring the bike through the storm. A single fall ends it, a checkpoint keeps it.
+                  Five roads, one run. Read the bends, brake before the rocks and carry speed through the checkpoint. Pass the service traffic, measure yourself against three pace ghosts, hold the gravel and bring the bike through the storm. A single fall ends it, a checkpoint keeps it.
                 </p>
 
                 <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -524,24 +650,24 @@ export default function Cycle() {
                       }}
                       disabled={locked}
                       aria-pressed={selected}
-                      className={`group relative flex w-full items-center gap-3 overflow-hidden rounded-xl border px-3 py-3 text-left transition ${
+                      className={`group relative flex w-full items-center gap-3 overflow-hidden rounded-[2px] border px-3 py-3 text-left transition ${
                         selected
-                          ? "border-gold/45 bg-gold/[0.07]"
+                          ? "border-accent/45 bg-accent/[0.05]"
                           : locked
-                            ? "border-white/6 bg-white/[0.015] opacity-55 disabled:cursor-not-allowed"
-                            : "border-white/10 bg-white/[0.025] hover:border-white/20"
+                            ? "border-rule/60 opacity-45 disabled:cursor-not-allowed"
+                            : "border-rule hover:border-white/25"
                       }`}
                     >
                       <span
-                        className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/10"
+                        className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-[2px] border border-white/10"
                         style={{ background: `linear-gradient(155deg, ${r.palette.skyBottom}, ${r.palette.ground} 58%, ${r.palette.edge})` }}
                       >
                         <span className="font-display text-[11px] font-bold text-white/90">{String(r.number).padStart(2, "0")}</span>
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-1.5">
-                          <span className="truncate text-[12px] font-bold text-white">{r.name}</span>
-                          {isCleared && <Check size={11} className="shrink-0 text-emerald-300" />}
+                          <span className="truncate text-[12px] font-medium text-ink">{r.name}</span>
+                          {isCleared && <Check size={11} className="shrink-0 text-accent" />}
                         </span>
                         <span className="mt-0.5 block truncate text-[10px] text-mist-600">{r.subtitle}</span>
                       </span>
@@ -551,7 +677,7 @@ export default function Cycle() {
                         ) : best != null ? (
                           <>
                             <span className="block text-[8px] font-bold text-mist-600">Best split</span>
-                            <span className="block font-display text-[11px] font-bold tabular-nums text-gold">{formatClock(best)}</span>
+                            <span className="block font-display text-[11px] font-medium tabular-nums text-accent">{formatClock(best)}</span>
                           </>
                         ) : (
                           <>
@@ -560,7 +686,7 @@ export default function Cycle() {
                           </>
                         )}
                       </span>
-                      {selected && <ChevronRight size={13} className="shrink-0 text-gold" />}
+                      {selected && <ChevronRight size={13} className="shrink-0 text-accent" />}
                     </button>
                   );
                 })}
@@ -568,13 +694,15 @@ export default function Cycle() {
                 <div className="panel mt-4 p-4">
                   <div className="flex items-center justify-between">
                     <p className="label text-[11px]">Ride briefing</p>
-                    <Wind size={14} className="text-violet-300" />
+                    <Wind size={14} className="text-accent" />
                   </div>
                   <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-                    <Briefing icon={<span className="keycap">Space</span>} title="Hop the gaps" body="Rocks and chasms are the only things that end a run. Hop early, land on the downslope." />
-                    <Briefing icon={<ArrowDownGlyph />} title="Tuck the descent" body="Hold down to stay low: faster on the ground, quicker to land in the air." />
-                    <Briefing icon={<Coins size={13} />} title="Collect the motes" body="Every glowing marker adds points and coins to the run." />
+                    <Briefing icon={<span className="text-[9px]">← →</span>} title="Hold your line" body="Steer with the arrows or A/D. The shoulder costs speed; the verge ends the run." />
+                    <Briefing icon={<ArrowDownGlyph />} title="Brake before the rocks" body="Down or S sheds speed fast. Brake early, release, then carry momentum through the bend." />
+                    <Briefing icon={<Wind size={13} />} title="Pedal for pace" body="Hold Up or W to push. The bike keeps a steady touring tempo without it." />
                     <Briefing icon={<Flag size={13} />} title="Gates are checkpoints" body="Clear a gate and the next road unlocks, even if the storm takes you later." />
+                    <Briefing icon={<span className="text-[9px]">◼</span>} title="Pass the traffic" body="Vans and pickups hold one lane. Read the gap, brake if you must, then pass on the clear side." />
+                    <Briefing icon={<Ghost size={13} />} title="Race the ghosts" body="Three pace riders share the road. They cannot hit you, but the clock they set is real." />
                   </div>
                   <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/8 pt-3 text-[10px]">
                     <span className="flex items-center gap-1 text-mist-500"><Countdown className="text-[10px]" /> to reset</span>
@@ -595,9 +723,9 @@ export default function Cycle() {
           <div className="absolute inset-0 z-40 flex items-center justify-center overflow-y-auto bg-shade/80 p-4 backdrop-blur-md">
             <div className="panel panel-glow fade-up w-full max-w-sm p-6">
               <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-xl border border-violet-400/25 bg-violet-500/10 text-violet-300"><Pause size={18} /></span>
+                <span className="grid size-10 place-items-center border border-accent/25 text-accent"><Pause size={17} /></span>
                 <div>
-                  <h2 className="font-display text-xl font-bold text-white">Hold the line.</h2>
+                  <h2 className="font-display text-xl font-semibold text-ink">Hold the line.</h2>
                   <p className="mt-1 text-[10px] text-mist-500">Road {hud.road}, {hud.roadName}</p>
                 </div>
               </div>
@@ -637,18 +765,26 @@ export default function Cycle() {
           <div className="absolute inset-0 z-40 overflow-y-auto bg-shade/80 backdrop-blur-md">
             <div className="relative mx-auto flex min-h-full w-full max-w-lg items-center px-4 py-6">
               <div className="panel panel-glow fade-up relative w-full overflow-hidden p-6">
-                <div className="pointer-events-none absolute -top-24 left-1/2 size-56 -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl" />
+                <div className="pointer-events-none absolute -top-24 left-1/2 size-56 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
                 <div className="relative">
                   <div className="text-center">
                     <p className={`text-[9px] font-extrabold ${summary.cleared ? "text-gold/80" : "text-rose-300/70"}`}>
-                      {summary.cleared ? "All five roads" : "Run ended"}
+                      {summary.cleared
+                        ? summary.startRoad === 1
+                          ? "All five roads"
+                          : `${ROADS.length - summary.startRoad + 1} roads from ${ROADS[summary.startRoad - 1].name}`
+                        : "Run ended"}
                     </p>
                     <h2 className="mt-1 font-display text-3xl font-extrabold tracking-[-0.03em] text-white">
                       {summary.cleared ? "Storm brought home." : runResult?.newBest ? "A new best, in the end." : "The road won this one."}
                     </h2>
                     <p className="mt-2 text-[11px] text-mist-500">
                       {summary.cleared
-                        ? "Fern Hollow to Stormfront without a fall. That is the whole mountain."
+                        ? summary.startRoad === 1
+                          ? "Fern Hollow to Stormfront without a fall. That is the whole mountain."
+                          : summary.startRoad === ROADS.length
+                            ? "Stormfront in one clean pass. The last gate is yours."
+                            : `${ROADS[summary.startRoad - 1].name} to Stormfront without a fall. ${summary.roadsCleared} roads banked from the checkpoint.`
                         : summary.roadsCleared > 0
                           ? `You stopped on ${summary.roadName}. The gate you cleared stays unlocked.`
                           : `You stopped on ${summary.roadName}. No checkpoint banked this time, and your unlocked roads are still waiting.`}
@@ -684,6 +820,26 @@ export default function Cycle() {
                           );
                         })}
                       </div>
+                    </div>
+                  )}
+
+                  {summary.rivals.length > 0 && (
+                    <div className="mt-3 rounded-xl border border-white/8 bg-white/[0.02] p-3">
+                      <p className="flex items-center gap-1.5 text-[9px] font-bold text-mist-600">
+                        <Ghost size={10} className="text-electric" /> Ghost field
+                      </p>
+                      <div className="mt-2 space-y-1.5">
+                        {summary.rivals.map((rival) => (
+                          <div key={rival.name} className="flex items-center gap-2 text-[10px]">
+                            <span className="size-1.5 shrink-0 rounded-full" style={{ background: rival.color }} />
+                            <span className="min-w-0 flex-1 truncate text-mist-300">{rival.name}</span>
+                            <span className={`shrink-0 font-bold tabular-nums ${rival.gapMs >= 0 ? "text-mist-400" : "text-emerald-300"}`}>
+                              {Math.abs(rival.gapMs / 1000).toFixed(1)}s {rival.gapMs >= 0 ? "ahead" : "behind"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-[9px] text-mist-600">Positive gaps were still ahead when your run ended.</p>
                     </div>
                   )}
 
@@ -765,17 +921,17 @@ export default function Cycle() {
 function Stat({ label, value, gold = false }: { label: string; value: string; gold?: boolean }) {
   return (
     <div>
-      <p className="text-[8px] font-bold text-mist-600">{label}</p>
-      <p className={`mt-1 font-display text-lg font-extrabold tabular-nums ${gold ? "text-gold" : "text-white"}`}>{value}</p>
+      <p className="label">{label}</p>
+      <p className={`mt-1.5 font-display text-lg font-medium tabular-nums ${gold ? "text-accent" : "text-ink"}`}>{value}</p>
     </div>
   );
 }
 
 function MiniStat({ label, value, gold = false }: { label: string; value: string; gold?: boolean }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.03] px-1.5 py-2.5">
-      <p className="text-[8px] font-bold text-mist-600">{label}</p>
-      <p className={`mt-0.5 font-display text-xs font-bold tabular-nums ${gold ? "text-gold" : "text-white"}`}>{value}</p>
+    <div className="border border-rule px-1.5 py-2.5">
+      <p className="label !text-[8px]">{label}</p>
+      <p className={`mt-0.5 font-display text-xs font-medium tabular-nums ${gold ? "text-accent" : "text-ink"}`}>{value}</p>
     </div>
   );
 }
@@ -783,10 +939,10 @@ function MiniStat({ label, value, gold = false }: { label: string; value: string
 function Briefing({ icon, title, body }: { icon: ReactNode; title: string; body: string }) {
   return (
     <div className="flex gap-2">
-      <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-md border border-white/8 bg-white/[0.03] text-[10px] text-violet-300">{icon}</span>
+      <span className="mt-0.5 grid size-7 shrink-0 place-items-center border border-rule text-[10px] text-accent">{icon}</span>
       <div>
-        <p className="text-[10px] font-bold text-mist-100">{title}</p>
-        <p className="mt-0.5 text-[9px] leading-relaxed text-mist-600">{body}</p>
+        <p className="text-[10px] font-medium text-ink-2">{title}</p>
+        <p className="mt-0.5 text-[9px] leading-relaxed text-mist-500">{body}</p>
       </div>
     </div>
   );

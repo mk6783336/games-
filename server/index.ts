@@ -28,7 +28,9 @@ const configuredPort = Number(process.env.PORT);
 const PORT = Number.isInteger(configuredPort) && configuredPort > 0 && configuredPort < 65_536 ? configuredPort : 8787;
 const app = express();
 const db = await getDatabase();
-await runMigrations();
+// Vercel runs the schema migration out-of-band with the direct Neon URL;
+// cold starts must not run DDL through the pooled connection.
+if (!process.env.VERCEL) await runMigrations();
 
 app.set("trust proxy", 1);
 app.disable("x-powered-by");
@@ -47,6 +49,16 @@ app.use(
         "http://127.0.0.1:5173",
         "http://localhost:5173",
       ]);
+      // Hosted deployments call the API same-origin, so their own Vercel
+      // domains must pass the origin check for cookie-bearing writes.
+      for (const host of [
+        process.env.VERCEL_URL,
+        process.env.VERCEL_BRANCH_URL,
+        process.env.VERCEL_PROJECT_PRODUCTION_URL,
+      ]) {
+        if (!host) continue;
+        allowed.add(host.startsWith("http") ? host : `https://${host}`);
+      }
       if (allowed.has(origin) || (process.env.NODE_ENV !== "production" && /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(origin))) {
         return callback(null, true);
       }
@@ -55,6 +67,12 @@ app.use(
     credentials: true,
   }),
 );
+app.use((req, _res, next) => {
+  // Vercel may hand the function an already-parsed body. Tell Express so its
+  // JSON parser does not try to read the consumed stream.
+  if (req.body !== undefined) (req as Request & { _body?: boolean })._body = true;
+  next();
+});
 app.use(express.json({ limit: "512kb" }));
 app.use(cookieParser());
 
@@ -177,9 +195,13 @@ async function copyStateIfEmpty(fromProfileId: string, toProfileId: string) {
   return true;
 }
 
-router.get("/health", (_req, res) => {
-  res.json({ ok: true, database: db.label, time: new Date().toISOString() });
-});
+router.get(
+  "/health",
+  route(async (_req, res) => {
+    const ping = await db.query<{ ok: number }>("SELECT 1 AS ok");
+    res.json({ ok: ping.rows[0]?.ok === 1, database: db.label, time: new Date().toISOString() });
+  }),
+);
 
 router.get(
   "/me",
@@ -427,11 +449,18 @@ app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
   if (!res.headersSent) fail(res, 500, "internal_error", "The server could not complete that request.");
 });
 
-const server = app.listen(PORT, "127.0.0.1", () => {
-  console.log(`[api] PLAYFLIX API listening on http://127.0.0.1:${PORT} using ${db.label}`);
-});
+export default app;
+
+// Vercel imports this module inside its function runtime, where the platform
+// owns the listener. Only a real Node process binds the local port.
+const server = process.env.VERCEL
+  ? null
+  : app.listen(PORT, "127.0.0.1", () => {
+      console.log(`[api] PLAYFLIX API listening on http://127.0.0.1:${PORT} using ${db.label}`);
+    });
 
 async function shutdown(signal: string) {
+  if (!server) return;
   console.log(`[api] ${signal}, shutting down`);
   server.close(async () => {
     await closeDatabase();
@@ -439,5 +468,7 @@ async function shutdown(signal: string) {
   });
 }
 
-process.on("SIGINT", () => void shutdown("SIGINT"));
-process.on("SIGTERM", () => void shutdown("SIGTERM"));
+if (server) {
+  process.on("SIGINT", () => void shutdown("SIGINT"));
+  process.on("SIGTERM", () => void shutdown("SIGTERM"));
+}

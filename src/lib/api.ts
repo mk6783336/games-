@@ -39,7 +39,11 @@ export class ApiError extends Error {
 export function apiBaseUrl() {
   const configured = import.meta.env.VITE_API_URL?.trim();
   if (configured) return configured.replace(/\/$/, "");
-  if (typeof window !== "undefined") return `${window.location.protocol}//${window.location.hostname}:8787`;
+  if (typeof window !== "undefined") {
+    // Hosted builds (Vercel) serve the API as a same-origin function at /api.
+    if (window.location.protocol === "https:") return `${window.location.origin}/api`;
+    return `${window.location.protocol}//${window.location.hostname}:8787`;
+  }
   return "http://127.0.0.1:8787";
 }
 

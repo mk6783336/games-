@@ -545,7 +545,7 @@ export class OneChanceGame {
               w: Math.max(1.5, (w / cols) * 0.35),
               h: Math.max(2, (h / rows) * 0.32),
               lit: rng() > 0.34,
-              hue: rng() > 0.7 ? 190 : rng() > 0.45 ? 46 : 268,
+              hue: rng() > 0.7 ? 194 : rng() > 0.45 ? 42 : 30,
             });
           }
         }
@@ -567,8 +567,8 @@ export class OneChanceGame {
     ctx.translate(shakeX, shakeY);
 
     this.drawSky();
-    this.drawSkylineLayer(this.buildingsFar, this.world * 0.055, "rgba(17,23,52,0.9)", 0.32, this.groundY() - this.U * 0.02);
-    this.drawSkylineLayer(this.buildingsNear, this.world * 0.13, "rgba(7,10,24,0.98)", 0.44, this.groundY() + this.U * 0.01);
+    this.drawSkylineLayer(this.buildingsFar, this.world * 0.055, "rgba(22,34,46,0.92)", 0.26, this.groundY() - this.U * 0.02);
+    this.drawSkylineLayer(this.buildingsNear, this.world * 0.13, "rgba(6,10,15,0.98)", 0.38, this.groundY() + this.U * 0.01);
     this.drawGround();
     this.drawSpeedLines();
 
@@ -592,10 +592,10 @@ export class OneChanceGame {
     const ctx = this.ctx;
     const horizon = this.groundY();
     const sky = ctx.createLinearGradient(0, 0, 0, horizon);
-    sky.addColorStop(0, "#070b20");
-    sky.addColorStop(0.45, "#101538");
-    sky.addColorStop(0.78, "#26174f");
-    sky.addColorStop(1, "#3a1c52");
+    sky.addColorStop(0, "#05080d");
+    sky.addColorStop(0.45, "#0b1420");
+    sky.addColorStop(0.78, "#1a2a3c");
+    sky.addColorStop(1, "#3a444e");
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, this.W, horizon);
 
@@ -612,18 +612,18 @@ export class OneChanceGame {
     const moonY = this.H * 0.17;
     const moonR = Math.min(this.W, this.H) * 0.085;
     const moonGlow = ctx.createRadialGradient(moonX, moonY, moonR * 0.2, moonX, moonY, moonR * 3.2);
-    moonGlow.addColorStop(0, "rgba(174, 203, 255, 0.38)");
-    moonGlow.addColorStop(0.5, "rgba(102, 132, 240, 0.12)");
-    moonGlow.addColorStop(1, "rgba(20, 28, 70, 0)");
+    moonGlow.addColorStop(0, "rgba(190, 211, 232, 0.34)");
+    moonGlow.addColorStop(0.5, "rgba(120, 145, 170, 0.1)");
+    moonGlow.addColorStop(1, "rgba(20, 30, 40, 0)");
     ctx.fillStyle = moonGlow;
     ctx.beginPath();
     ctx.arc(moonX, moonY, moonR * 3.2, 0, Math.PI * 2);
     ctx.fill();
 
     const moon = ctx.createRadialGradient(moonX - moonR * 0.25, moonY - moonR * 0.3, moonR * 0.1, moonX, moonY, moonR);
-    moon.addColorStop(0, "rgba(240, 244, 255, 0.75)");
-    moon.addColorStop(0.55, "rgba(150, 176, 255, 0.3)");
-    moon.addColorStop(1, "rgba(58, 80, 160, 0.04)");
+    moon.addColorStop(0, "rgba(238, 244, 250, 0.72)");
+    moon.addColorStop(0.55, "rgba(172, 190, 208, 0.26)");
+    moon.addColorStop(1, "rgba(58, 76, 96, 0.04)");
     ctx.fillStyle = moon;
     ctx.beginPath();
     ctx.arc(moonX, moonY, moonR, 0, Math.PI * 2);
@@ -633,22 +633,22 @@ export class OneChanceGame {
     ctx.save();
     ctx.translate(moonX, moonY);
     ctx.rotate(-0.32);
-    ctx.strokeStyle = "rgba(148, 163, 255, 0.16)";
+    ctx.strokeStyle = "rgba(166, 188, 208, 0.13)";
     ctx.lineWidth = 1.2;
     ctx.beginPath();
     ctx.ellipse(0, 0, moonR * 2.35, moonR * 0.58, 0, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.strokeStyle = "rgba(232, 121, 249, 0.1)";
+    ctx.strokeStyle = "rgba(196, 146, 96, 0.08)";
     ctx.beginPath();
     ctx.ellipse(0, 0, moonR * 2.85, moonR * 0.7, 0, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
 
     const aurora = ctx.createLinearGradient(this.W * 0.1, 0, this.W * 0.85, this.H * 0.62);
-    aurora.addColorStop(0, "rgba(76, 29, 149, 0)");
-    aurora.addColorStop(0.42, "rgba(109, 40, 217, 0.1)");
-    aurora.addColorStop(0.62, "rgba(34, 211, 238, 0.055)");
-    aurora.addColorStop(1, "rgba(14, 20, 48, 0)");
+    aurora.addColorStop(0, "rgba(30, 60, 76, 0)");
+    aurora.addColorStop(0.42, "rgba(52, 88, 104, 0.1)");
+    aurora.addColorStop(0.62, "rgba(90, 130, 140, 0.05)");
+    aurora.addColorStop(1, "rgba(10, 18, 26, 0)");
     ctx.fillStyle = aurora;
     ctx.beginPath();
     ctx.moveTo(0, this.H * 0.06);
@@ -659,9 +659,9 @@ export class OneChanceGame {
     ctx.fill();
 
     const haze = ctx.createRadialGradient(this.W * 0.52, horizon, 0, this.W * 0.52, horizon, this.W * 0.6);
-    haze.addColorStop(0, "rgba(217, 70, 239, 0.16)");
-    haze.addColorStop(0.45, "rgba(124, 58, 237, 0.09)");
-    haze.addColorStop(1, "rgba(5, 7, 15, 0)");
+    haze.addColorStop(0, "rgba(214, 158, 96, 0.13)");
+    haze.addColorStop(0.45, "rgba(96, 118, 138, 0.08)");
+    haze.addColorStop(1, "rgba(5, 7, 10, 0)");
     ctx.fillStyle = haze;
     ctx.fillRect(0, horizon - this.H * 0.45, this.W, this.H * 0.45);
   }
@@ -678,7 +678,7 @@ export class OneChanceGame {
         ctx.fillRect(x, baseY - b.h, b.w, b.h);
         for (const w of b.windows) {
           if (!w.lit) continue;
-          ctx.fillStyle = `hsla(${w.hue}, 85%, 68%, ${windowAlpha})`;
+          ctx.fillStyle = `hsla(${w.hue}, 52%, 62%, ${windowAlpha})`;
           ctx.fillRect(x + w.x, baseY - b.h + w.y, w.w, w.h);
         }
         ctx.fillStyle = color;
@@ -690,28 +690,26 @@ export class OneChanceGame {
     const ctx = this.ctx;
     const ground = this.groundY();
     const floor = ctx.createLinearGradient(0, ground, 0, this.H);
-    floor.addColorStop(0, "#0a0d1c");
-    floor.addColorStop(0.55, "#05070f");
-    floor.addColorStop(1, "#020309");
+    floor.addColorStop(0, "#0c1219");
+    floor.addColorStop(0.55, "#06090d");
+    floor.addColorStop(1, "#020304");
     ctx.fillStyle = floor;
     ctx.fillRect(0, ground, this.W, this.H - ground);
 
     const line = ctx.createLinearGradient(0, 0, this.W, 0);
-    line.addColorStop(0, "rgba(34, 211, 238, 0.15)");
-    line.addColorStop(0.28, "rgba(34, 211, 238, 0.9)");
-    line.addColorStop(0.55, "rgba(167, 139, 250, 0.95)");
-    line.addColorStop(0.8, "rgba(232, 121, 249, 0.7)");
-    line.addColorStop(1, "rgba(232, 121, 249, 0.12)");
+    line.addColorStop(0, "rgba(143, 176, 196, 0.12)");
+    line.addColorStop(0.28, "rgba(214, 167, 106, 0.75)");
+    line.addColorStop(0.55, "rgba(230, 188, 132, 0.85)");
+    line.addColorStop(0.8, "rgba(143, 176, 196, 0.45)");
+    line.addColorStop(1, "rgba(143, 176, 196, 0.08)");
     ctx.save();
-    ctx.shadowColor = "rgba(167,139,250,0.8)";
-    ctx.shadowBlur = 16;
     ctx.fillStyle = line;
     ctx.fillRect(0, ground - 1.5, this.W, 3);
     ctx.restore();
 
     const spacing = this.U * 0.12;
     const offset = (this.world * 0.9) % spacing;
-    ctx.fillStyle = "rgba(129, 140, 248, 0.14)";
+    ctx.fillStyle = "rgba(190, 160, 116, 0.12)";
     for (let x = -offset; x < this.W; x += spacing) {
       ctx.fillRect(x, ground + this.U * 0.035, this.U * 0.004, this.U * 0.018);
     }
@@ -722,8 +720,8 @@ export class OneChanceGame {
     }
     // distant city reflection
     const reflect = ctx.createLinearGradient(0, ground, 0, this.H);
-    reflect.addColorStop(0, "rgba(124, 58, 237, 0.1)");
-    reflect.addColorStop(1, "rgba(124, 58, 237, 0)");
+    reflect.addColorStop(0, "rgba(214, 158, 96, 0.08)");
+    reflect.addColorStop(1, "rgba(214, 158, 96, 0)");
     ctx.fillStyle = reflect;
     ctx.fillRect(0, ground, this.W, this.H - ground);
   }
@@ -761,12 +759,10 @@ export class OneChanceGame {
       if (hazard.kind === "spike") {
         const h = this.U * 0.075;
         ctx.save();
-        ctx.shadowColor = "rgba(192, 132, 252, 0.75)";
-        ctx.shadowBlur = 14;
         const grad = ctx.createLinearGradient(x - w / 2, ground, x + w / 2, ground - h);
-        grad.addColorStop(0, "#6d28d9");
-        grad.addColorStop(0.55, "#a78bfa");
-        grad.addColorStop(1, "#f0abfc");
+        grad.addColorStop(0, "#4a2118");
+        grad.addColorStop(0.55, "#b26f46");
+        grad.addColorStop(1, "#f0c89a");
         ctx.fillStyle = grad;
         for (let i = 0; i < 3; i++) {
           const sw = w / 3;
@@ -778,23 +774,21 @@ export class OneChanceGame {
           ctx.closePath();
           ctx.fill();
         }
-        ctx.fillStyle = "rgba(240, 171, 252, 0.9)";
+        ctx.fillStyle = "rgba(244, 206, 164, 0.85)";
         ctx.fillRect(x - w / 2, ground - 2, w, 2);
         ctx.restore();
       } else if (hazard.kind === "crate") {
         const h = this.U * 0.115;
         ctx.save();
-        ctx.shadowColor = "rgba(56, 189, 248, 0.35)";
-        ctx.shadowBlur = 12;
         const body = ctx.createLinearGradient(x, ground - h, x, ground);
-        body.addColorStop(0, "#243154");
-        body.addColorStop(1, "#0b1122");
+        body.addColorStop(0, "#26333d");
+        body.addColorStop(1, "#0a1016");
         ctx.fillStyle = body;
         ctx.fillRect(x - w / 2, ground - h, w, h);
-        ctx.strokeStyle = "rgba(125, 211, 252, 0.65)";
+        ctx.strokeStyle = "rgba(170, 196, 214, 0.55)";
         ctx.lineWidth = 1.5;
         ctx.strokeRect(x - w / 2 + 1, ground - h + 1, w - 2, h - 2);
-        ctx.strokeStyle = "rgba(167, 139, 250, 0.35)";
+        ctx.strokeStyle = "rgba(229, 177, 95, 0.3)";
         ctx.beginPath();
         ctx.moveTo(x - w / 2 + 4, ground - 4);
         ctx.lineTo(x + w / 2 - 4, ground - h + 4);
@@ -809,19 +803,17 @@ export class OneChanceGame {
         const beamBottom = ground - this.U * 0.085;
         const beamH = beamBottom - beamTop;
         ctx.save();
-        ctx.shadowColor = "rgba(232, 121, 249, 0.8)";
-        ctx.shadowBlur = 18;
         const beam = ctx.createLinearGradient(x - w / 2, 0, x + w / 2, 0);
-        beam.addColorStop(0, "rgba(232, 121, 249, 0.03)");
-        beam.addColorStop(0.5, `rgba(240, 171, 252, ${0.3 + pulse * 0.2})`);
-        beam.addColorStop(1, "rgba(232, 121, 249, 0.06)");
+        beam.addColorStop(0, "rgba(230, 140, 90, 0.03)");
+        beam.addColorStop(0.5, `rgba(240, 176, 120, ${0.3 + pulse * 0.2})`);
+        beam.addColorStop(1, "rgba(230, 140, 90, 0.06)");
         ctx.fillStyle = beam;
         ctx.fillRect(x - w / 2, beamTop, w, beamH);
-        ctx.strokeStyle = "rgba(232, 121, 249, 0.75)";
+        ctx.strokeStyle = "rgba(240, 176, 120, 0.7)";
         ctx.lineWidth = 1.5;
         ctx.strokeRect(x - w / 2, beamTop, w, beamH);
         for (let i = 0; i < 6; i++) {
-          ctx.fillStyle = `rgba(255, 210, 255, ${0.16 + pulse * 0.14})`;
+          ctx.fillStyle = `rgba(255, 226, 190, ${0.14 + pulse * 0.12})`;
           ctx.fillRect(x - w / 2 + 2, beamTop + 6 + i * (beamH / 6.5), w - 4, 1.5);
         }
         ctx.fillStyle = "rgba(245, 196, 90, 0.9)";
@@ -928,25 +920,15 @@ export class OneChanceGame {
     ctx.ellipse(x, ground + 2, u * 0.045 * shadowScale, u * 0.013 * shadowScale, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // trail
-    for (let i = 3; i >= 1; i--) {
+    // motion ghosts: two, faint, but never a neon aura
+    for (let i = 2; i >= 1; i--) {
       ctx.save();
-      ctx.globalAlpha = 0.08 * i;
-      this.drawRunner(x - i * u * 0.028, feet, u, h, sliding, airborne, this.player.runPhase - i * 0.4, "#c084fc");
+      ctx.globalAlpha = 0.05 * i;
+      this.drawRunner(x - i * u * 0.032, feet, u, h, sliding, airborne, this.player.runPhase - i * 0.4, "#c9a06a");
       ctx.restore();
     }
 
-    // glow behind the runner
-    const halo = ctx.createRadialGradient(x, feet - h * 0.5, 0, x, feet - h * 0.5, u * 0.14);
-    halo.addColorStop(0, "rgba(139, 92, 246, 0.24)");
-    halo.addColorStop(0.5, "rgba(56, 189, 248, 0.08)");
-    halo.addColorStop(1, "rgba(56, 189, 248, 0)");
-    ctx.fillStyle = halo;
-    ctx.beginPath();
-    ctx.arc(x, feet - h * 0.5, u * 0.14, 0, Math.PI * 2);
-    ctx.fill();
-
-    this.drawRunner(x, feet, u, h, sliding, airborne, this.player.runPhase, "#38bdf8");
+    this.drawRunner(x, feet, u, h, sliding, airborne, this.player.runPhase, "#a8bdcf");
   }
 
   private drawRunner(
@@ -963,136 +945,162 @@ export class OneChanceGame {
     ctx.save();
     ctx.translate(x, feet);
 
-    const rimGrad = ctx.createLinearGradient(-u * 0.08, -h, u * 0.08, 0);
-    rimGrad.addColorStop(0, "#c084fc");
-    rimGrad.addColorStop(0.5, rim);
-    rimGrad.addColorStop(1, "#e879f9");
-
-    const dark = "#090b17";
-    const body = "#141a32";
+    const dark = "#05090e";
+    const far = "#0b131b";
+    const headR = Math.max(5, h * 0.072);
+    const headY = -h + headR * 1.1;
+    const shoulderY = -h * 0.79;
+    const hipY = -h * 0.46;
 
     if (sliding) {
-      ctx.shadowColor = "rgba(56,189,248,0.55)";
-      ctx.shadowBlur = 12;
-      // trailing scarf
-      ctx.strokeStyle = "rgba(232,121,249,0.65)";
-      ctx.lineWidth = u * 0.009;
-      ctx.beginPath();
-      ctx.moveTo(-u * 0.03, -h * 0.7);
-      ctx.quadraticCurveTo(-u * 0.09, -h * 0.95, -u * 0.13, -h * 0.55);
-      ctx.stroke();
-      // low body
-      ctx.fillStyle = body;
-      ctx.beginPath();
-      ctx.ellipse(0, -h * 0.45, u * 0.052, h * 0.48, -0.12, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = rimGrad;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      // head forward
+      // low, forward, one arm skimming the roof
       ctx.fillStyle = dark;
       ctx.beginPath();
-      ctx.arc(u * 0.043, -h * 0.55, u * 0.03, 0, Math.PI * 2);
+      ctx.ellipse(0, -h * 0.3, h * 0.3, h * 0.115, -0.1, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = rimGrad;
-      ctx.stroke();
-      ctx.fillStyle = "#7dd3fc";
       ctx.beginPath();
-      ctx.arc(u * 0.049, -h * 0.58, u * 0.005, 0, Math.PI * 2);
+      ctx.arc(h * 0.26, -h * 0.4, headR, 0, Math.PI * 2);
       ctx.fill();
-      // legs trailing
-      ctx.strokeStyle = dark;
-      ctx.lineWidth = u * 0.018;
+      ctx.strokeStyle = far;
+      ctx.lineWidth = h * 0.085;
       ctx.lineCap = "round";
       ctx.beginPath();
-      ctx.moveTo(-u * 0.01, -h * 0.25);
-      ctx.lineTo(-u * 0.07, -h * 0.12);
-      ctx.lineTo(-u * 0.085, -h * 0.0);
-      ctx.moveTo(-u * 0.005, -h * 0.2);
-      ctx.lineTo(u * 0.025, -h * 0.06);
+      ctx.moveTo(-h * 0.04, -h * 0.24);
+      ctx.lineTo(-h * 0.2, -h * 0.14);
+      ctx.lineTo(-h * 0.32, -h * 0.06);
+      ctx.moveTo(-h * 0.02, -h * 0.2);
+      ctx.lineTo(h * 0.08, -h * 0.08);
+      ctx.lineTo(h * 0.16, 0);
+      ctx.stroke();
+      ctx.strokeStyle = dark;
+      ctx.lineWidth = h * 0.055;
+      ctx.beginPath();
+      ctx.moveTo(h * 0.13, -h * 0.34);
+      ctx.lineTo(h * 0.24, -h * 0.2);
+      ctx.lineTo(h * 0.3, -h * 0.12);
+      ctx.stroke();
+      ctx.strokeStyle = `${rim}66`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(h * 0.2, -h * 0.42);
+      ctx.quadraticCurveTo(-h * 0.02, -h * 0.4, -h * 0.14, -h * 0.3);
       ctx.stroke();
       ctx.restore();
       return;
     }
 
-    const lean = airborne ? 0.08 : 0.04;
-    const hipY = -h * 0.48;
-    const shoulderY = -h * 0.82;
-    const headR = u * 0.026;
-    const headX = u * 0.012;
-    const headY = -h + headR * 0.9;
+    const idle = this.phase === "idle" || this.phase === "countdown";
+    const swing = airborne ? 0.82 : idle ? 0.5 : Math.sin(phase);
+    const swing2 = airborne ? -0.4 : idle ? -0.42 : Math.sin(phase + Math.PI);
 
-    ctx.shadowColor = "rgba(56,189,248,0.45)";
-    ctx.shadowBlur = 10;
+    const hip = { x: 0, y: hipY };
+    const shoulder = { x: h * 0.025, y: shoulderY };
 
-    // scarf
-    const scarfWave = Math.sin(phase * 1.3) * u * 0.012;
-    ctx.strokeStyle = "rgba(232,121,249,0.7)";
-    ctx.lineWidth = u * 0.009;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(headX + u * 0.018, headY + headR * 0.9);
-    ctx.quadraticCurveTo(headX - u * 0.06, headY + headR * 1.3 + scarfWave, headX - u * 0.115, headY + headR * 1.9 + scarfWave);
-    ctx.stroke();
+    const farKnee = { x: h * 0.075 - swing2 * h * 0.075, y: hipY + h * 0.22 };
+    const farFoot = { x: -swing2 * h * 0.125 - h * 0.01, y: airborne ? hipY + h * 0.36 : 0 };
+    const nearKnee = { x: h * 0.03 + swing * h * 0.085, y: hipY + h * 0.24 };
+    const nearFoot = { x: swing * h * 0.14 + h * 0.02, y: airborne ? hipY + h * 0.4 : 0 };
 
-    // legs
-    const swing = airborne ? 0.9 : Math.sin(phase) * 0.85;
-    const swing2 = airborne ? -0.4 : Math.sin(phase + Math.PI) * 0.85;
-    ctx.strokeStyle = dark;
-    ctx.lineWidth = u * 0.021;
+    // far leg sits behind the jacket
+    ctx.strokeStyle = far;
+    ctx.lineWidth = h * 0.07;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.beginPath();
-    ctx.moveTo(0, hipY);
-    ctx.lineTo(Math.sin(swing) * u * 0.04 + u * 0.008, hipY + h * 0.22);
-    ctx.lineTo(Math.sin(swing) * u * 0.062 + u * 0.015, 0);
-    ctx.moveTo(0, hipY);
-    ctx.lineTo(Math.sin(swing2) * u * 0.035 - u * 0.008, hipY + h * 0.22);
-    ctx.lineTo(Math.sin(swing2) * u * 0.055 - u * 0.012, 0);
+    ctx.moveTo(hip.x - h * 0.015, hip.y);
+    ctx.lineTo(farKnee.x, farKnee.y);
+    ctx.lineTo(farFoot.x, farFoot.y);
     ctx.stroke();
-
-    // arms
-    ctx.strokeStyle = body;
-    ctx.lineWidth = u * 0.017;
-    const armSwing = Math.sin(phase + Math.PI) * 0.8;
     ctx.beginPath();
-    ctx.moveTo(headX - u * 0.008, shoulderY + h * 0.04);
-    ctx.lineTo(headX + Math.sin(armSwing) * u * 0.035, shoulderY + h * 0.15);
-    ctx.lineTo(headX + Math.sin(armSwing) * u * 0.055 + u * 0.008, shoulderY + h * 0.26);
-    ctx.moveTo(headX + u * 0.005, shoulderY + h * 0.04);
-    ctx.lineTo(headX - Math.sin(armSwing) * u * 0.035 + u * 0.01, shoulderY + h * 0.14);
-    ctx.lineTo(headX - Math.sin(armSwing) * u * 0.04 + u * 0.03, shoulderY + h * 0.23);
+    ctx.moveTo(farFoot.x, farFoot.y);
+    ctx.lineTo(farFoot.x + h * 0.08, farFoot.y);
     ctx.stroke();
 
-    // torso
-    ctx.fillStyle = body;
+    // far arm
+    ctx.strokeStyle = far;
+    ctx.lineWidth = h * 0.05;
     ctx.beginPath();
-    ctx.moveTo(-u * 0.022, shoulderY + h * 0.02);
-    ctx.quadraticCurveTo(u * 0.024, shoulderY, u * 0.034 + lean * u, hipY - h * 0.02);
-    ctx.quadraticCurveTo(u * 0.02, hipY + h * 0.06, -u * 0.02, hipY + h * 0.04);
-    ctx.quadraticCurveTo(-u * 0.038, shoulderY + h * 0.14, -u * 0.022, shoulderY + h * 0.02);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = rimGrad;
-    ctx.lineWidth = 1.5;
+    ctx.moveTo(shoulder.x - h * 0.025, shoulder.y + h * 0.04);
+    ctx.lineTo(shoulder.x - h * 0.12, shoulder.y + h * 0.14);
+    ctx.lineTo(shoulder.x - h * 0.15, shoulder.y + h * 0.28);
     ctx.stroke();
 
-    // head
+    // jacket: hood, shoulders, short hem
     ctx.fillStyle = dark;
     ctx.beginPath();
-    ctx.arc(headX, headY, headR, 0, Math.PI * 2);
+    ctx.moveTo(shoulder.x - h * 0.06, shoulder.y + h * 0.02);
+    ctx.quadraticCurveTo(shoulder.x - h * 0.08, shoulder.y - h * 0.1, shoulder.x - h * 0.01, shoulder.y - h * 0.13);
+    ctx.quadraticCurveTo(shoulder.x + h * 0.08, shoulder.y - h * 0.09, shoulder.x + h * 0.075, shoulder.y + h * 0.03);
+    ctx.lineTo(hip.x + h * 0.055, hip.y + h * 0.01);
+    ctx.quadraticCurveTo(hip.x + h * 0.02, hip.y + h * 0.08, hip.x - h * 0.055, hip.y + h * 0.05);
+    ctx.lineTo(shoulder.x - h * 0.07, shoulder.y + h * 0.16);
+    ctx.closePath();
     ctx.fill();
-    ctx.strokeStyle = rimGrad;
-    ctx.lineWidth = 1.5;
+
+    // backpack behind the shoulder
+    ctx.fillStyle = far;
+    ctx.beginPath();
+    ctx.roundRect(shoulder.x - h * 0.14, shoulder.y + h * 0.02, h * 0.08, h * 0.17, h * 0.02);
+    ctx.fill();
+
+    // hood and face
+    ctx.fillStyle = dark;
+    ctx.beginPath();
+    ctx.arc(shoulder.x + h * 0.03, headY, headR * 1.12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(shoulder.x + h * 0.075, headY + headR * 0.08, headR * 0.5, headR * 0.62, 0.1, 0, Math.PI * 2);
+    ctx.fillStyle = "#010203";
+    ctx.fill();
+
+    // a single pale glint, not a glowing visor
+    ctx.strokeStyle = "rgba(201, 216, 228, 0.72)";
+    ctx.lineWidth = Math.max(1, u * 0.0022);
+    ctx.beginPath();
+    ctx.moveTo(shoulder.x + h * 0.035, headY - headR * 0.04);
+    ctx.lineTo(shoulder.x + h * 0.1, headY - headR * 0.06);
     ctx.stroke();
 
-    // visor
-    ctx.shadowColor = "#7dd3fc";
-    ctx.shadowBlur = 12;
-    ctx.fillStyle = "#7dd3fc";
+    // near leg
+    ctx.strokeStyle = dark;
+    ctx.lineWidth = h * 0.082;
     ctx.beginPath();
-    ctx.ellipse(headX + headR * 0.4, headY - headR * 0.1, headR * 0.42, headR * 0.16, 0, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(hip.x + h * 0.005, hip.y);
+    ctx.lineTo(nearKnee.x, nearKnee.y);
+    ctx.lineTo(nearFoot.x, nearFoot.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(nearFoot.x, nearFoot.y);
+    ctx.lineTo(nearFoot.x + h * 0.09, nearFoot.y);
+    ctx.stroke();
+
+    // knee highlight keeps the stride legible on a dark roof
+    ctx.strokeStyle = `${rim}55`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(hip.x + h * 0.01, hip.y + h * 0.02);
+    ctx.lineTo(nearKnee.x, nearKnee.y + h * 0.01);
+    ctx.stroke();
+
+    // near arm
+    ctx.strokeStyle = dark;
+    ctx.lineWidth = h * 0.055;
+    ctx.beginPath();
+    ctx.moveTo(shoulder.x + h * 0.03, shoulder.y + h * 0.05);
+    ctx.lineTo(shoulder.x + h * 0.13, shoulder.y + h * 0.16);
+    ctx.lineTo(shoulder.x + h * 0.16, shoulder.y + h * 0.31);
+    ctx.stroke();
+
+    // cool rim along the hood and back
+    ctx.strokeStyle = `${rim}66`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(shoulder.x + h * 0.03, headY, headR * 1.12, Math.PI * 1.15, Math.PI * 1.78);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(shoulder.x - h * 0.055, shoulder.y + h * 0.04);
+    ctx.quadraticCurveTo(hip.x - h * 0.06, hip.y - h * 0.1, hip.x - h * 0.05, hip.y + h * 0.04);
+    ctx.stroke();
 
     ctx.restore();
   }
@@ -1122,15 +1130,12 @@ export class OneChanceGame {
     ctx.scale(scale, scale);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.font = `800 ${this.U * 0.16}px Sora, sans-serif`;
-    ctx.shadowColor = "rgba(139,92,246,0.85)";
-    ctx.shadowBlur = 40;
-    ctx.fillStyle = "rgba(255,255,255,0.94)";
+    ctx.font = `600 ${this.U * 0.15}px Archivo, sans-serif`;
+    ctx.fillStyle = "rgba(242,239,230,0.94)";
     ctx.fillText(String(n), 0, 0);
-    ctx.shadowBlur = 0;
-    ctx.font = `700 ${this.U * 0.022}px Manrope, sans-serif`;
-    ctx.fillStyle = "rgba(196,181,253,0.8)";
-    ctx.fillText("GET READY", 0, this.U * 0.11);
+    ctx.font = `500 ${this.U * 0.02}px "Instrument Sans", sans-serif`;
+    ctx.fillStyle = "rgba(201,196,184,0.75)";
+    ctx.fillText("GET READY", 0, this.U * 0.09);
     ctx.restore();
   }
 

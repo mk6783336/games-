@@ -1,67 +1,109 @@
-import { ArrowRight, Gamepad2, Layers, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { GAME_LIST } from "../lib/games";
-import { GameCard } from "../components/GameCard";
+import { formatScore } from "../lib/games";
+import { usePlayer } from "../state/player";
+import { GameArt } from "../components/Art";
 
 export default function Games() {
+  const { state } = usePlayer();
+
   return (
-    <div className="container-page pt-10 sm:pt-14">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div className="max-w-2xl">
-                    <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.6rem)] font-extrabold leading-[0.98] tracking-[-0.05em] text-white">
-            Three worlds.<br /><span className="violet-text">One arena.</span>
-          </h1>
-          <p className="mt-4 max-w-lg text-sm leading-relaxed text-mist-500">
-            A launch lineup with nothing to skip. A slow-burn escape room, a split-second survival run and a five-road climb from forest to storm. All free, all complete, all want your best score.
-          </p>
-        </div>
-        <div className="hidden items-center gap-3 sm:flex">
-          <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4 text-center">
-            <p className="font-display text-2xl font-extrabold text-white">03</p>
-            <p className="text-[9px] font-bold text-mist-600">Launch games</p>
-          </div>
-          <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4 text-center">
-            <p className="font-display text-2xl font-extrabold text-white">∞</p>
-            <p className="text-[9px] font-bold text-mist-600">Retries</p>
-          </div>
-        </div>
+    <div className="container-page pb-10 pt-14 sm:pt-20">
+      <p className="eyebrow">The library</p>
+      <div className="mt-5 flex flex-wrap items-end justify-between gap-8">
+        <h1 className="max-w-3xl text-[clamp(2.6rem,6vw,5.25rem)] leading-[0.9]">
+          Three worlds.
+          <span className="serif block text-mist-500">One standard.</span>
+        </h1>
+        <p className="max-w-xs text-[12px] leading-relaxed text-mist-500">
+          Every game ships complete: a beginning, an ending, a score worth defending. Nothing here is a demo.
+        </p>
       </div>
 
-      <div className="mt-9 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {GAME_LIST.map((game) => (
-          <GameCard key={game.id} game={game} />
-        ))}
-      </div>
+      <ol className="mt-12 border-t border-rule">
+        {GAME_LIST.map((game, index) => {
+          const best = state.stats[game.id].best;
+          const progress =
+            game.id === "impossible-room"
+              ? state.room.completedLevels.length / 3
+              : game.id === "cycle"
+                ? state.cycle.levelsCleared.length / 5
+                : Math.min(1, (best ?? 0) / 2000);
+          const progressLabel =
+            game.id === "impossible-room"
+              ? `${state.room.completedLevels.length} of 3 chapters`
+              : game.id === "cycle"
+                ? `${state.cycle.levelsCleared.length} of 5 roads`
+                : best
+                  ? `Best ${formatScore(game.id, best)}`
+                  : "No run yet";
+          return (
+            <li key={game.id} className="border-b border-rule py-10 sm:py-12">
+              <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
+                <Link
+                  to={`/games/${game.id}`}
+                  className={`group relative block overflow-hidden border border-rule ${
+                    index % 2 === 0 ? "lg:col-span-6" : "lg:col-span-6 lg:order-2"
+                  }`}
+                >
+                  <div className="aspect-[16/9] overflow-hidden">
+                    <GameArt
+                      art={game.art}
+                      className="h-full w-full transition-transform duration-[1200ms] group-hover:scale-[1.02]"
+                    />
+                  </div>
+                  <span className="absolute left-4 top-4 index-number text-white/70">0{index + 1}</span>
+                </Link>
 
-      <div className="panel mt-6 flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
-        <div className="flex items-start gap-3.5">
-          <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-gold/25 bg-gold/[0.08] text-gold">
-            <ShieldCheck size={18} />
-          </span>
-          <div>
-            <p className="text-sm font-bold text-white">No filler, ever</p>
-            <p className="mt-1 max-w-xl text-[12px] leading-relaxed text-mist-600">
-              Every game in the library ships complete, tested and playable. No unfinished launches, no padding the shelves with games that do not earn their place.
-            </p>
-          </div>
-        </div>
-        <Link to="/challenges" className="btn btn-ghost shrink-0 px-4 py-2.5 text-[11px]">
+                <div className={`lg:col-span-6 ${index % 2 === 0 ? "" : "lg:order-1"}`}>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="label !text-accent">{game.genre}</span>
+                    <span className="h-px w-6 bg-rule" />
+                    <span className="label">{game.tags[0]}</span>
+                  </div>
+                  <h2 className="mt-3 text-[clamp(1.9rem,3.8vw,3rem)] leading-[0.95]">{game.title}</h2>
+                  <p className="serif mt-2 text-lg text-mist-400">{game.tagline}</p>
+                  <p className="mt-4 max-w-md text-[12px] leading-relaxed text-mist-500">{game.description}</p>
+
+                  <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-rule pt-4">
+                    <div>
+                      <p className="label">Progress</p>
+                      <p className="mt-1 text-[11px] text-ink-2">{progressLabel}</p>
+                    </div>
+                    <div className="min-w-[120px] flex-1">
+                      <div className="h-px w-full bg-rule">
+                        <div
+                          className="h-px bg-accent transition-[width] duration-500"
+                          style={{ width: `${Math.max(2, progress * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap items-center gap-3">
+                    <Link to={game.route} className="btn btn-primary">
+                      <Play size={12} fill="currentColor" />
+                      Play now
+                    </Link>
+                    <Link to={`/games/${game.id}`} className="btn btn-ghost">
+                      Details <ArrowRight size={12} />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+
+      <div className="mt-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <p className="max-w-md text-[11px] leading-relaxed text-mist-600">
+          A launch lineup deliberately kept small. Each game is tested on desktop and mobile before it reaches this page.
+        </p>
+        <Link to="/challenges" className="text-link">
           Today's challenges <ArrowRight size={13} />
         </Link>
-      </div>
-
-      <div className="mt-12 grid gap-4 sm:grid-cols-3">
-        {[
-          { icon: <Layers size={17} />, title: "Deep by design", body: "Inventory combinations, connected chapters, adaptive hazards; built to reward mastery." },
-          { icon: <Sparkles size={17} />, title: "One more run", body: "Fast restarts, saved progress and a daily seed that makes every day a new contest." },
-          { icon: <Gamepad2 size={17} />, title: "Any screen", body: "Thumb-friendly controls on mobile, keyboard-ready on desktop, readable everywhere." },
-        ].map((item) => (
-          <div key={item.title} className="rounded-2xl border border-white/7 bg-white/[0.02] p-5">
-            <span className="grid size-9 place-items-center rounded-xl border border-violet-400/20 bg-violet-500/[0.07] text-violet-300">{item.icon}</span>
-            <p className="mt-3 text-sm font-bold text-mist-100">{item.title}</p>
-            <p className="mt-1 text-[12px] leading-relaxed text-mist-600">{item.body}</p>
-          </div>
-        ))}
       </div>
     </div>
   );
