@@ -1,9 +1,12 @@
 node_modules/
 dist/
+test-results/
+playwright-report/
 .env
 .env.local
 .data/
 .logs/
+.hallmark/
 .freebuff/
 .tooling/
 *.log

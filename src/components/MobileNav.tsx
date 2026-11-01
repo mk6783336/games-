@@ -11,7 +11,7 @@ const ITEMS = [
 export function MobileNav() {
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#070a17]/95 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-2xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-rule bg-paper-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden"
       aria-label="Mobile"
     >
       <div className="mx-auto grid max-w-md grid-cols-4 px-2 pt-1.5">
@@ -21,18 +21,21 @@ export function MobileNav() {
             to={to}
             end={end}
             className={({ isActive }) =>
-              `group relative flex flex-col items-center gap-1 rounded-xl py-2 text-[9.5px] font-bold uppercase tracking-[0.08em] transition ${
-                isActive ? "text-violet-200" : "text-mist-600"
+              `group relative flex flex-col items-center gap-1 rounded-card py-2 text-[10.5px] font-bold transition ${
+                isActive ? "text-ink" : "text-mist-600"
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <span className={`grid h-7 w-11 place-items-center rounded-full transition ${isActive ? "bg-violet-500/15" : ""}`}>
+                <span
+                  className={`grid h-7 w-11 place-items-center rounded-card transition ${
+                    isActive ? "bg-accent text-accent-ink" : ""
+                  }`}
+                >
                   <Icon size={19} strokeWidth={isActive ? 2.4 : 1.9} />
                 </span>
                 {label}
-                {isActive && <span className="absolute top-0 h-[2px] w-6 rounded-full bg-violet-400" />}
               </>
             )}
           </NavLink>

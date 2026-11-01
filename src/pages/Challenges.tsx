@@ -5,7 +5,6 @@ import {
   Check,
   Copy,
   Flame,
-  Link2,
   Play,
   RefreshCw,
   Share2,
@@ -13,12 +12,11 @@ import {
   Swords,
   Target,
   Trophy,
-  Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { absoluteChallengeUrl, challengePath, makeChallenge, newSeed, type ChallengeLink } from "../lib/challenges";
 import { getDaily } from "../lib/daily";
-import { formatDuration, formatScore, GAMES } from "../lib/games";
+import { formatDuration, formatScore, GAME_LIST, GAMES } from "../lib/games";
 import type { GameId } from "../lib/types";
 import { usePlayer } from "../state/player";
 import type { ChallengeRecord } from "../lib/types";
@@ -34,17 +32,17 @@ function DailyCard({ gameId }: { gameId: GameId }) {
   const progress =
     record == null
       ? 0
-      : gameId === "one-chance"
-        ? Math.min(100, (record.score / daily.target) * 100)
-        : Math.max(0, Math.min(100, (1 - record.score / daily.target) * 100));
+      : gameId === "impossible-room"
+        ? Math.max(0, Math.min(100, (1 - record.score / daily.target) * 100))
+        : Math.min(100, (record.score / daily.target) * 100);
 
   return (
     <article className={`panel relative overflow-hidden p-5 sm:p-6 ${done ? "border-gold/25" : ""}`}>
       <div className={`pointer-events-none absolute -right-16 -top-20 size-52 rounded-full blur-3xl ${gameId === "one-chance" ? "bg-blue-600/15" : "bg-gold/10"}`} />
       <div className="relative">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-mist-600">
-            Game {game.index} · {game.genre}
+          <span className="text-[9px] font-extrabold text-mist-600">
+            Game {game.index}, {game.genre}
           </span>
           <span className={`chip text-[9px] ${done ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-300" : "border-white/10"}`}>
             {done ? <><Check size={10} /> Complete</> : <><CalendarDays size={10} /> Daily</>}
@@ -62,7 +60,7 @@ function DailyCard({ gameId }: { gameId: GameId }) {
         <div className="mt-4 rounded-xl border border-white/8 bg-black/20 px-3.5 py-3">
           <div className="flex items-center justify-between gap-2 text-[10px]">
             <span className="font-semibold text-mist-500">
-              {record ? `${done ? "Cleared" : "Best today"} · ${formatScore(gameId, record.score)}` : "Not attempted yet"}
+              {record ? `${done ? "Cleared" : "Best today"}, ${formatScore(gameId, record.score)}` : "Not attempted yet"}
             </span>
             <span className="font-bold tabular-nums text-mist-600">{Math.round(progress)}%</span>
           </div>
@@ -94,10 +92,10 @@ function ReceivedChallenge({ challenge }: { challenge: ChallengeRecord }) {
         <Avatar name={challenge.from} hue={200} size={32} ring={false} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[12px] font-bold text-mist-100">{challenge.from}</p>
-          <p className="text-[10px] text-mist-600">{game.title} · beat {formatScore(challenge.game, challenge.target)}</p>
+          <p className="text-[10px] text-mist-600">{game.title}, beat {formatScore(challenge.game, challenge.target)}</p>
         </div>
         <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-[8px] font-extrabold uppercase tracking-wider ${
+          className={`shrink-0 rounded-full px-2 py-0.5 text-[8px] font-extrabold ${
             challenge.beat
               ? "bg-emerald-400/10 text-emerald-300"
               : challenge.score != null
@@ -110,10 +108,10 @@ function ReceivedChallenge({ challenge }: { challenge: ChallengeRecord }) {
       </div>
       <div className="mt-3 flex items-center justify-between gap-3">
         <span className="text-[10px] text-mist-600">
-          {challenge.score != null ? `Your result · ${formatScore(challenge.game, challenge.score)}` : "You haven't answered yet."}
+          {challenge.score != null ? `Your result, ${formatScore(challenge.game, challenge.score)}` : "You haven't answered yet."}
         </span>
         <Link to={path} className="text-[10px] font-bold text-violet-300 transition hover:text-violet-200">
-          {challenge.score != null ? "Try again →" : "Accept →"}
+          {challenge.score != null ? "Try again" : "Accept"}
         </Link>
       </div>
     </div>
@@ -131,6 +129,10 @@ export default function Challenges() {
     if (g === "one-chance") {
       const best = state.stats["one-chance"].best;
       return best ? Math.max(300, Math.round((best * 1.04) / 10) * 10 + 10) : 900;
+    }
+    if (g === "cycle") {
+      const best = state.stats.cycle.best;
+      return best ? Math.max(2_000, Math.round((best * 1.04) / 100) * 100 + 100) : 12_000;
     }
     const best = state.room.bestTimes[1];
     return best ? Math.max(45_000, Math.round((best * 0.96) / 1000) * 1000) : 180_000;
@@ -177,8 +179,7 @@ export default function Challenges() {
     <div className="container-page pt-10 sm:pt-14">
       <div className="flex flex-wrap items-end justify-between gap-5">
         <div className="max-w-xl">
-          <p className="eyebrow"><Swords size={13} className="text-violet-400" /> Challenges</p>
-          <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.5rem)] font-extrabold leading-[0.98] tracking-[-0.05em] text-white">
+                    <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.5rem)] font-extrabold leading-[0.98] tracking-[-0.05em] text-white">
             Don't play alone.
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-mist-500">
@@ -186,27 +187,27 @@ export default function Challenges() {
           </p>
         </div>
         <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-2 text-[10px] font-semibold text-mist-400">
-          <Sparkles size={12} className="text-gold" /> Resets daily · <Countdown />
+          <Sparkles size={12} className="text-gold" /> Resets daily, <Countdown />
         </div>
       </div>
 
-      <section className="mt-8 grid gap-5 md:grid-cols-2">
-        <DailyCard gameId="one-chance" />
-        <DailyCard gameId="impossible-room" />
+      <section className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {GAME_LIST.map((game) => (
+          <DailyCard key={game.id} gameId={game.id} />
+        ))}
       </section>
 
       <section className="mt-10 grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
         <div className="panel panel-glow relative overflow-hidden p-5 sm:p-7">
           <div className="pointer-events-none absolute -right-24 -top-24 size-64 rounded-full bg-violet-600/15 blur-3xl" />
           <div className="relative">
-            <p className="eyebrow text-violet-300"><Link2 size={12} /> Friend challenge</p>
-            <h2 className="mt-2 font-display text-2xl font-bold text-white">Send a gauntlet</h2>
+                        <h2 className="mt-2 font-display text-2xl font-bold text-white">Send a gauntlet</h2>
             <p className="mt-2 max-w-md text-[12px] leading-relaxed text-mist-600">
-              Build a link with your chosen game, a fresh seed and a target. They'll get the exact same run — no sign-up, no excuses.
+              Build a link with your chosen game, a fresh seed and a target. They'll get the exact same run; no sign-up, no excuses.
             </p>
 
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              {(["one-chance", "impossible-room"] as GameId[]).map((g) => (
+            <div className="mt-5 grid gap-2 sm:grid-cols-3">
+              {(["one-chance", "impossible-room", "cycle"] as GameId[]).map((g) => (
                 <button
                   key={g}
                   onClick={() => {
@@ -221,7 +222,7 @@ export default function Challenges() {
                   }`}
                   aria-pressed={game === g}
                 >
-                  <span className={`text-[9px] font-bold uppercase tracking-[0.14em] ${game === g ? "text-violet-300" : "text-mist-600"}`}>Game {GAMES[g].index}</span>
+                  <span className={`text-[9px] font-bold ${game === g ? "text-violet-300" : "text-mist-600"}`}>Game {GAMES[g].index}</span>
                   <span className="mt-1 block text-[12px] font-bold text-white">{GAMES[g].title}</span>
                   <span className="mt-0.5 block truncate text-[10px] text-mist-600">{GAMES[g].short}</span>
                 </button>
@@ -230,19 +231,23 @@ export default function Challenges() {
 
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               <div className="rounded-xl border border-white/8 bg-black/20 px-3.5 py-2.5">
-                <p className="text-[9px] font-bold uppercase tracking-[0.13em] text-mist-600">Target to beat</p>
+                <p className="text-[9px] font-bold text-mist-600">Target to beat</p>
                 <p className="mt-0.5 font-display text-sm font-bold text-gold">{formatScore(game, challenge.target)}</p>
               </div>
               <div className="rounded-xl border border-white/8 bg-black/20 px-3.5 py-2.5">
-                <p className="text-[9px] font-bold uppercase tracking-[0.13em] text-mist-600">{game === "one-chance" ? "Seed" : "Rules"}</p>
+                <p className="text-[9px] font-bold text-mist-600">{game === "one-chance" ? "Seed" : "Rules"}</p>
                 <p className="mt-0.5 truncate font-display text-sm font-bold text-mist-200">
-                  {game === "one-chance" ? `#${String(seed).slice(0, 8)}` : "Chapter I · timed"}
+                  {game === "one-chance"
+                    ? `#${String(seed).slice(0, 8)}`
+                    : game === "cycle"
+                      ? "All five roads"
+                      : "Chapter I, timed"}
                 </p>
               </div>
             </div>
 
             <div className="mt-4">
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.14em] text-mist-600" htmlFor="challenge-link">
+              <label className="mb-1.5 block text-[10px] font-bold text-mist-600" htmlFor="challenge-link">
                 Your challenge link
               </label>
               <div className="flex gap-2">
@@ -252,7 +257,7 @@ export default function Challenges() {
                   readOnly
                   value={url}
                   onFocus={(e) => e.currentTarget.select()}
-                  className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#060915] px-3 py-2.5 font-mono text-[10px] text-mist-400 outline-none focus:border-violet-400/50"
+                  className="min-w-0 flex-1 rounded-xl border border-white/10 bg-paper-2 px-3 py-2.5 font-mono text-[10px] text-mist-400 outline-none focus:border-violet-400/50"
                 />
                 <button onClick={copyLink} className="btn btn-primary shrink-0 px-3.5 py-2.5 text-[11px]" aria-label="Copy challenge link">
                   {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -278,7 +283,7 @@ export default function Challenges() {
               </Link>
             </div>
             <p className="mt-3 text-[10px] leading-relaxed text-mist-600">
-              Your target is built from your personal best. Open your own link to verify it — your score is recorded just like theirs.
+              Your target is built from your personal best. Open your own link to verify it; your score is recorded just like theirs.
             </p>
           </div>
         </div>
@@ -287,8 +292,7 @@ export default function Challenges() {
           <div className="panel p-5 sm:p-6">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <p className="eyebrow"><Users size={12} /> Incoming</p>
-                <h2 className="mt-1.5 font-display text-lg font-bold text-white">Who called you out</h2>
+                                <h2 className="mt-1.5 font-display text-lg font-bold text-white">Who called you out</h2>
               </div>
               <span className="grid size-9 place-items-center rounded-xl border border-white/8 bg-white/[0.03] text-mist-500"><Swords size={16} /></span>
             </div>
@@ -311,10 +315,10 @@ export default function Challenges() {
           </div>
 
           <div className="panel p-5 sm:p-6">
-            <p className="eyebrow"><Flame size={12} className="text-orange-300" /> How it works</p>
+            <p className="label"><Flame size={12} className="text-orange-300" /> How it works</p>
             <ol className="mt-4 space-y-3">
               {[
-                ["Pick a game", "One Chance seed or a timed Impossible Room sprint."],
+                ["Pick a game", "A One Chance seed, a timed room sprint, or all five Cycle roads."],
                 ["Share the link", "The seed and target travel inside the URL."],
                 ["Settle it", "Their score lands here automatically when they finish."],
               ].map(([title, body], i) => (

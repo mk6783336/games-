@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Coins,
   Gamepad2,
+  Mountain,
   Pencil,
   Play,
   RotateCcw,
@@ -69,12 +70,12 @@ function Toggle({
         aria-checked={checked}
         aria-label={label}
         onClick={() => onChange(!checked)}
-        className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full border transition ${
+        className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full border transition-colors motion-reduce:transition-none ${
           checked ? "border-violet-400/50 bg-violet-500/80" : "border-white/12 bg-white/8"
         }`}
       >
         <span
-          className={`absolute top-0.5 size-4.5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-[1.35rem]" : "translate-x-0.5"}`}
+          className={`absolute top-0.5 size-4.5 rounded-full bg-white shadow transition-transform motion-reduce:transition-none ${checked ? "translate-x-[1.35rem]" : "translate-x-0.5"}`}
           style={{ width: 18, height: 18 }}
         />
       </button>
@@ -93,8 +94,12 @@ export default function Profile() {
 
   const level = levelFromXp(state.xp);
   const earned = ACHIEVEMENTS.filter((a) => state.achievements[a.id]);
-  const totalRuns = state.stats["impossible-room"].plays + state.stats["one-chance"].plays;
-  const coinsEarned = state.stats["impossible-room"].coinsEarned + state.stats["one-chance"].coinsEarned;
+  const totalRuns =
+    state.stats["impossible-room"].plays + state.stats["one-chance"].plays + state.stats.cycle.plays;
+  const coinsEarned =
+    state.stats["impossible-room"].coinsEarned +
+    state.stats["one-chance"].coinsEarned +
+    state.stats.cycle.coinsEarned;
   const country = countryInfo(state.profile.country);
   const visibleAchievements = ACHIEVEMENTS.filter((a) =>
     filter === "all" ? true : filter === "earned" ? Boolean(state.achievements[a.id]) : !state.achievements[a.id],
@@ -126,9 +131,9 @@ export default function Profile() {
       {/* Profile hero */}
       <section className="panel relative overflow-hidden">
         <div className="relative h-28 overflow-hidden border-b border-white/6 sm:h-36">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_120%,rgba(124,58,237,0.4),transparent_60%),radial-gradient(ellipse_at_80%_-20%,rgba(59,130,246,0.28),transparent_55%),linear-gradient(120deg,#0b0f22,#121634_55%,#0a0e1e)]" />
-          <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] [background-size:34px_34px]" />
-          <div className="absolute right-5 top-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.16em] text-mist-400 backdrop-blur">
+          <div className="absolute inset-0 hero-wash" />
+          <div className="absolute inset-0 opacity-20 grid-lines [background-size:34px_34px]" />
+          <div className="absolute right-5 top-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[9px] font-bold text-mist-400 backdrop-blur">
             <ShieldCheck size={11} className="text-violet-300" /> Player card
           </div>
           <div className="pointer-events-none absolute -bottom-16 left-1/3 size-48 rounded-full bg-violet-500/20 blur-3xl" />
@@ -137,7 +142,7 @@ export default function Profile() {
         <div className="relative px-5 pb-6 sm:px-7">
           <div className="-mt-10 flex flex-wrap items-end justify-between gap-4 sm:-mt-12">
             <div className="flex items-end gap-3.5 sm:gap-4">
-              <span className="rounded-full bg-[#0a0e1c] p-1 ring-1 ring-white/10">
+              <span className="rounded-full bg-paper-2 p-1 ring-1 ring-white/10">
                 <Avatar name={state.profile.name} hue={state.profile.avatarHue} size={78} ring={false} />
               </span>
               <div className="pb-1">
@@ -179,11 +184,13 @@ export default function Profile() {
       </section>
 
       {/* Stats */}
-      <section className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6" aria-label="Your statistics">
+      <section className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4" aria-label="Your statistics">
         <StatTile label="Runs" value={totalRuns} icon={<Gamepad2 size={13} />} />
         <StatTile label="One Chance best" value={formatScore("one-chance", state.stats["one-chance"].best)} icon={<Sparkles size={13} />} />
+        <StatTile label="Cycle best" value={formatScore("cycle", state.stats.cycle.best)} icon={<Mountain size={13} />} />
         <StatTile label="Fastest escape" value={formatScore("impossible-room", state.stats["impossible-room"].best)} icon={<Timer size={13} />} />
         <StatTile label="Chapters" value={`${state.room.completedLevels.length}/3`} icon={<DoorMark />} />
+        <StatTile label="Roads" value={`${state.cycle.levelsCleared.length}/5`} icon={<Mountain size={13} />} />
         <StatTile label="Coins earned" value={coinsEarned.toLocaleString()} tone="gold" icon={<Coins size={13} />} />
         <StatTile label="Achievements" value={`${earned.length}/${ACHIEVEMENTS.length}`} icon={<Trophy size={13} />} />
       </section>
@@ -194,10 +201,9 @@ export default function Profile() {
           <section className="panel p-5 sm:p-6">
             <div className="flex items-end justify-between gap-3">
               <div>
-                <p className="eyebrow">Personal records</p>
-                <h2 className="mt-1.5 font-display text-xl font-bold text-white">Your two campaigns</h2>
+                                <h2 className="mt-1.5 font-display text-xl font-bold text-white">Your three campaigns</h2>
               </div>
-              <Link to="/games" className="text-[10px] font-bold text-violet-300 hover:text-violet-200">Library →</Link>
+              <Link to="/games" className="text-[10px] font-bold text-violet-300 hover:text-violet-200">Library</Link>
             </div>
             <div className="mt-4 space-y-2.5">
               {GAME_LIST.map((game) => {
@@ -210,11 +216,11 @@ export default function Profile() {
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[12px] font-bold text-white">{game.title}</p>
                       <p className="mt-0.5 text-[10px] text-mist-600">
-                        {game.scoreLabel} · <span className="font-semibold text-mist-300">{formatScore(game.id, stat.best)}</span>
+                        {game.scoreLabel}, <span className="font-semibold text-mist-300">{formatScore(game.id, stat.best)}</span>
                       </p>
-                      <p className="mt-0.5 text-[9px] text-mist-600">{stat.plays} runs · {stat.coinsEarned.toLocaleString()} coins earned</p>
+                      <p className="mt-0.5 text-[9px] text-mist-600">{stat.plays} runs, {stat.coinsEarned.toLocaleString()} coins earned</p>
                     </div>
-                    <Link to={game.route} aria-label={`Play ${game.title}`} className="grid size-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/5 text-mist-200 transition hover:border-violet-400/40 hover:text-white">
+                    <Link to={game.route} aria-label={`Play ${game.title}`} className="grid size-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/5 text-mist-200 transition-colors motion-reduce:transition-none hover:border-violet-400/40 hover:text-white">
                       <Play size={14} fill="currentColor" />
                     </Link>
                   </div>
@@ -227,8 +233,7 @@ export default function Profile() {
           <section id="achievements" className="panel scroll-mt-24 p-5 sm:p-6">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="eyebrow"><Trophy size={12} className="text-gold" /> Trophy room</p>
-                <h2 className="mt-1.5 font-display text-xl font-bold text-white">Achievements</h2>
+                                <h2 className="mt-1.5 font-display text-xl font-bold text-white">Achievements</h2>
               </div>
               <div className="flex gap-1 rounded-full border border-white/8 bg-white/[0.025] p-1">
                 {(["all", "earned", "locked"] as const).map((f) => (
@@ -252,11 +257,11 @@ export default function Profile() {
                 return (
                   <div
                     key={def.id}
-                    className={`rounded-2xl border p-3.5 transition ${unlockedAt ? "border-gold/20 bg-gold/[0.035]" : "border-white/6 bg-white/[0.015]"}`}
+                    className={`rounded-2xl border p-3.5 transition-colors motion-reduce:transition-none ${unlockedAt ? "border-gold/20 bg-gold/[0.035]" : "border-white/6 bg-white/[0.015]"}`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <AchievementIcon icon={def.icon} tier={def.tier} locked={!unlockedAt} />
-                      <span className={`text-[8px] font-extrabold uppercase tracking-[0.14em] ${unlockedAt ? "text-gold/80" : "text-mist-600"}`}>
+                      <span className={`text-[8px] font-extrabold ${unlockedAt ? "text-gold/80" : "text-mist-600"}`}>
                         {unlockedAt ? "Earned" : def.tier}
                       </span>
                     </div>
@@ -275,8 +280,7 @@ export default function Profile() {
           <section className="panel p-5 sm:p-6">
             <div className="flex items-end justify-between">
               <div>
-                <p className="eyebrow">Recent activity</p>
-                <h2 className="mt-1.5 font-display text-xl font-bold text-white">The last few runs</h2>
+                                <h2 className="mt-1.5 font-display text-xl font-bold text-white">The last few runs</h2>
               </div>
               <span className="text-[9px] text-mist-600">{state.history.length} recorded</span>
             </div>
@@ -297,7 +301,7 @@ export default function Profile() {
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[11px] font-semibold text-mist-200">{GAMES[entry.game].title}</p>
                       <p className="text-[9px] text-mist-600">
-                        {entry.mode === "daily" ? "Daily challenge" : entry.mode === "challenge" ? "Friend challenge" : "Solo run"} · {timeAgo(entry.at)}
+                        {entry.mode === "daily" ? "Daily challenge" : entry.mode === "challenge" ? "Friend challenge" : "Solo run"}, {timeAgo(entry.at)}
                       </p>
                     </div>
                     <span className="font-display text-[11px] font-bold tabular-nums text-mist-300">{formatScore(entry.game, entry.score)}</span>
@@ -313,8 +317,7 @@ export default function Profile() {
           <section className="panel p-5">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <p className="eyebrow">Account</p>
-                <h2 className="mt-1.5 font-display text-lg font-bold text-white">Settings</h2>
+                                <h2 className="mt-1.5 font-display text-lg font-bold text-white">Settings</h2>
               </div>
               <Pencil size={14} className="text-mist-600" />
             </div>
@@ -333,7 +336,7 @@ export default function Profile() {
                 <select
                   value={state.profile.country}
                   onChange={(e) => updateProfile({ country: e.target.value })}
-                  className="mt-1.5 w-full rounded-lg border border-white/10 bg-[#080c19] px-2.5 py-2 text-[11px] text-mist-200 outline-none focus:border-violet-400/50"
+                  className="mt-1.5 w-full rounded-lg border border-white/10 bg-paper-3 px-2.5 py-2 text-[11px] text-mist-200 outline-none focus:border-violet-400/50"
                   aria-label="Country"
                 >
                   {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name} ({c.code})</option>)}
@@ -389,7 +392,7 @@ export default function Profile() {
           </section>
 
           <section className="panel p-5">
-            <p className="eyebrow"><ShieldCheck size={12} /> Your data</p>
+            <p className="label"><ShieldCheck size={12} /> Your data</p>
             {identity?.kind === "account" ? (
               <p className="mt-2 text-[11px] leading-relaxed text-mist-600">
                 Signed in as <strong className="font-semibold text-mist-300">{identity.email}</strong>. Progress, records and settings sync to your PLAYFLIX account on the server. With product analytics on, gameplay events are sent to PostHog; turn it off above to stop them.
@@ -430,7 +433,7 @@ export default function Profile() {
           <Avatar name={nameDraft || "PlayerOne"} hue={hueDraft} size={76} />
           <p className="mt-2 text-[10px] text-mist-600">Your avatar is generated from your name and colour.</p>
         </div>
-        <label htmlFor="display-name" className="mt-5 block text-[10px] font-bold uppercase tracking-[0.14em] text-mist-500">Display name</label>
+        <label htmlFor="display-name" className="mt-5 block text-[10px] font-bold text-mist-500">Display name</label>
         <div className="relative mt-1.5">
           <input
             id="display-name"
@@ -439,19 +442,19 @@ export default function Profile() {
             maxLength={18}
             autoComplete="nickname"
             placeholder="Pick a name"
-            className="w-full rounded-xl border border-white/10 bg-[#060915] px-3.5 py-3 pr-12 text-sm font-semibold text-white outline-none transition placeholder:text-mist-600 focus:border-violet-400/60"
+            className="w-full rounded-xl border border-white/10 bg-paper-2 px-3.5 py-3 pr-12 text-sm font-semibold text-white outline-none transition placeholder:text-mist-600 focus:border-violet-400/60"
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] tabular-nums text-mist-600">{nameDraft.length}/18</span>
         </div>
         <p className="mt-2 text-[10px] text-mist-600">This appears on leaderboards and friend challenge links.</p>
 
-        <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.14em] text-mist-500">Avatar colour</p>
+        <p className="mt-5 text-[10px] font-bold text-mist-500">Avatar colour</p>
         <div className="mt-2 flex flex-wrap gap-2.5">
           {AVATAR_HUES.map((hue) => (
             <button
               key={hue}
               onClick={() => setHueDraft(hue)}
-              className={`relative size-8 rounded-full transition ${hueDraft === hue ? "ring-2 ring-white ring-offset-2 ring-offset-[#0b0f20]" : "opacity-70 hover:opacity-100"}`}
+              className={`relative size-8 rounded-full transition ${hueDraft === hue ? "ring-2 ring-white ring-offset-2 ring-offset-shade" : "opacity-70 hover:opacity-100"}`}
               style={{ background: `radial-gradient(circle at 30% 25%, hsl(${hue} 90% 70%), hsl(${hue + 28} 70% 38%))` }}
               aria-label={`Avatar colour ${hue}`}
               aria-pressed={hueDraft === hue}

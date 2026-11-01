@@ -18,6 +18,12 @@ export function createInitialState(): PlayerState {
     stats: {
       "impossible-room": { plays: 0, best: null, lastPlayed: null, coinsEarned: 0 },
       "one-chance": { plays: 0, best: null, lastPlayed: null, coinsEarned: 0 },
+      cycle: { plays: 0, best: null, lastPlayed: null, coinsEarned: 0 },
+    },
+    cycle: {
+      levelsCleared: [],
+      bestMs: {},
+      totalRuns: 0,
     },
     room: {
       unlocked: 1,
@@ -42,6 +48,11 @@ export function createInitialState(): PlayerState {
   };
 }
 
+/** Merge any stored or server-supplied document with the current defaults. */
+export function hydrateState(parsed: Partial<PlayerState>): PlayerState {
+  return normalizeState(parsed);
+}
+
 function normalizeState(parsed: Partial<PlayerState>): PlayerState {
   const base = createInitialState();
   return {
@@ -52,6 +63,12 @@ function normalizeState(parsed: Partial<PlayerState>): PlayerState {
     stats: {
       "impossible-room": { ...base.stats["impossible-room"], ...(parsed.stats?.["impossible-room"] ?? {}) },
       "one-chance": { ...base.stats["one-chance"], ...(parsed.stats?.["one-chance"] ?? {}) },
+      cycle: { ...base.stats.cycle, ...(parsed.stats?.cycle ?? {}) },
+    },
+    cycle: {
+      levelsCleared: Array.isArray(parsed.cycle?.levelsCleared) ? parsed.cycle.levelsCleared : [],
+      bestMs: { ...parsed.cycle?.bestMs },
+      totalRuns: parsed.cycle?.totalRuns ?? 0,
     },
     room: { ...base.room, ...(parsed.room ?? {}), bestTimes: { ...base.room.bestTimes, ...(parsed.room?.bestTimes ?? {}) } },
     settings: { ...base.settings, ...(parsed.settings ?? {}) },

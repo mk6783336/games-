@@ -101,10 +101,10 @@ function InspectorContent({
     <div className="flex h-full flex-col">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-gold/80">Inspection</p>
+          <p className="text-[9px] font-bold text-gold/80">Inspection</p>
           <h2 className="mt-0.5 font-display text-base font-bold text-white">{hotspot.label}</h2>
         </div>
-        <button onClick={onClose} aria-label="Close inspection" className="grid size-7 shrink-0 place-items-center rounded-full border border-white/10 bg-white/5 text-mist-500 hover:text-white">
+        <button onClick={onClose} aria-label="Close inspection" className="grid size-7 shrink-0 place-items-center rounded-full border border-white/10 bg-white/5 text-mist-500 hover:text-white focus-visible:outline-2 focus-visible:outline-accent">
           <X size={13} />
         </button>
       </div>
@@ -118,7 +118,7 @@ function InspectorContent({
         )}
         {hotspot.take && taken && (
           <p className="flex items-center gap-1.5 rounded-lg border border-white/7 bg-white/[0.025] px-2.5 py-2 text-[10px] text-mist-600">
-            <Check size={11} /> Taken · {ITEMS[hotspot.take].name}
+            <Check size={11} /> Taken, {ITEMS[hotspot.take].name}
           </p>
         )}
 
@@ -132,7 +132,7 @@ function InspectorContent({
             </button>
           ) : (
             <p className="rounded-lg border border-white/7 bg-white/[0.025] px-2.5 py-2 text-[10px] leading-relaxed text-mist-600">
-              Select an item from your inventory, then tap the room — or use it here.
+              Select an item from your inventory, then tap the room; or use it here.
             </p>
           )
         )}
@@ -157,8 +157,8 @@ function InspectorContent({
       </div>
 
       <div className="mt-auto pt-4">
-        <p className="text-[9px] uppercase tracking-[0.14em] text-mist-600">
-          {selectedItem ? `Holding · ${ITEMS[selectedItem].name}` : "Tap another point to keep searching"}
+        <p className="text-[9px] text-mist-600">
+          {selectedItem ? `Holding, ${ITEMS[selectedItem].name}` : "Tap another point to keep searching"}
         </p>
       </div>
     </div>
@@ -569,11 +569,11 @@ export default function ImpossibleRoom() {
   ) : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-[#04060d]">
+    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-shade">
       <AchievementToasts />
 
       {/* Top HUD */}
-      <header className="relative z-30 flex h-14 shrink-0 items-center gap-2 border-b border-white/8 bg-[#060916]/90 px-2.5 backdrop-blur-xl sm:px-4">
+      <header className="relative z-30 flex h-14 shrink-0 items-center gap-2 border-b border-white/8 bg-shade/90 px-2.5 backdrop-blur-xl sm:px-4">
         <Link
           to="/games/impossible-room"
           aria-label="Back to game overview"
@@ -584,13 +584,13 @@ export default function ImpossibleRoom() {
         <div className="min-w-0 flex-1">
           <p className="truncate text-[11px] font-bold text-white sm:text-xs">The Impossible Room</p>
           <p className="truncate text-[9px] font-semibold text-mist-600">
-            Chapter {ROMAN[chapter]} · {room.name}
-            {mode !== "solo" && <span className="text-gold"> · {mode === "daily" ? "Daily" : "Challenge"}</span>}
+            Chapter {ROMAN[chapter]}, {room.name}
+            {mode !== "solo" && <span className="text-gold">, {mode === "daily" ? "Daily" : "Challenge"}</span>}
           </p>
         </div>
         <div className="hidden items-center gap-1.5 sm:flex" aria-label={`Chapter ${chapter} of 3`}>
           {[1, 2, 3].map((n) => (
-            <span key={n} className={`h-1.5 rounded-full transition-all ${n === chapter ? "w-5 bg-gold" : n < chapter ? "w-1.5 bg-gold/40" : "w-1.5 bg-white/15"}`} />
+            <span key={n} className={`h-1.5 w-5 origin-left rounded-full transition-transform duration-300 ease-out motion-reduce:transition-none ${n === chapter ? "scale-x-100 bg-gold" : n < chapter ? "scale-x-[0.375] bg-gold/40" : "scale-x-[0.375] bg-white/15"}`} />
           ))}
         </div>
         <div className="flex shrink-0 items-center gap-1.5 rounded-lg border border-white/8 bg-white/[0.03] px-2.5 py-1.5 text-mist-200">
@@ -604,7 +604,7 @@ export default function ImpossibleRoom() {
         >
           <Lightbulb size={15} />
           {hintCount > 0 && (
-            <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-gold text-[8px] font-extrabold text-[#241a05]">{hintCount}</span>
+            <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-gold text-[8px] font-extrabold text-accent-ink">{hintCount}</span>
           )}
         </button>
         <button
@@ -621,19 +621,19 @@ export default function ImpossibleRoom() {
         <div className="pointer-events-none absolute inset-0 opacity-30 blur-2xl">
           <RoomScene roomId={room.id} flags={flags} className="h-full w-full scale-110" />
         </div>
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#04060d_90%)]" />
+        <div className="pointer-events-none absolute inset-0 vignette-deep" />
 
         <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center gap-2 p-2 sm:p-3">
           <div
-            className="relative aspect-[3/2] w-full shrink-0 overflow-hidden rounded-xl border border-white/12 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)] md:w-[min(100%,calc((100dvh-10rem)*1.5))]"
+            className="relative aspect-[3/2] w-full shrink-0 overflow-hidden rounded-xl border border-white/12 shadow-cinema md:w-[min(100%,calc((100dvh-10rem)*1.5))]"
             onClick={() => setInspectId(null)}
           >
             <RoomScene roomId={room.id} flags={flags} className="absolute inset-0 h-full w-full" />
             <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-white/5" />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_52%,rgba(2,3,8,0.55)_100%)]" />
+            <div className="pointer-events-none absolute inset-0 vignette-soft" />
 
             <div className="absolute left-2.5 top-2.5 z-20 hidden sm:left-3.5 sm:top-3.5 md:block">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white/70 backdrop-blur-md">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[8px] font-bold text-white/70 backdrop-blur-md">
                 <span className="size-1 rounded-full bg-gold" /> {room.objective}
               </span>
             </div>
@@ -663,14 +663,14 @@ export default function ImpossibleRoom() {
                   style={{ left: `${hs.x}%`, top: `${hs.y}%` }}
                   aria-label={`${hs.label}${done ? " (explored)" : ""}`}
                 >
-                  <span className={`absolute size-7 rounded-full border ${done ? "border-white/15" : hs.ambient ? "border-white/20" : "animate-pulse border-gold/40"}`} />
+                  <span className={`absolute size-7 rounded-full border ${done ? "border-white/15" : hs.ambient ? "border-white/20" : "animate-pulse motion-reduce:animate-none border-gold/40"}`} />
                   <span
-                    className={`relative size-2.5 rounded-full shadow-[0_0_12px_rgba(245,196,90,0.8)] transition group-hover:scale-125 ${
+                    className={`relative size-2.5 rounded-full glow-gold transition group-hover:scale-125 ${
                       done ? "bg-white/35" : hs.ambient ? "bg-white/50" : "bg-gold"
                     }`}
                   />
                   <span
-                    className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#080b16]/90 px-1.5 py-0.5 text-[8px] font-semibold text-white/80 backdrop-blur transition-opacity ${
+                    className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-shade/90 px-1.5 py-0.5 text-[8px] font-semibold text-white/80 backdrop-blur transition-opacity ${
                       labelsOn ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                     }`}
                   >
@@ -681,11 +681,11 @@ export default function ImpossibleRoom() {
             })}
 
             {exitOpen && (
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(0deg,rgba(255,214,138,0.14),transparent)]" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 gold-rim" />
             )}
 
             {notice && (
-              <div onClick={(e) => e.stopPropagation()} className="absolute inset-x-2 bottom-2 z-30 hidden items-start gap-2 rounded-lg border border-gold/25 bg-[#0c0d18]/95 px-3 py-2.5 text-[10px] leading-relaxed text-mist-200 shadow-xl backdrop-blur-md sm:inset-x-auto sm:left-3 sm:max-w-md md:flex">
+              <div onClick={(e) => e.stopPropagation()} className="absolute inset-x-2 bottom-2 z-30 hidden items-start gap-2 rounded-lg border border-gold/25 bg-shade/95 px-3 py-2.5 text-[10px] leading-relaxed text-mist-200 shadow-xl backdrop-blur-md sm:inset-x-auto sm:left-3 sm:max-w-md md:flex">
                 <Sparkles size={13} className="mt-0.5 shrink-0 text-gold" />
                 <span>{notice}</span>
                 <button onClick={(e) => { e.stopPropagation(); setNotice(null); }} className="ml-1 shrink-0 text-mist-600 hover:text-white" aria-label="Dismiss message">
@@ -695,7 +695,7 @@ export default function ImpossibleRoom() {
             )}
 
             {inspector && (
-              <div className="absolute bottom-2 right-2 top-2 z-30 hidden w-72 overflow-y-auto rounded-xl border border-white/12 bg-[#080b16]/92 p-4 shadow-2xl backdrop-blur-xl md:block" onClick={(e) => e.stopPropagation()}>
+              <div className="absolute bottom-2 right-2 top-2 z-30 hidden w-72 overflow-y-auto rounded-xl border border-white/12 bg-shade/90 p-4 shadow-2xl backdrop-blur-xl md:block" onClick={(e) => e.stopPropagation()}>
                 {inspector}
               </div>
             )}
@@ -707,8 +707,7 @@ export default function ImpossibleRoom() {
               <div className="flex h-full min-h-full flex-col">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="eyebrow">Field journal · Chapter {ROMAN[chapter]}</p>
-                    <h2 className="mt-1 font-display text-[15px] font-bold leading-snug text-white">{room.objective}</h2>
+                                        <h2 className="mt-1 font-display text-[15px] font-bold leading-snug text-white">{room.objective}</h2>
                   </div>
                   <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-gold/20 bg-gold/[0.06] font-display text-base font-extrabold text-gold">{ROMAN[chapter]}</span>
                 </div>
@@ -726,17 +725,17 @@ export default function ImpossibleRoom() {
 
                 <div className="mt-3 grid grid-cols-3 gap-2">
                   <div className="rounded-lg border border-white/7 bg-white/[0.025] px-2.5 py-2">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.1em] text-mist-600">Carrying</p>
+                    <p className="text-[8px] font-bold text-mist-600">Carrying</p>
                     <p className="mt-0.5 truncate text-[10px] font-semibold text-mist-300">{inventory.length ? inventory.map((i) => ITEMS[i].name).join(", ") : "Nothing yet"}</p>
                   </div>
                   <div className="rounded-lg border border-white/7 bg-white/[0.025] px-2.5 py-2">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.1em] text-mist-600">Explored</p>
+                    <p className="text-[8px] font-bold text-mist-600">Explored</p>
                     <p className="mt-0.5 text-[10px] font-semibold text-mist-300">
                       {room.hotspots.filter((h) => flags[`taken:${h.id}`] || (h.puzzle && flags[room.puzzles[h.puzzle]?.successFlag])).length} / {room.hotspots.length} points
                     </p>
                   </div>
                   <div className="rounded-lg border border-white/7 bg-white/[0.025] px-2.5 py-2">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.1em] text-mist-600">Hints</p>
+                    <p className="text-[8px] font-bold text-mist-600">Hints</p>
                     <p className="mt-0.5 text-[10px] font-semibold text-mist-300">{hintCount} / {room.hints.length} used</p>
                   </div>
                 </div>
@@ -757,19 +756,19 @@ export default function ImpossibleRoom() {
 
       {/* Inventory */}
       {phase === "playing" && (
-      <div className="relative z-30 shrink-0 border-t border-white/8 bg-[#070a15]/95 pb-[max(0.4rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
+      <div className="relative z-30 shrink-0 border-t border-white/8 bg-shade/95 pb-[max(0.4rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
         {selectedItem && (
           <div className="flex items-center justify-between gap-3 border-b border-violet-400/15 bg-violet-500/[0.07] px-3 py-1.5">
             <p className="flex min-w-0 items-center gap-1.5 text-[10px] text-violet-100">
               <ItemGlyph item={selectedItem} size={12} />
               <span className="font-bold">{ITEMS[selectedItem].name}</span>
-              <span className="truncate text-violet-200/50">— tap an object in the room to use it</span>
+              <span className="truncate text-violet-200/50">. Tap an object in the room to use it</span>
             </p>
             <button onClick={() => setSelectedItem(null)} className="shrink-0 text-[9px] font-bold text-violet-200/70 hover:text-white">Cancel</button>
           </div>
         )}
         <div className="mx-auto flex max-w-6xl items-center gap-2 px-2.5 py-2">
-          <div className="flex shrink-0 items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-mist-600">
+          <div className="flex shrink-0 items-center gap-1.5 text-[9px] font-bold text-mist-600">
             <Backpack size={13} /> <span className="hidden sm:inline">Inventory</span>
           </div>
           <div className="flex flex-1 items-center gap-1.5 overflow-x-auto hide-scrollbar">
@@ -812,10 +811,10 @@ export default function ImpossibleRoom() {
 
       {/* Intro overlay */}
       {phase === "intro" && (
-        <div className="fixed inset-0 z-[60] overflow-y-auto bg-[#04060d]/94 backdrop-blur-md">
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-shade/94 backdrop-blur-md">
           <div className="pointer-events-none fixed inset-0 opacity-25">
             <RoomScene roomId={room.id} flags={{}} className="h-full w-full" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,transparent_10%,#04060d_75%)]" />
+            <div className="absolute inset-0 vignette-deep" />
           </div>
           <div className="relative mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-4 py-5 sm:px-6 sm:py-8">
             <div className="flex items-center justify-between">
@@ -828,8 +827,8 @@ export default function ImpossibleRoom() {
             <div className="my-auto py-8">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="chip border-violet-400/25 bg-violet-500/10 text-violet-200">Chapter {ROMAN[chapter]} / III</span>
-                {mode === "daily" && <span className="chip border-gold/30 bg-gold/10 text-gold"><Target size={10} /> Daily · under {formatDuration(daily.target)}</span>}
-                {mode === "challenge" && challenge && <span className="chip border-violet-400/30 bg-violet-500/10 text-violet-200">Challenge from {challenge.from} · beat {formatDuration(challenge.target)}</span>}
+                {mode === "daily" && <span className="chip border-gold/30 bg-gold/10 text-gold"><Target size={10} /> Daily, under {formatDuration(daily.target)}</span>}
+                {mode === "challenge" && challenge && <span className="chip border-violet-400/30 bg-violet-500/10 text-violet-200">Challenge from {challenge.from}, beat {formatDuration(challenge.target)}</span>}
                 {mode === "solo" && state.room.completedLevels.includes(chapter) && <span className="chip border-emerald-400/25 bg-emerald-400/10 text-emerald-300"><Check size={10} /> Cleared</span>}
               </div>
 
@@ -840,7 +839,7 @@ export default function ImpossibleRoom() {
               <p className="mt-5 max-w-lg text-[13px] leading-relaxed text-mist-400">{room.intro}</p>
 
               <div className="mt-6 rounded-xl border border-gold/20 bg-gold/[0.04] px-4 py-3.5">
-                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-gold/70">Objective</p>
+                <p className="text-[9px] font-bold text-gold/70">Objective</p>
                 <p className="mt-1 text-[12px] font-semibold text-mist-100">{room.objective}</p>
               </div>
 
@@ -857,7 +856,7 @@ export default function ImpossibleRoom() {
 
               {mode === "solo" && !runInProgress && (
                 <div className="mt-6">
-                  <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.16em] text-mist-600">Start from</p>
+                  <p className="mb-2 text-[9px] font-bold text-mist-600">Start from</p>
                   <div className="grid grid-cols-3 gap-2">
                     {[1, 2, 3].map((n) => {
                       const r = getRoom(n);
@@ -871,7 +870,7 @@ export default function ImpossibleRoom() {
                             chapter === n ? "border-violet-400/40 bg-violet-500/[0.1]" : "border-white/8 bg-white/[0.02] hover:border-white/20"
                           } disabled:cursor-not-allowed disabled:opacity-35`}
                         >
-                          <span className={`text-[8px] font-bold uppercase tracking-[0.14em] ${chapter === n ? "text-violet-300" : "text-mist-600"}`}>Chapter {ROMAN[n]}</span>
+                          <span className={`text-[8px] font-bold ${chapter === n ? "text-violet-300" : "text-mist-600"}`}>Chapter {ROMAN[n]}</span>
                           <span className="mt-1 block min-h-[30px] text-[11px] font-bold leading-snug text-mist-200 line-clamp-2">{r.name}</span>
                           <span className="mt-0.5 block text-[8px] text-mist-600">{locked ? "Locked" : state.room.completedLevels.includes(n) ? `Best ${formatDuration(state.room.bestTimes[n] ?? 0)}` : "Unplayed"}</span>
                         </button>
@@ -908,14 +907,14 @@ export default function ImpossibleRoom() {
 
       {/* Results overlay */}
       {(phase === "complete" || phase === "escaped") && result && (
-        <div className="fixed inset-0 z-[60] overflow-y-auto bg-[#04060d]/94 backdrop-blur-md">
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-shade/94 backdrop-blur-md">
           <div className="relative mx-auto flex min-h-dvh w-full max-w-lg flex-col justify-center px-4 py-8">
             <div className="panel panel-glow fade-up relative overflow-hidden p-6 text-center sm:p-8">
               <div className="pointer-events-none absolute -top-24 left-1/2 size-64 -translate-x-1/2 rounded-full bg-gold/10 blur-3xl" />
               <div className={`relative mx-auto grid size-16 place-items-center rounded-full border ${phase === "escaped" ? "border-gold/40 bg-gold/10 text-gold" : "border-violet-400/30 bg-violet-500/10 text-violet-200"}`}>
                 {phase === "escaped" ? <Trophy size={30} /> : <Check size={30} />}
               </div>
-              <p className="mt-4 text-[9px] font-extrabold uppercase tracking-[0.22em] text-gold/80">
+              <p className="mt-4 text-[9px] font-extrabold text-gold/80">
                 {phase === "escaped" ? "The Impossible Room" : `Chapter ${ROMAN[chapter]}`}
               </p>
               <h2 className="mt-1.5 font-display text-3xl font-extrabold tracking-[-0.03em] text-white">
@@ -929,17 +928,17 @@ export default function ImpossibleRoom() {
 
               <div className="mt-6 grid grid-cols-3 gap-2">
                 <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-3">
-                  <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-mist-600">Chapter time</p>
+                  <p className="text-[8px] font-bold text-mist-600">Chapter time</p>
                   <p className="mt-1 font-display text-lg font-extrabold tabular-nums text-white">{formatDuration(finishedTime ?? 0)}</p>
                 </div>
                 <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-3">
-                  <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-mist-600">Escape time</p>
+                  <p className="text-[8px] font-bold text-mist-600">Escape time</p>
                   <p className={`mt-1 font-display text-lg font-extrabold tabular-nums ${phase === "escaped" ? "text-gold" : "text-mist-500"}`}>
                     {phase === "escaped" ? (totalEscapeMs ? formatDuration(totalEscapeMs) : "—") : "—"}
                   </p>
                 </div>
                 <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-3">
-                  <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-mist-600">Hints</p>
+                  <p className="text-[8px] font-bold text-mist-600">Hints</p>
                   <p className="mt-1 font-display text-lg font-extrabold tabular-nums text-white">{totalHints}</p>
                 </div>
               </div>
@@ -952,9 +951,9 @@ export default function ImpossibleRoom() {
                   </p>
                   <p className="mt-1 text-[10px] leading-relaxed text-mist-500">
                     {mode === "daily"
-                      ? `Target: under ${formatDuration(daily.target)} · Your time ${formatDuration(finishedTime ?? 0)}${dailyPassed ? ` · +${daily.reward} coins` : ""}`
+                      ? `Target: under ${formatDuration(daily.target)}, Your time ${formatDuration(finishedTime ?? 0)}${dailyPassed ? `, +${daily.reward} coins` : ""}`
                       : challenge
-                        ? `${challenge.from}'s time to beat: ${formatDuration(challenge.target)} · You: ${formatDuration(finishedTime ?? 0)}`
+                        ? `${challenge.from}'s time to beat: ${formatDuration(challenge.target)}, You: ${formatDuration(finishedTime ?? 0)}`
                         : "Challenge data missing."}
                   </p>
                 </div>
@@ -1017,13 +1016,13 @@ export default function ImpossibleRoom() {
                 )}
               </div>
             </div>
-            <p className="mt-4 text-center text-[9px] uppercase tracking-[0.16em] text-mist-600">Chapter progress saved · Keep exploring</p>
+            <p className="mt-4 text-center text-[9px] text-mist-600">Chapter progress saved, Keep exploring</p>
           </div>
         </div>
       )}
 
       {/* Hints */}
-      <Modal open={showHints} onClose={() => setShowHints(false)} title={`Hints · Chapter ${ROMAN[chapter]}`}>
+      <Modal open={showHints} onClose={() => setShowHints(false)} title={`Hints, Chapter ${ROMAN[chapter]}`}>
         <p className="text-[12px] leading-relaxed text-mist-400">
           Hints are always available. The trophy room remembers how many you needed.
         </p>
@@ -1050,9 +1049,9 @@ export default function ImpossibleRoom() {
       <Modal open={paused} onClose={() => setPaused(false)} title="Paused">
         <p className="text-[12px] leading-relaxed text-mist-400">The room can wait. Your timer has stopped.</p>
         <div className="mt-4 rounded-xl border border-white/8 bg-white/[0.025] p-3.5">
-          <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-mist-600">Objective</p>
+          <p className="text-[9px] font-bold text-mist-600">Objective</p>
           <p className="mt-1 text-[12px] font-semibold text-mist-200">{room.objective}</p>
-          <p className="mt-2 text-[10px] text-mist-600">{inventory.length} items · {hintCount} hints · Chapter {ROMAN[chapter]} of III</p>
+          <p className="mt-2 text-[10px] text-mist-600">{inventory.length} items, {hintCount} hints, Chapter {ROMAN[chapter]} of III</p>
         </div>
         <div className="mt-4 space-y-2">
           <button onClick={() => setPaused(false)} className="btn btn-primary w-full py-3 text-xs">

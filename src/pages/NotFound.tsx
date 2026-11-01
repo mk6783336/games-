@@ -7,7 +7,7 @@ export default function NotFound() {
       <span className="grid size-16 place-items-center rounded-2xl border border-violet-400/25 bg-violet-500/10 text-violet-300">
         <DoorOpen size={28} />
       </span>
-      <p className="eyebrow mt-5">404 · Wrong room</p>
+      <p className="label mt-5">404, Wrong room</p>
       <h1 className="mt-2 font-display text-4xl font-extrabold tracking-[-0.04em] text-white sm:text-5xl">This door doesn't open.</h1>
       <p className="mt-3 max-w-sm text-sm leading-relaxed text-mist-500">
         The page you were looking for isn't here. The games, however, are exactly where you left them.

@@ -106,10 +106,34 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: "regular",
     name: "Regular",
-    description: "Record 10 runs across both games.",
+    description: "Record 10 runs across the games.",
     tier: "silver",
     icon: "gamepad",
     test: (s) => s.history.length >= 10,
+  },
+  {
+    id: "first-road",
+    name: "Gravel Beginner",
+    description: "Clear your first road in Cycle.",
+    tier: "bronze",
+    icon: "feather",
+    test: (s) => s.cycle.levelsCleared.includes(1),
+  },
+  {
+    id: "all-roads",
+    name: "All Five Roads",
+    description: "Carry the bike from Fern Hollow to Stormfront.",
+    tier: "gold",
+    icon: "trophy",
+    test: (s) => [1, 2, 3, 4, 5].every((n) => s.cycle.levelsCleared.includes(n)),
+  },
+  {
+    id: "eye-of-the-storm",
+    name: "Eye of the Storm",
+    description: "Clear Stormfront in under 2:30.",
+    tier: "silver",
+    icon: "zap",
+    test: (s) => s.cycle.bestMs[5] != null && s.cycle.bestMs[5] <= 150_000,
   },
 ];
 

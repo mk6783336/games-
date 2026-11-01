@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { ArrowUpRight, Coins, Instagram, LogIn, MessageCircle, Trophy, Youtube } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Coins, Instagram, LogIn, MessageCircle, Trophy, Youtube } from "lucide-react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { usePlayer } from "../state/player";
 import { achievementById } from "../lib/achievements";
@@ -15,26 +15,45 @@ const NAV = [
 
 export function Header() {
   const { state, identity } = usePlayer();
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setHidden(y > 140 && y > lastY.current);
+      lastY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#05070f]/70 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-40 border-b border-rule bg-paper transition-transform duration-300 motion-reduce:transition-none ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <div className="container-page flex h-16 items-center justify-between gap-3">
         <Logo size={32} subtitle={false} />
-        <nav className="hidden items-center gap-1 rounded-full border border-white/8 bg-white/[0.03] p-1 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
           {NAV.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `relative rounded-full px-4 py-2 text-[12px] font-semibold transition ${
-                  isActive ? "bg-white/[0.07] text-white" : "text-mist-500 hover:text-mist-100"
+                `relative rounded-card px-3 py-2 text-[13px] font-semibold transition-colors ${
+                  isActive ? "text-accent" : "text-mist-500 hover:text-ink"
                 }`
               }
             >
               {({ isActive }) => (
                 <>
                   {item.label}
-                  {isActive && <span className="absolute inset-x-0 -bottom-[5px] mx-auto h-0.5 w-4 rounded-full bg-violet-400" />}
+                  {isActive && (
+                    <span className="absolute inset-x-3 -bottom-[7px] h-0.5 bg-accent" aria-hidden="true" />
+                  )}
                 </>
               )}
             </NavLink>
@@ -42,22 +61,18 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-2">
           {identity?.kind === "guest" && (
-            <Link
-              to="/account"
-              title="Sign in or create an account"
-              className="flex items-center gap-1.5 rounded-full border border-violet-400/25 bg-violet-500/10 px-2.5 py-1.5 text-[11px] font-bold text-violet-100 transition hover:border-violet-400/45 hover:bg-violet-500/20"
-            >
-              <LogIn size={13} />
+            <Link to="/account" title="Sign in or create an account" className="btn btn-sm btn-ghost">
+              <LogIn size={14} />
               <span className="hidden lg:inline">Sign in</span>
             </Link>
           )}
           <Link
             to="/profile"
-            className="flex items-center gap-1.5 rounded-full border border-gold/20 bg-gold/[0.07] px-2.5 py-1.5 text-xs font-bold text-gold transition hover:border-gold/40 hover:bg-gold/[0.12]"
+            className="chip border-gold/40 text-gold transition-colors hover:border-gold"
             aria-label={`${state.coins.toLocaleString()} coins`}
           >
             <Coins size={14} />
-            <span className="tabular-nums">{state.coins.toLocaleString()}</span>
+            <span className="num">{state.coins.toLocaleString()}</span>
           </Link>
           <Link to="/profile" aria-label="Open profile" className="rounded-full transition hover:opacity-90">
             <Avatar name={state.profile.name} hue={state.profile.avatarHue} size={32} />
@@ -70,12 +85,14 @@ export function Header() {
 
 export function Footer() {
   return (
-    <footer className="relative mt-20 border-t border-white/[0.06] bg-[#04060d]/70 pb-24 pt-12 md:pb-10">
+    <footer className="relative mt-20 border-t border-rule bg-paper-2 pb-24 pt-14 md:pb-10">
       <div className="container-page">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
           <div>
-            <Logo size={34} subtitle />
-            <p className="mt-4 max-w-xs text-[13px] leading-relaxed text-mist-500">
+            <p className="display text-[clamp(1.6rem,3vw,2.1rem)] leading-[1.05] text-ink">
+              Play free. Chase the board.
+            </p>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-mist-500">
               Two exceptional games. One global arena. Play free, chase the board, and bring your friends into the run.
             </p>
             <div className="mt-5 flex gap-2">
@@ -88,7 +105,7 @@ export function Footer() {
                   key={label}
                   to={to}
                   aria-label={label}
-                  className="grid size-9 place-items-center rounded-xl border border-white/8 bg-white/[0.03] text-mist-500 transition hover:border-violet-400/30 hover:text-white"
+                  className="grid size-9 place-items-center rounded-card border border-rule bg-paper-3 text-mist-500 transition-colors hover:border-accent-2 hover:text-ink"
                 >
                   <Icon size={16} />
                 </Link>
@@ -101,6 +118,7 @@ export function Footer() {
               { label: "All games", to: "/games" },
               { label: "The Impossible Room", to: "/games/impossible-room" },
               { label: "One Chance", to: "/games/one-chance" },
+              { label: "Cycle", to: "/games/cycle" },
               { label: "Daily challenges", to: "/challenges" },
             ]}
           />
@@ -124,12 +142,13 @@ export function Footer() {
           />
         </div>
         <hr className="rule mt-10" />
-        <div className="mt-5 flex flex-col items-start justify-between gap-3 text-[11px] text-mist-600 sm:flex-row sm:items-center">
-          <p>© 2026 PLAYFLIX. Play · Challenge · Compete.</p>
-          <p className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1"><span className="size-1.5 rounded-full bg-emerald-400" /> All systems online</span>
-            <span className="text-white/15">/</span>
-            Made for players everywhere
+        <div className="mt-5 flex flex-col items-start justify-between gap-3 text-xs text-mist-600 sm:flex-row sm:items-center">
+          <p>© 2026 PLAYFLIX. Play, challenge, compete.</p>
+          <p className="flex items-center gap-4">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-1.5 rounded-full bg-success" aria-hidden="true" /> All systems online
+            </span>
+            <span>Made for players everywhere</span>
           </p>
         </div>
       </div>
@@ -140,13 +159,15 @@ export function Footer() {
 function FooterColumn({ title, links }: { title: string; links: { label: string; to: string }[] }) {
   return (
     <div>
-      <h3 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-mist-600">{title}</h3>
+      <p className="label">{title}</p>
       <ul className="mt-4 space-y-2.5">
         {links.map((l) => (
           <li key={l.label}>
-            <Link to={l.to} className="group inline-flex items-center gap-1 text-[13px] text-mist-500 transition hover:text-white">
+            <Link
+              to={l.to}
+              className="text-sm text-mist-500 transition-colors hover:text-ink hover:underline"
+            >
               {l.label}
-              <ArrowUpRight size={11} className="opacity-0 transition group-hover:opacity-60" />
             </Link>
           </li>
         ))}
@@ -166,15 +187,15 @@ export function AchievementToasts() {
           <button
             key={toast.uid}
             onClick={() => dismissToast(toast.uid)}
-            className="pointer-events-auto fade-up flex w-full max-w-sm items-center gap-3 rounded-2xl border border-gold/30 bg-[#141021]/95 p-3.5 text-left shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl"
+            className="pointer-events-auto fade-up flex w-full max-w-sm items-center gap-3 rounded-card border-2 border-gold/40 bg-paper-3 p-3.5 text-left shadow-card"
           >
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-gold/30 bg-gold/10 text-gold">
+            <span className="grid size-10 shrink-0 place-items-center text-gold">
               <Trophy size={18} />
             </span>
             <span className="min-w-0">
-              <span className="block text-[9px] font-extrabold uppercase tracking-[0.2em] text-gold/80">Achievement unlocked</span>
-              <span className="block truncate text-sm font-bold text-white">{def.name}</span>
-              <span className="block text-[11px] text-mist-500">+50 coins</span>
+              <span className="label block text-gold">Achievement unlocked</span>
+              <span className="block truncate text-sm font-bold text-ink">{def.name}</span>
+              <span className="block text-xs text-mist-500">+50 coins</span>
             </span>
           </button>
         );
@@ -194,7 +215,7 @@ export function SiteLayout() {
     <div className="app-shell flex min-h-dvh flex-col">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-violet-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-card focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-accent-ink"
       >
         Skip to content
       </a>

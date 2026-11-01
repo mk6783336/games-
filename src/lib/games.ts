@@ -8,7 +8,7 @@ export interface GameMeta {
   tagline: string;
   description: string;
   genre: string;
-  art: "room" | "runner";
+  art: "room" | "runner" | "cycle";
   route: string;
   scoreKind: "time" | "points";
   scoreLabel: string;
@@ -33,7 +33,7 @@ export const GAMES: Record<GameId, GameMeta> = {
     route: "/play/impossible-room",
     scoreKind: "time",
     scoreLabel: "Fastest escape",
-    accent: "#f5c45a",
+    accent: "var(--color-accent)",
     tags: ["Single player", "3 chapters", "Hints"],
     features: [
       "Interactive rooms with layered clues",
@@ -65,7 +65,7 @@ export const GAMES: Record<GameId, GameMeta> = {
     route: "/play/one-chance",
     scoreKind: "points",
     scoreLabel: "Best score",
-    accent: "#6ea8ff",
+    accent: "var(--color-electric)",
     tags: ["One life", "Endless", "Daily seed"],
     features: [
       "One-life runs with progressive speed",
@@ -79,9 +79,43 @@ export const GAMES: Record<GameId, GameMeta> = {
       { keys: ["P", "Esc"], action: "Pause the run" },
     ],
   },
+  cycle: {
+    id: "cycle",
+    index: "03",
+    title: "Cycle",
+    short: "Five roads from forest to storm.",
+    tagline: "The hill always wins. Pedal anyway.",
+    description:
+      "A five-stage cycling climb. Read the terrain, hold your line through fern hollow, alpine rock, aurora night, ember canyon and the stormfront, and bring the bike home. One fall ends the run.",
+    genre: "Cycling climb",
+    art: "cycle",
+    route: "/play/cycle",
+    scoreKind: "points",
+    scoreLabel: "Best score",
+    accent: "var(--color-accent-2)",
+    tags: ["5 levels", "Single player", "One run"],
+    features: [
+      "Five hand-built roads, forest to storm",
+      "Pedal, hop and grind for air and speed",
+      "Every cleared road saves and opens the next",
+      "Instant retry from any road you have cleared",
+    ],
+    controls: [
+      { keys: ["Space", "↑", "W"], action: "Hop over gaps and rocks" },
+      { keys: ["↓", "S"], action: "Lean down to keep speed" },
+      { keys: ["P", "Esc"], action: "Pause the ride" },
+    ],
+    chapters: [
+      { number: 1, name: "Fern Hollow", subtitle: "Soft light, low branches, a first taste of gravel." },
+      { number: 2, name: "Ridgeclimb", subtitle: "The switchbacks start here. So does the wind." },
+      { number: 3, name: "Aurora Pass", subtitle: "Ride the night sky without losing the trail." },
+      { number: 4, name: "Ember Canyon", subtitle: "Hot rock, long drops, no shade anywhere." },
+      { number: 5, name: "Stormfront", subtitle: "The road ends in weather. Bring the bike through." },
+    ],
+  },
 };
 
-export const GAME_LIST: GameMeta[] = [GAMES["impossible-room"], GAMES["one-chance"]];
+export const GAME_LIST: GameMeta[] = [GAMES["impossible-room"], GAMES["one-chance"], GAMES.cycle];
 
 export const COUNTRIES: { code: string; name: string; flag: string }[] = [
   { code: "PK", name: "Pakistan", flag: "🇵🇰" },
@@ -105,7 +139,7 @@ export function countryInfo(code: string) {
 }
 
 export function formatScore(game: GameId, value: number | null): string {
-  if (value == null) return "—";
+  if (value == null) return game === "impossible-room" ? "0:00" : "0";
   if (game === "impossible-room") return formatDuration(value);
   return value.toLocaleString("en-US");
 }

@@ -45,18 +45,17 @@ export default function Leaderboard() {
     <div className="container-page pt-10 sm:pt-14">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-2xl">
-          <p className="eyebrow"><Trophy size={13} className="text-gold" /> Leaderboards</p>
-          <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.6rem)] font-extrabold leading-[0.98] tracking-[-0.05em] text-white">
+                    <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.6rem)] font-extrabold leading-[0.98] tracking-[-0.05em] text-white">
             Somebody has<br />to be <span className="violet-text">first.</span>
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-mist-500">
             Your own runs are saved on this device. Pick a board, find your name, then do something about the gap.
           </p>
-          <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.14em] text-mist-600">Preview board · rival entries are sample data</p>
+          <p className="mt-3 text-[9px] font-bold text-mist-600">Preview board, rival entries are sample data</p>
         </div>
         <div className="panel flex items-center gap-4 px-5 py-4">
           <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-mist-600">Your standing</p>
+            <p className="text-[9px] font-bold text-mist-600">Your standing</p>
             <p className="mt-1 font-display text-2xl font-extrabold tabular-nums text-white">
               {yourRank ? `#${yourRank}` : "—"}
               <span className="ml-1 text-sm font-semibold text-mist-600">/ {rows.length}</span>
@@ -128,7 +127,7 @@ export default function Leaderboard() {
                 <select
                   value={state.profile.country}
                   onChange={(e) => updateProfile({ country: e.target.value })}
-                  className="rounded-lg border border-white/10 bg-[#0a0e1e] px-2 py-1 text-[10px] text-mist-200 outline-none focus:border-violet-400/50"
+                  className="rounded-lg border border-white/10 bg-paper-2 px-2 py-1 text-[10px] text-mist-200 outline-none focus:border-violet-400/50"
                   aria-label="Change your country"
                 >
                   {COUNTRIES.map((c) => (
@@ -148,7 +147,7 @@ export default function Leaderboard() {
           {!state.settings.publicLeaderboard && (
             <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-orange-400/20 bg-orange-400/[0.05] px-3.5 py-2.5">
               <span className="text-[10px] text-orange-200/80">Your profile is private, so your score is hidden from these boards.</span>
-              <Link to="/profile" className="text-[10px] font-bold text-orange-200 hover:text-white">Change in settings →</Link>
+              <Link to="/profile" className="text-[10px] font-bold text-orange-200 hover:text-white">Change in settings</Link>
             </div>
           )}
 
@@ -163,21 +162,21 @@ export default function Leaderboard() {
                     key={`${row.name}-${rank}`}
                     className={`relative overflow-hidden rounded-2xl border px-2 pb-4 pt-5 text-center ${
                       first
-                        ? "border-gold/30 bg-[linear-gradient(160deg,rgba(245,196,90,0.12),rgba(13,18,38,0.85))] sm:pt-6"
-                        : "border-white/8 bg-[linear-gradient(160deg,rgba(24,30,58,0.8),rgba(8,12,25,0.85))]"
+                        ? "border-gold/30 gold-panel sm:pt-6"
+                        : "border-white/8 bg-shade/85"
                     }`}
                   >
-                    {first && <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(ellipse_at_top,rgba(245,196,90,0.24),transparent_70%)]" />}
+                    {first && <div className="pointer-events-none absolute inset-x-0 top-0 h-20 gold-toplight" />}
                     <div className="relative mx-auto w-fit">
                       {first && <Crown size={16} className="mx-auto mb-1 text-gold" fill="rgba(245,196,90,0.2)" />}
                       <Avatar name={row.name} hue={row.avatarHue} size={first ? 50 : 42} />
                       <span className={`absolute -bottom-1 -right-1 grid size-5 place-items-center rounded-full border text-[9px] font-extrabold ${
-                        first ? "border-gold/50 bg-gold text-[#231803]" : "border-white/15 bg-[#141a30] text-mist-300"
+                        first ? "border-gold/50 bg-gold text-accent-ink" : "border-white/15 bg-shade text-mist-300"
                       }`}>
                         {rank}
                       </span>
                     </div>
-                    <p className="relative mt-2.5 truncate text-[11px] font-bold text-white sm:text-xs">{row.name}{row.isYou ? " · you" : ""}</p>
+                    <p className="relative mt-2.5 truncate text-[11px] font-bold text-white sm:text-xs">{row.name}{row.isYou ? ", you" : ""}</p>
                     <p className="text-[9px] text-mist-600">{row.country}</p>
                     <p className={`relative mt-2 font-display text-sm font-extrabold tabular-nums sm:text-base ${first ? "text-gold" : "text-mist-200"}`}>
                       {formatScore(game, row.score)}
@@ -190,8 +189,8 @@ export default function Leaderboard() {
 
           <div className="panel mt-4 p-4 sm:p-5">
             <div className="mb-3 flex items-center justify-between gap-2 px-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-mist-600">
-                {gameMeta.scoreLabel} · {scope === "global" ? "World" : scope === "country" ? countryInfo(state.profile.country).name : "Friends"}
+              <p className="text-[10px] font-bold text-mist-600">
+                {gameMeta.scoreLabel}, {scope === "global" ? "World" : scope === "country" ? countryInfo(state.profile.country).name : "Friends"}
               </p>
               <span className="text-[9px] text-mist-600">{rows.length} players</span>
             </div>
@@ -208,7 +207,7 @@ export default function Leaderboard() {
               <div>
                 <p className="text-[11px] font-bold text-mist-200">{state.profile.name}</p>
                 <p className="text-[9px] text-mist-600">
-                  {stat.best != null ? `${gameMeta.scoreLabel} · ${formatScore(game, stat.best)}` : "No score on this board yet"}
+                  {stat.best != null ? `${gameMeta.scoreLabel}, ${formatScore(game, stat.best)}` : "No score on this board yet"}
                 </p>
               </div>
             </div>
@@ -221,7 +220,7 @@ export default function Leaderboard() {
         {/* Side */}
         <aside className="order-1 space-y-4 lg:order-2">
           <div className="panel p-5">
-            <p className="eyebrow"><Trophy size={12} className="text-gold" /> Board rules</p>
+            <p className="label"><Trophy size={12} className="text-gold" /> Board rules</p>
             <ul className="mt-3 space-y-2.5 text-[11px] leading-relaxed text-mist-500">
               <li className="flex gap-2"><span className="text-violet-400">01</span> One Chance ranks by highest score. The Impossible Room ranks by fastest full escape.</li>
               <li className="flex gap-2"><span className="text-violet-400">02</span> Daily runs use the same seed for everyone in the world.</li>
@@ -230,7 +229,7 @@ export default function Leaderboard() {
           </div>
           <div className="panel relative overflow-hidden p-5">
             <div className="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full bg-violet-600/15 blur-2xl" />
-            <p className="eyebrow">Season 01</p>
+            <p className="label">Season 01</p>
             <p className="mt-2 font-display text-lg font-bold leading-snug text-white">The top three keep their names in lights until the reset.</p>
             <Link to="/challenges" className="btn btn-ghost mt-4 w-full py-2.5 text-[11px]">
               Take the daily challenge

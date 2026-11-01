@@ -167,7 +167,7 @@ export function PuzzleModal({
                 {Array.from({ length: puzzle.code?.length ?? 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className={`grid size-12 place-items-center rounded-xl border font-display text-xl font-bold tabular-nums transition ${
+                    className={`grid size-12 place-items-center rounded-xl border font-display text-xl font-bold tabular-nums transition-colors motion-reduce:transition-none ${
                       digits[i] ? "border-violet-400/40 bg-violet-500/10 text-white" : "border-white/10 bg-black/25 text-mist-600"
                     }`}
                   >
@@ -181,7 +181,7 @@ export function PuzzleModal({
                   <button
                     key={key}
                     onClick={() => pressDigit(key)}
-                    className={`grid h-12 place-items-center rounded-xl border text-sm font-bold transition active:scale-95 ${
+                    className={`grid h-12 place-items-center rounded-xl border text-sm font-bold transition-[color,border-color,transform] motion-reduce:transition-none active:scale-95 ${
                       key === "clear" || key === "back"
                         ? "border-white/8 bg-white/[0.03] text-mist-500 hover:text-white"
                         : "border-white/10 bg-white/[0.05] text-mist-100 hover:border-violet-400/40 hover:bg-white/[0.08]"
@@ -193,7 +193,7 @@ export function PuzzleModal({
                 ))}
               </div>
               <button onClick={submit} disabled={digits.length !== (puzzle.code?.length ?? 3)} className="btn btn-primary mx-auto mt-4 flex w-full max-w-[260px] py-3 text-xs">
-                <LockKeyhole size={14} /> Unlock
+                <LockKeyhole size={14} /> Open
               </button>
             </div>
           )}
@@ -208,15 +208,15 @@ export function PuzzleModal({
                     <button
                       key={index}
                       onClick={() => cycleSlot(index)}
-                      className="group relative grid size-[5.2rem] place-items-center rounded-full border border-white/12 bg-[radial-gradient(circle_at_35%_25%,rgba(93,73,44,0.55),rgba(10,13,24,0.9))] text-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_15px_30px_-18px_rgba(0,0,0,0.9)] transition hover:border-gold/50 sm:size-24"
+                      className="group relative grid size-[5.2rem] place-items-center rounded-full border border-white/12 gold-wash text-gold shadow-card transition-colors motion-reduce:transition-none hover:border-gold/50 focus-visible:outline-2 focus-visible:outline-accent sm:size-24"
                       aria-label={`Ring ${index + 1}: ${symbol.label}. Click to change.`}
                     >
                       <span className="absolute inset-2 rounded-full border border-dashed border-white/10" />
                       <Icon size={28} strokeWidth={1.6} />
-                      <span className="absolute -bottom-2.5 rounded-full border border-white/10 bg-[#0b0f1d] px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider text-mist-600">
+                      <span className="absolute -bottom-2.5 rounded-full border border-white/10 bg-shade px-2 py-0.5 text-[8px] font-bold text-mist-600">
                         Ring {index + 1}
                       </span>
-                      <span className="absolute inset-x-0 -top-1 flex justify-center text-[8px] text-mist-600 opacity-0 transition group-hover:opacity-100"><ArrowUp size={10} /></span>
+                      <span className="absolute inset-x-0 -top-1 flex justify-center text-[8px] text-mist-600 opacity-0 transition-opacity motion-reduce:transition-none group-hover:opacity-100"><ArrowUp size={10} /></span>
                     </button>
                   );
                 })}
@@ -235,23 +235,23 @@ export function PuzzleModal({
                   <div key={i} className="flex flex-col items-center gap-1.5">
                     <button
                       onClick={() => changeDial(i, 1)}
-                      className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-400 transition hover:border-violet-400/40 hover:text-white"
+                      className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-400 transition-colors motion-reduce:transition-none hover:border-violet-400/40 hover:text-white focus-visible:outline-2 focus-visible:outline-accent"
                       aria-label={`Increase ring ${i + 1}`}
                     >
                       <ChevronUp size={16} />
                     </button>
-                    <div className="relative grid size-[4.5rem] place-items-center overflow-hidden rounded-full border border-gold/25 bg-[radial-gradient(circle_at_40%_25%,rgba(89,69,38,0.6),rgba(8,11,20,0.95))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:size-20">
+                    <div className="relative grid size-[4.5rem] place-items-center overflow-hidden rounded-full border border-gold/25 gold-wash shadow-rim sm:size-20">
                       <span className="absolute inset-2 rounded-full border border-dashed border-white/8" />
                       <span className="font-display text-3xl font-extrabold text-gold tabular-nums">{digit}</span>
                     </div>
                     <button
                       onClick={() => changeDial(i, -1)}
-                      className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-400 transition hover:border-violet-400/40 hover:text-white"
+                      className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-400 transition-colors motion-reduce:transition-none hover:border-violet-400/40 hover:text-white focus-visible:outline-2 focus-visible:outline-accent"
                       aria-label={`Decrease ring ${i + 1}`}
                     >
                       <ChevronDown size={16} />
                     </button>
-                    <span className="text-[8px] font-bold uppercase tracking-wider text-mist-600">{["Hours", "Minutes", "Declination"][i]}</span>
+                    <span className="text-[8px] font-bold text-mist-600">{["Hours", "Minutes", "Declination"][i]}</span>
                   </div>
                 ))}
               </div>

@@ -541,12 +541,121 @@ export function RunnerCardArt({ className = "" }: { className?: string }) {
   );
 }
 
+/** Cycle key art: a lone rider climbing through layered biome ridges. */
+export function CycleCardArt({ className = "" }: { className?: string }) {
+  const raw = useId();
+  const id = raw.replace(/[^a-zA-Z0-9]/g, "");
+
+  return (
+    <svg viewBox="0 0 900 560" className={className} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id={`${id}-sky`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#0a0725" />
+          <stop offset="55%" stopColor="#131033" />
+          <stop offset="100%" stopColor="#05070f" />
+        </linearGradient>
+        <radialGradient id={`${id}-moon`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#f5c45a" />
+          <stop offset="60%" stopColor="#f5c45a" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#f5c45a" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={`${id}-aurora`} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
+          <stop offset="45%" stopColor="#8b5cf6" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#5b8cff" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${id}-ridge1`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#182242" />
+          <stop offset="100%" stopColor="#0b1024" />
+        </linearGradient>
+        <linearGradient id={`${id}-ridge2`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#101734" />
+          <stop offset="100%" stopColor="#070a1a" />
+        </linearGradient>
+        <filter id={`${id}-soft`} x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="18" />
+        </filter>
+      </defs>
+
+      <rect width="900" height="560" fill={`url(#${id}-sky)`} />
+      <circle cx="716" cy="120" r="74" fill={`url(#${id}-moon)`} opacity="0.85" />
+      <circle cx="716" cy="120" r="30" fill="#f5c45a" />
+
+      {/* aurora band */}
+      <path d="M-40 150 C 180 96, 360 190, 540 140 C 690 98, 800 150, 940 120 L940 196 C 780 224, 660 176, 520 210 C 350 250, 170 178, -40 226 Z" fill={`url(#${id}-aurora)`} opacity="0.75" />
+
+      {/* stars */}
+      <g fill="#cfd9ff">
+        {[[80, 70, 1.3], [196, 132, 1], [300, 60, 1.5], [420, 110, 1.1], [560, 70, 1.2], [640, 168, 1], [834, 84, 1.4], [120, 200, 0.9]].map(
+          ([x, y, r], i) => (
+            <circle key={i} cx={x} cy={y} r={r} opacity={0.35 + (i % 4) * 0.13} />
+          ),
+        )}
+      </g>
+
+      {/* far ridge (aurora pass) */}
+      <path
+        d="M0 330 L120 240 L210 300 L330 200 L430 290 L540 220 L660 300 L760 236 L900 320 V560 H0 Z"
+        fill={`url(#${id}-ridge1)`}
+        opacity="0.9"
+      />
+      <path
+        d="M330 200 L360 226 M540 220 L566 244 M760 236 L786 262"
+        stroke="#8ec9ff"
+        strokeWidth="3"
+        opacity="0.4"
+        fill="none"
+      />
+
+      {/* near ridge (forest slope) */}
+      <path
+        d="M0 420 L140 350 L260 410 L400 330 L540 408 L680 352 L810 414 L900 372 V560 H0 Z"
+        fill={`url(#${id}-ridge2)`}
+      />
+
+      {/* conifers */}
+      <g fill="#04060f">
+        {[[92, 402, 34], [150, 388, 26], [232, 404, 30], [640, 386, 32], [706, 400, 26], [778, 392, 34]].map(
+          ([x, y, h], i) => (
+            <path key={i} d={`M${x} ${y - h} L${x + h * 0.36} ${y} L${x - h * 0.36} ${y} Z`} />
+          ),
+        )}
+        <path d="M336 356 L366 326 L396 356 Z" />
+      </g>
+
+      {/* road */}
+      <path d="M0 560 C 220 500, 340 520, 470 470 C 600 420, 720 452, 900 410 V560 Z" fill="#04050d" />
+      <path d="M0 560 C 220 500, 340 520, 470 470 C 600 420, 720 452, 900 410" fill="none" stroke="#f5c45a" strokeWidth="2" opacity="0.35" strokeDasharray="14 18" />
+
+      {/* rider */}
+      <g transform="translate(430 436)">
+        <ellipse cx="30" cy="58" rx="52" ry="8" fill="#02030a" opacity="0.6" />
+        <g stroke="#c6cbe6" strokeWidth="2.4" fill="none">
+          <circle cx="-18" cy="34" r="17" />
+          <circle cx="42" cy="34" r="17" />
+          <path d="M-18 34 L10 6 L42 34 M10 6 L-2 34 M10 6 L34 14" strokeWidth="3" />
+        </g>
+        <g fill="#f4f5ff">
+          <circle cx="16" cy="-24" r="9" />
+          <path d="M12 -14 C 22 -12, 28 -4, 26 6 L 34 22 L 26 26 L 14 10 L 6 -2 Z" />
+          <path d="M6 -4 L -2 16 L 10 20 L 18 4 Z" />
+          <path d="M24 4 L 36 -4 L 42 4 L 30 12 Z" />
+        </g>
+        <path d="M8 -30 C 12 -36, 24 -36, 28 -28" stroke="#f5c45a" strokeWidth="4" fill="none" strokeLinecap="round" />
+        <circle cx="10" cy="6" r="3" fill="#f5c45a" />
+      </g>
+    </svg>
+  );
+}
+
 export function GameArt({
   art,
   className = "",
 }: {
-  art: "room" | "runner";
+  art: "room" | "runner" | "cycle";
   className?: string;
 }) {
-  return art === "room" ? <RoomCardArt className={className} /> : <RunnerCardArt className={className} />;
+  if (art === "room") return <RoomCardArt className={className} />;
+  if (art === "cycle") return <CycleCardArt className={className} />;
+  return <RunnerCardArt className={className} />;
 }

@@ -13,7 +13,7 @@ import { findNewAchievements } from "../lib/achievements";
 import { captureEvent, identifyPlayer, initAnalytics, setAnalyticsConsent } from "../lib/analytics";
 import { api, ApiError, type Identity, type MeResponse, type SignInInput, type SignUpInput } from "../lib/api";
 import { getDaily } from "../lib/daily";
-import { clearLegacyState, createInitialState, loadLegacyState } from "../lib/storage";
+import { clearLegacyState, createInitialState, hydrateState, loadLegacyState } from "../lib/storage";
 import type {
   GameId,
   HistoryEntry,
@@ -45,6 +45,12 @@ interface RecordRunInput {
   challengeId?: string | null;
 }
 
+interface RecordCycleRoadInput {
+  level: number;
+  timeMs: number;
+  totalTimeMs: number;
+}
+
 interface RecordRoomInput {
   stage: number;
   timeMs: number;
@@ -71,6 +77,7 @@ interface PlayerContextValue {
   updateSettings: (patch: Partial<Settings>) => void;
   recordRun: (input: RecordRunInput) => RunResult;
   recordRoomStage: (input: RecordRoomInput) => RunResult;
+  recordCycleRoad: (input: RecordCycleRoadInput) => RunResult;
   registerChallenge: (input: ChallengeInput) => void;
   resetProgress: () => void;
   signUp: (input: SignUpInput) => Promise<void>;
@@ -190,7 +197,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   );
 
   const adoptMe = useCallback((me: MeResponse) => {
-    let next = me.state ?? createInitialState();
+    let next = hydrateState(me.state ?? {});
     if (me.identity.kind === "account") {
       next = {
         ...next,
@@ -408,7 +415,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const daily = getDaily(game);
     const key = daily.key;
     const existing = draft.dailies[key];
-    const completed = game === "one-chance" ? score >= daily.target : score <= daily.target;
+    // The Impossible Room is timed, so lower is better. Every other game is scored.
+    const higherIsBetter = game !== "impossible-room";
+    const completed = higherIsBetter ? score >= daily.target : score <= daily.target;
     const alreadyRewarded = existing?.completed ?? false;
     const record = {
       date: daily.date,
@@ -416,7 +425,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       score:
         existing == null
           ? score
-          : game === "one-chance"
+          : higherIsBetter
             ? Math.max(existing.score, score)
             : Math.min(existing.score, score),
       completed: alreadyRewarded || completed,
@@ -447,6 +456,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       stat.lastPlayed = Date.now();
       stat.coinsEarned += baseCoins;
       if (newBest) stat.best = score;
+      if (game === "cycle") draft.cycle.totalRuns += 1;
 
       let dailyCoins = 0;
       if (mode === "daily") dailyCoins = applyDaily(draft, game, score);
@@ -454,7 +464,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       if (challengeId) {
         const challenge = draft.challenges.find((c) => c.id === challengeId);
         if (challenge) {
-          const beat = game === "one-chance" ? score > challenge.target : score < challenge.target;
+          const beat = game === "impossible-room" ? score < challenge.target : score > challenge.target;
           challenge.score = score;
           challenge.beat = beat;
         }
@@ -598,6 +608,43 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     [applyDaily, finalise, publish],
   );
 
+  const recordCycleRoad = useCallback(
+    ({ level, timeMs, totalTimeMs }: RecordCycleRoadInput): RunResult => {
+      if (!Number.isFinite(timeMs) || timeMs <= 0) return emptyResult();
+      const draft = structuredClone(stateRef.current);
+      const progress = draft.cycle;
+      const firstClear = !progress.levelsCleared.includes(level);
+      if (firstClear) {
+        progress.levelsCleared.push(level);
+        progress.levelsCleared.sort((a, b) => a - b);
+      }
+      progress.bestMs[level] =
+        progress.bestMs[level] == null ? timeMs : Math.min(progress.bestMs[level], timeMs);
+
+      const coins = 70 + level * 30;
+      const xp = 90 + level * 45;
+      draft.coins += coins;
+      draft.xp += xp;
+      draft.stats.cycle.coinsEarned += coins;
+      draft.stats.cycle.lastPlayed = Date.now();
+
+      const unlocked = finalise(draft);
+      publish(draft);
+
+      captureEvent("cycle_road_cleared", {
+        road: level,
+        split_ms: timeMs,
+        run_ms: totalTimeMs,
+        first_clear: firstClear,
+        coins_awarded: coins + unlocked.length * 50,
+        achievements_unlocked: unlocked.length,
+      });
+
+      return { coins: coins + unlocked.length * 50, xp, newAchievements: unlocked, newBest: firstClear };
+    },
+    [finalise, publish],
+  );
+
   const resetProgress = useCallback(() => {
     const current = stateRef.current;
     const fresh = createInitialState();
@@ -622,6 +669,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       updateSettings,
       recordRun,
       recordRoomStage,
+      recordCycleRoad,
       registerChallenge,
       resetProgress,
       signUp,
@@ -641,6 +689,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       updateSettings,
       recordRun,
       recordRoomStage,
+      recordCycleRoad,
       registerChallenge,
       resetProgress,
       signUp,
@@ -654,10 +703,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   if (bootStatus !== "ready") {
     return (
-      <div className="grid min-h-dvh place-items-center bg-[#05070f] px-5 py-10">
+      <div className="grid min-h-dvh place-items-center bg-shade px-5 py-10">
         <div className="panel w-full max-w-md p-6 text-center">
-          <p className="eyebrow justify-center">PLAYFLIX · Player service</p>
-          <h1 className="mt-3 font-display text-2xl font-extrabold tracking-[-0.03em] text-white">
+                    <h1 className="mt-3 font-display text-2xl font-extrabold tracking-[-0.03em] text-white">
             {bootStatus === "error" ? "The arena is out of reach." : "Connecting your profile."}
           </h1>
           {bootStatus === "error" ? (
@@ -665,7 +713,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
               <p className="mt-3 text-[12px] leading-relaxed text-mist-500">
                 {bootError ?? "The player service did not respond."}
               </p>
-              <button onClick={retryBoot} className="btn btn-primary mt-5 w-full py-3 text-xs">
+              <button onClick={retryBoot} className="btn btn-primary mt-5 w-full py-3 text-xs focus-visible:outline-2 focus-visible:outline-accent">
                 <RefreshCw size={13} /> Try again
               </button>
               <p className="mt-3 text-[10px] text-mist-600">
@@ -674,7 +722,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
             </>
           ) : (
             <p className="mt-4 flex items-center justify-center gap-2 text-[12px] text-mist-400">
-              <Loader2 size={15} className="animate-spin text-violet-300" /> Loading saved progress and identity…
+              <Loader2 size={15} className="animate-spin motion-reduce:animate-none text-violet-300" /> Loading saved progress and identity…
             </p>
           )}
         </div>
@@ -688,7 +736,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       {sync.status === "error" && (
         <div
           role="alert"
-          className="fixed inset-x-3 bottom-20 z-[90] mx-auto flex max-w-md items-start gap-2.5 rounded-xl border border-orange-400/30 bg-[#1a1206]/95 px-3.5 py-3 text-[11px] text-orange-100/90 shadow-2xl backdrop-blur-xl md:bottom-5"
+          className="fixed inset-x-3 bottom-20 z-[90] mx-auto flex max-w-md items-start gap-2.5 rounded-xl border border-orange-400/30 bg-paper-3/95 px-3.5 py-3 text-[11px] text-orange-100/90 shadow-2xl backdrop-blur-xl md:bottom-5"
         >
           <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-orange-300" />
           <span className="min-w-0 flex-1 leading-relaxed">

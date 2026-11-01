@@ -190,21 +190,21 @@ export default function OneChance() {
   }, [screen]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-[#03050d]">
+    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-shade">
       <AchievementToasts />
 
-      <header className="relative z-30 flex h-14 shrink-0 items-center gap-2 border-b border-white/8 bg-[#060916]/90 px-2.5 backdrop-blur-xl sm:px-4">
+      <header className="relative z-30 flex h-14 shrink-0 items-center gap-2 border-b border-white/8 bg-shade/90 px-2.5 backdrop-blur-xl sm:px-4">
         <Link
           to="/games/one-chance"
           aria-label="Back to game overview"
-          className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/8 bg-white/[0.03] text-mist-400 transition hover:text-white"
+          className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/8 bg-white/[0.03] text-mist-400 transition hover:text-white focus-visible:outline-2 focus-visible:outline-accent"
         >
           <ArrowLeft size={16} />
         </Link>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[11px] font-bold text-white sm:text-xs">One Chance</p>
           <p className="truncate text-[9px] font-semibold text-mist-600">
-            One life · {practice ? "Practice run" : mode === "daily" ? "Daily seed" : mode === "challenge" ? `Challenge · ${challenge?.from ?? "Unknown"}` : "Endless run"}
+            One life, {practice ? "Practice run" : mode === "daily" ? "Daily seed" : mode === "challenge" ? `Challenge, ${challenge?.from ?? "Unknown"}` : "Endless run"}
           </p>
         </div>
         {screen !== "menu" && (
@@ -218,7 +218,7 @@ export default function OneChance() {
           </div>
         )}
         {screen === "playing" ? (
-          <button onClick={pauseGame} className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/8 bg-white/[0.03] text-mist-400 transition hover:text-white" aria-label="Pause">
+          <button onClick={pauseGame} className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/8 bg-white/[0.03] text-mist-400 transition hover:text-white focus-visible:outline-2 focus-visible:outline-accent" aria-label="Pause">
             <Pause size={15} />
           </button>
         ) : (
@@ -243,8 +243,8 @@ export default function OneChance() {
         {(screen === "playing" || screen === "paused") && (
           <div className="pointer-events-none absolute inset-0 z-20">
             <div className="absolute left-3 top-3 sm:left-5 sm:top-4">
-              <p className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-white/45">Score</p>
-              <p className="font-display text-4xl font-extrabold leading-none tabular-nums text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)] sm:text-5xl">{hud.score.toLocaleString()}</p>
+              <p className="text-[9px] font-extrabold text-white/45">Score</p>
+              <p className="font-display text-4xl font-extrabold leading-none tabular-nums text-white title-legible sm:text-5xl">{hud.score.toLocaleString()}</p>
               <div className="mt-2 flex items-center gap-2 text-[10px] font-semibold text-white/60">
                 <span className="flex items-center gap-1"><Coins size={11} className="text-gold" />{hud.coins}</span>
                 <span className="text-white/15">/</span>
@@ -253,19 +253,19 @@ export default function OneChance() {
             </div>
             <div className="absolute right-3 top-3 flex flex-col items-end gap-2 sm:right-5 sm:top-4">
               {targetScore != null ? (
-                <div className="w-40 rounded-xl border border-white/10 bg-[#070b18]/70 px-3 py-2.5 backdrop-blur-md sm:w-48">
-                  <div className="flex items-center justify-between text-[8px] font-bold uppercase tracking-[0.14em] text-mist-500">
+                <div className="w-40 rounded-xl border border-white/10 bg-shade/70 px-3 py-2.5 backdrop-blur-md sm:w-48">
+                  <div className="flex items-center justify-between text-[8px] font-bold text-mist-500">
                     <span className="flex items-center gap-1"><Target size={10} className="text-gold" />Target</span>
                     <span className="tabular-nums text-mist-300">{hud.score.toLocaleString()} / {targetScore.toLocaleString()}</span>
                   </div>
                   <ProgressBar value={targetProgress} tone="gold" className="mt-1.5" />
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-[#070b18]/60 px-2.5 py-1 text-[9px] font-semibold text-mist-400 backdrop-blur">
+                <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-shade/70 px-2.5 py-1 text-[9px] font-semibold text-mist-400 backdrop-blur">
                   <Zap size={10} className="text-violet-300" /> Speed {Math.round(Math.min(100, Math.max(0, ((hud.speed - 0.4) / 0.38) * 100)))}%
                 </div>
               )}
-              <span className="text-[8px] font-semibold uppercase tracking-[0.16em] text-white/30">{practice ? "Practice · not ranked" : "One life · no retries"}</span>
+              <span className="text-[8px] font-semibold text-white/30">{practice ? "Practice, not ranked" : "One life, no retries"}</span>
             </div>
 
             {/* Mobile controls */}
@@ -276,15 +276,15 @@ export default function OneChance() {
                   e.stopPropagation();
                   slide();
                 }}
-                className="pointer-events-auto grid size-[4.4rem] place-items-center rounded-full border border-fuchsia-400/30 bg-[#100c1e]/75 text-fuchsia-200 backdrop-blur-md active:scale-95"
+                className="pointer-events-auto grid size-[4.4rem] place-items-center rounded-full border border-fuchsia-400/30 bg-shade/85 text-fuchsia-200 backdrop-blur-md active:scale-95"
                 aria-label="Slide"
               >
                 <span className="flex flex-col items-center gap-0.5">
                   <span className="text-lg">⌄</span>
-                  <span className="text-[8px] font-extrabold uppercase tracking-[0.12em]">Slide</span>
+                  <span className="text-[8px] font-extrabold">Slide</span>
                 </span>
               </button>
-              <div className="pointer-events-none pb-2 text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-white/35">
+              <div className="pointer-events-none pb-2 text-center text-[9px] font-semibold text-white/35">
                 Tap to jump
               </div>
               <button
@@ -298,12 +298,12 @@ export default function OneChance() {
               >
                 <span className="flex flex-col items-center gap-0.5">
                   <span className="text-lg">⌃</span>
-                  <span className="text-[8px] font-extrabold uppercase tracking-[0.12em]">Jump</span>
+                  <span className="text-[8px] font-extrabold">Jump</span>
                 </span>
               </button>
             </div>
 
-            <div className="absolute inset-x-0 bottom-3 hidden items-center justify-center gap-3 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/40 sm:flex">
+            <div className="absolute inset-x-0 bottom-3 hidden items-center justify-center gap-3 text-[9px] font-semibold text-white/40 sm:flex">
               <span><kbd className="keycap mr-1">Space</kbd> Jump</span>
               <span className="text-white/15">/</span>
               <span><kbd className="keycap mr-1">↓</kbd> Slide</span>
@@ -315,21 +315,21 @@ export default function OneChance() {
 
         {/* Menu */}
         {screen === "menu" && (
-          <div className="absolute inset-0 z-30 overflow-y-auto bg-[linear-gradient(100deg,rgba(4,6,15,0.92),rgba(4,6,15,0.55)_55%,rgba(4,6,15,0.8))] backdrop-blur-[2px]">
+          <div className="absolute inset-0 z-30 overflow-y-auto hud-scrim backdrop-blur-[2px]">
             <div className="mx-auto flex min-h-full w-full max-w-4xl items-center px-4 py-6 sm:px-8">
               <div className="grid w-full gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
                 <div className="fade-up">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="chip border-blue-400/25 bg-blue-500/10 text-blue-200">Game 02 · Survival arcade</span>
+                    <span className="chip border-blue-400/25 bg-blue-500/10 text-blue-200">Game 02, Survival arcade</span>
                     {mode === "daily" && <span className="chip border-gold/25 bg-gold/10 text-gold"><Target size={10} /> Daily seed</span>}
                     {mode === "challenge" && challenge && <span className="chip border-violet-400/25 bg-violet-500/10 text-violet-200">From {challenge.from}</span>}
-                    {practice && <span className="chip border-blue-400/25 bg-blue-500/10 text-blue-200"><FlaskConical size={10} /> Practice · unranked</span>}
+                    {practice && <span className="chip border-blue-400/25 bg-blue-500/10 text-blue-200"><FlaskConical size={10} /> Practice, unranked</span>}
                   </div>
                   <h1 className="mt-4 font-display text-[clamp(3rem,9vw,5.5rem)] font-extrabold uppercase leading-[0.85] tracking-[-0.06em] text-white">
                     One<br /><span className="violet-text">Chance.</span>
                   </h1>
                   <p className="mt-4 max-w-md text-[13px] leading-relaxed text-mist-400">
-                    One life. One run. No excuses. The city accelerates with every second — jump the spikes, slide under the lasers, and stay alive long enough to matter.
+                    One life. One run. No excuses. The city accelerates with every second; jump the spikes, slide under the lasers, and stay alive long enough to matter.
                   </p>
 
                   <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -345,21 +345,21 @@ export default function OneChance() {
                       onClick={() => startGame(true)}
                       className="mt-3 flex items-center gap-1.5 text-[10px] font-semibold text-blue-300/80 transition hover:text-blue-200"
                     >
-                      <FlaskConical size={12} /> Practice run — no records, no leaderboard
+                      <FlaskConical size={12} /> Practice run, no records, no leaderboard
                     </button>
                   )}
 
                   <div className="mt-7 flex flex-wrap gap-5">
                     <div>
-                      <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-mist-600">Personal best</p>
+                      <p className="text-[8px] font-bold text-mist-600">Personal best</p>
                       <p className="mt-1 font-display text-lg font-extrabold tabular-nums text-white">{formatScore("one-chance", state.stats["one-chance"].best)}</p>
                     </div>
                     <div>
-                      <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-mist-600">Runs</p>
+                      <p className="text-[8px] font-bold text-mist-600">Runs</p>
                       <p className="mt-1 font-display text-lg font-extrabold tabular-nums text-white">{state.stats["one-chance"].plays}</p>
                     </div>
                     <div>
-                      <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-mist-600">
+                      <p className="text-[8px] font-bold text-mist-600">
                         {mode === "daily" ? "Daily target" : mode === "challenge" ? "Target to beat" : "Today's best"}
                       </p>
                       <p className="mt-1 font-display text-lg font-extrabold tabular-nums text-gold">
@@ -377,16 +377,16 @@ export default function OneChance() {
                       )}
                       {mode === "challenge" && challengeRecord && (
                         <span className={`rounded-full border px-2.5 py-1 ${challengeRecord.beat ? "border-emerald-400/20 bg-emerald-400/[0.06] text-emerald-300" : "border-white/10 bg-white/[0.03] text-mist-400"}`}>
-                          {challengeRecord.beat ? <span className="flex items-center gap-1"><Check size={10} /> Challenge beaten · {challengeRecord.score?.toLocaleString()}</span> : challengeRecord.score != null ? `Your attempt ${challengeRecord.score.toLocaleString()}` : "Not attempted yet"}
+                          {challengeRecord.beat ? <span className="flex items-center gap-1"><Check size={10} /> Challenge beaten, {challengeRecord.score?.toLocaleString()}</span> : challengeRecord.score != null ? `Your attempt ${challengeRecord.score.toLocaleString()}` : "Not attempted yet"}
                         </span>
                       )}
                     </div>
                   )}
                 </div>
 
-                <div className="fade-up animation-delay-2 rounded-2xl border border-white/10 bg-[#080c19]/70 p-5 backdrop-blur-xl">
+                <div className="fade-up animation-delay-2 rounded-2xl border border-white/10 bg-shade/70 p-5 backdrop-blur-xl">
                   <div className="flex items-center justify-between">
-                    <p className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-mist-500">Run briefing</p>
+                    <p className="text-[9px] font-extrabold text-mist-500">Run briefing</p>
                     <Zap size={14} className="text-blue-300" />
                   </div>
                   <div className="mt-4 space-y-2.5">
@@ -417,13 +417,12 @@ export default function OneChance() {
 
         {/* Pause */}
         {screen === "paused" && (
-          <div className="absolute inset-0 z-40 flex items-center justify-center overflow-y-auto bg-[#03050d]/80 p-4 backdrop-blur-md">
+          <div className="absolute inset-0 z-40 flex items-center justify-center overflow-y-auto bg-shade/80 p-4 backdrop-blur-md">
             <div className="panel panel-glow fade-up w-full max-w-sm p-6">
               <div className="flex items-center gap-3">
                 <span className="grid size-10 place-items-center rounded-xl border border-violet-400/25 bg-violet-500/10 text-violet-300"><Pause size={18} /></span>
                 <div>
-                  <p className="eyebrow">Run paused</p>
-                  <h2 className="font-display text-xl font-bold text-white">Catch your breath.</h2>
+                                    <h2 className="font-display text-xl font-bold text-white">Catch your breath.</h2>
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2">
@@ -433,7 +432,7 @@ export default function OneChance() {
                   ["Distance", `${hud.distance}m`],
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-lg border border-white/8 bg-white/[0.025] px-2 py-2 text-center">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.1em] text-mist-600">{label}</p>
+                    <p className="text-[8px] font-bold text-mist-600">{label}</p>
                     <p className="mt-0.5 font-display text-sm font-bold tabular-nums text-white">{value}</p>
                   </div>
                 ))}
@@ -452,33 +451,33 @@ export default function OneChance() {
 
         {/* Game over */}
         {screen === "over" && summary && (
-          <div className="absolute inset-0 z-40 overflow-y-auto bg-[#03050d]/82 backdrop-blur-md">
+          <div className="absolute inset-0 z-40 overflow-y-auto bg-shade/80 backdrop-blur-md">
             <div className="relative mx-auto flex min-h-full w-full max-w-md items-center px-4 py-6">
               <div className="panel panel-glow fade-up relative w-full overflow-hidden p-6">
                 <div className="pointer-events-none absolute -top-24 left-1/2 size-56 -translate-x-1/2 rounded-full bg-rose-500/10 blur-3xl" />
                 <div className="relative text-center">
-                  <p className={`text-[9px] font-extrabold uppercase tracking-[0.22em] ${practice ? "text-blue-300/70" : "text-rose-300/70"}`}>{practice ? "Practice run" : "Run ended"}</p>
+                  <p className={`text-[9px] font-extrabold ${practice ? "text-blue-300/70" : "text-rose-300/70"}`}>{practice ? "Practice run" : "Run ended"}</p>
                   <h2 className="mt-1 font-display text-3xl font-extrabold tracking-[-0.03em] text-white">{practice ? "No records. Just reps." : runResult?.newBest ? "A new best." : "One chance, spent."}</h2>
                   <p className="mt-2 text-[11px] text-mist-500">
                     {practice ? "Same city, same hazards. Nothing here touched your records or the boards." : runResult?.newBest ? "You went further than ever. The board noticed." : "The city always wins eventually. The score is what you leave behind."}
                   </p>
 
                   <div className="mt-5">
-                    <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-mist-600">Final score</p>
+                    <p className="text-[9px] font-bold text-mist-600">Final score</p>
                     <p className="mt-1 font-display text-5xl font-extrabold leading-none tabular-nums text-white">{summary.score.toLocaleString()}</p>
                   </div>
 
                   <div className="mt-5 grid grid-cols-3 gap-2">
                     <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-2.5">
-                      <p className="text-[8px] font-bold uppercase tracking-[0.1em] text-mist-600">Coins</p>
+                      <p className="text-[8px] font-bold text-mist-600">Coins</p>
                       <p className="mt-0.5 font-display text-sm font-bold tabular-nums text-gold">{summary.collectedCoins}</p>
                     </div>
                     <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-2.5">
-                      <p className="text-[8px] font-bold uppercase tracking-[0.1em] text-mist-600">Distance</p>
+                      <p className="text-[8px] font-bold text-mist-600">Distance</p>
                       <p className="mt-0.5 font-display text-sm font-bold tabular-nums text-white">{summary.distance}m</p>
                     </div>
                     <div className="rounded-xl border border-white/8 bg-white/[0.03] px-2 py-2.5">
-                      <p className="text-[8px] font-bold uppercase tracking-[0.1em] text-mist-600">Survived</p>
+                      <p className="text-[8px] font-bold text-mist-600">Survived</p>
                       <p className="mt-0.5 font-display text-sm font-bold tabular-nums text-white">{formatDuration(summary.durationMs)}</p>
                     </div>
                   </div>
@@ -505,8 +504,8 @@ export default function OneChance() {
                       </p>
                       <p className="mt-1 text-[10px] leading-relaxed text-mist-500">
                         {mode === "daily"
-                          ? `Target ${daily.target.toLocaleString()} · Your score ${summary.score.toLocaleString()}${summary.score >= daily.target ? ` · +${daily.reward} coins` : ""}`
-                          : challenge ? `${challenge.from}'s target ${challenge.target.toLocaleString()} · You ${summary.score.toLocaleString()}` : "Challenge data missing."}
+                          ? `Target ${daily.target.toLocaleString()}, Your score ${summary.score.toLocaleString()}${summary.score >= daily.target ? `, +${daily.reward} coins` : ""}`
+                          : challenge ? `${challenge.from}'s target ${challenge.target.toLocaleString()}, You ${summary.score.toLocaleString()}` : "Challenge data missing."}
                       </p>
                     </div>
                   )}
@@ -546,8 +545,8 @@ export default function OneChance() {
           </div>
         )}
 
-        <div className="pointer-events-none absolute bottom-2 left-3 z-10 hidden items-center gap-1.5 text-[8px] font-semibold uppercase tracking-[0.14em] text-white/20 sm:flex">
-          <Logo size={14} wordmark={false} linkTo={null} /> PLAYFLIX · One Chance
+        <div className="pointer-events-none absolute bottom-2 left-3 z-10 hidden items-center gap-1.5 text-[8px] font-semibold text-white/20 sm:flex">
+          <Logo size={14} wordmark={false} linkTo={null} /> PLAYFLIX, One Chance
         </div>
       </div>
     </div>

@@ -25,6 +25,12 @@ const DAILY_CONFIG: Record<GameId, { title: string; description: string; target:
     target: 180_000,
     reward: 150,
   },
+  cycle: {
+    title: "Stormfront Sprint",
+    description: "One seeded ride from Fern Hollow to Stormfront. The purse is only paid for the full five-road run.",
+    target: 40_000,
+    reward: 250,
+  },
 };
 
 export function hashString(input: string): number {
@@ -57,7 +63,7 @@ export function getDaily(game: GameId, dateKey = dayKey()): DailyChallenge {
     description: cfg.description,
     target: cfg.target,
     reward: cfg.reward,
-    unit: game === "one-chance" ? "points" : "time",
+    unit: game === "impossible-room" ? "time" : "points",
     seed: seedFor(game, dateKey),
     date: dateKey,
   };

@@ -127,7 +127,7 @@ function StudyScene({ flags, p }: SceneProps) {
         </g>
         {flags["study-code"] && (
           <g fill="#ffe6a8" filter={`url(#${p}-glow)`} fontFamily="Sora, sans-serif" fontWeight="700">
-            <text x="220" y="165" textAnchor="middle" fontSize="15" opacity="0.9">4 · 9 · 2</text>
+            <text x="220" y="165" textAnchor="middle" fontSize="15" opacity="0.9">4, 9, 2</text>
           </g>
         )}
       </g>
@@ -485,24 +485,26 @@ function ClockworkScene({ flags, p }: SceneProps) {
           </g>
         ) : (
           <g>
-            {[0, 1, 2].map((row) =>
-              [0, 1].map((col) => {
-                const symbols = ["☾", "✦", "☀"];
-                return (
-                  <circle key={`${row}-${col}`} cx={714 + col * 64} cy={440 + row * 24} r="9" fill="#0b0d0d" stroke="#8a6b37" strokeWidth="1" opacity="0.8">
-                    <title>{symbols[(row + col) % 3]}</title>
-                  </circle>
-                );
-              }),
-            )}
-            <g fill="#c7a266" fontSize="9" textAnchor="middle" opacity="0.7">
-              <text x="714" y="443">☾</text>
-              <text x="778" y="443">✦</text>
-              <text x="714" y="467">☀</text>
-              <text x="778" y="467">☾</text>
-              <text x="714" y="491">✦</text>
-              <text x="778" y="491">☀</text>
-            </g>
+            {["moon", "star", "sun", "moon", "star", "sun"].map((kind, i) => {
+              const gx = i % 2 === 0 ? 714 : 778;
+              const gy = 443 + Math.floor(i / 2) * 24;
+              return (
+                <g key={`${kind}-${i}`} transform={`translate(${gx} ${gy})`} fill="#c7a266" opacity="0.7">
+                  {kind === "moon" && (
+                    <path d="M1.6 -4.6 A4.6 4.6 0 1 0 1.6 4.6 A3.6 3.6 0 1 1 1.6 -4.6 Z" />
+                  )}
+                  {kind === "star" && (
+                    <path d="M0 -5 Q0.9 -0.9 5 0 Q0.9 0.9 0 5 Q-0.9 0.9 -5 0 Q-0.9 -0.9 0 -5 Z" />
+                  )}
+                  {kind === "sun" && (
+                    <g>
+                      <circle cx="0" cy="0" r="2.6" />
+                      <path d="M0 -5.4 V-3.6 M0 3.6 V5.4 M-5.4 0 H-3.6 M3.6 0 H5.4 M-3.8 -3.8 L-2.6 -2.6 M2.6 2.6 L3.8 3.8 M3.8 -3.8 L2.6 -2.6 M-2.6 2.6 L-3.8 3.8" stroke="#c7a266" strokeWidth="1.1" strokeLinecap="round" />
+                    </g>
+                  )}
+                </g>
+              );
+            })}
           </g>
         )}
       </g>

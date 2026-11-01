@@ -27,7 +27,7 @@ export function LeaderboardTable({
   return (
     <div className="overflow-hidden">
       {showHeader && (
-        <div className="grid grid-cols-[2.2rem_1fr_auto] gap-3 border-b border-white/6 px-2 pb-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-mist-600 sm:grid-cols-[2.4rem_1fr_7rem_5.5rem]">
+        <div className="grid grid-cols-[2.2rem_1fr_auto] gap-3 border-b border-white/6 px-2 pb-2.5 text-[10px] font-bold text-mist-600 sm:grid-cols-[2.4rem_1fr_7rem_5.5rem]">
           <span>Rank</span>
           <span>Player</span>
           <span className="hidden sm:block">Region</span>
@@ -63,7 +63,7 @@ export function LeaderboardTable({
                       {row.name}
                     </span>
                     {row.isYou && (
-                      <span className="rounded bg-violet-500/25 px-1.5 py-0.5 text-[8px] font-extrabold uppercase tracking-wider text-violet-200">
+                      <span className="rounded bg-violet-500/25 px-1.5 py-0.5 text-[8px] font-extrabold text-violet-200">
                         You
                       </span>
                     )}
@@ -71,7 +71,7 @@ export function LeaderboardTable({
                 </span>
               </span>
               <span className="hidden items-center gap-1.5 text-[11px] text-mist-500 sm:flex">
-                <span className="rounded border border-white/8 bg-white/[0.03] px-1 py-0.5 font-mono text-[8px] font-bold tracking-wider text-mist-500">{row.country}</span>
+                <span className="rounded border border-white/8 bg-white/[0.03] px-1.5 py-0.5 text-[10px] font-semibold text-mist-500">{row.country}</span>
                 <span className="truncate">{countryInfo(row.country).name}</span>
               </span>
               <span className={`text-right font-display font-bold tabular-nums ${row.isYou ? "text-violet-100" : "text-mist-300"}`} style={{ fontSize: dense ? 12 : 13 }}>

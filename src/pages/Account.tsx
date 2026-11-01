@@ -95,9 +95,6 @@ export default function Account() {
     return (
       <div className="container-page pt-10 sm:pt-14">
         <div className="mx-auto max-w-3xl">
-          <p className="eyebrow">
-            <ShieldCheck size={13} className="text-emerald-300" /> Account
-          </p>
           <h1 className="mt-3 font-display text-[clamp(2.4rem,7vw,4.3rem)] font-extrabold leading-[0.94] tracking-[-0.055em] text-white">
             Your run is<br />
             <span className="violet-text">synced.</span>
@@ -111,7 +108,7 @@ export default function Account() {
               <div className="flex items-center gap-4">
                 <Avatar name={state.profile.name} hue={state.profile.avatarHue} size={56} />
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-mist-600">Signed in as</p>
+                  <p className="text-[10px] font-semibold text-mist-600">Signed in as</p>
                   <p className="mt-1 truncate font-display text-xl font-bold text-white">{state.profile.name}</p>
                   <p className="mt-0.5 truncate text-[11px] text-mist-500">{identity.email}</p>
                 </div>
@@ -120,7 +117,7 @@ export default function Account() {
               <div className="mt-5 grid grid-cols-2 gap-2">
                 {bests.map((item) => (
                   <div key={item.label} className="rounded-xl border border-white/8 bg-white/[0.025] px-3 py-3">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-mist-600">{item.label}</p>
+                    <p className="text-[8px] font-semibold text-mist-600">{item.label}</p>
                     <p className="mt-1 font-display text-lg font-bold tabular-nums text-gold">
                       {item.value == null ? "—" : item.value.toLocaleString()}
                     </p>
@@ -138,14 +135,14 @@ export default function Account() {
                   Open profile <ArrowRight size={13} />
                 </Link>
                 <button onClick={handleSignOut} disabled={busy} className="btn btn-ghost px-4 py-2.5 text-[11px]">
-                  {busy ? <Loader2 size={13} className="animate-spin" /> : <LogOut size={13} />} Sign out
+                  {busy ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <LogOut size={13} />} Sign out
                 </button>
               </div>
               {error && <p className="mt-3 text-[11px] text-rose-300">{error}</p>}
             </section>
 
             <section className="panel p-6">
-              <p className="eyebrow"><Sparkles size={12} /> Account details</p>
+              <p className="label"><Sparkles size={12} /> Account details</p>
               <dl className="mt-4 divide-y divide-white/6 text-[11px]">
                 <div className="flex items-center justify-between gap-4 py-3">
                   <dt className="text-mist-500">Status</dt>
@@ -195,7 +192,7 @@ export default function Account() {
                     disabled={deleting}
                     className="inline-flex items-center gap-1.5 rounded-lg border border-red-400/40 bg-red-500/20 px-3 py-2 text-[10px] font-bold text-red-100 transition hover:bg-red-500/30 disabled:opacity-60"
                   >
-                    {deleting ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} />} Yes, delete everything
+                    {deleting ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" /> : <Trash2 size={11} />} Yes, delete everything
                   </button>
                   <button onClick={() => { setConfirmDelete(false); setDeleteError(null); }} disabled={deleting} className="btn btn-ghost px-3 py-2 text-[10px]">
                     Keep my account
@@ -221,13 +218,12 @@ export default function Account() {
       <div className="mx-auto max-w-5xl">
         <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
           <div>
-            <p className="eyebrow"><UserRound size={13} /> Account</p>
             <h1 className="mt-3 font-display text-[clamp(2.5rem,7vw,4.6rem)] font-extrabold leading-[0.93] tracking-[-0.055em] text-white">
               Keep your<br />
               <span className="violet-text">progress.</span>
             </h1>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-mist-500">
-              You are playing as a guest. Your progress is already saved to a secure guest session on this device — create an account to carry it across devices and keep it safe.
+              You are playing as a guest. Your progress is already saved to a secure guest session on this device; create an account to carry it across devices and keep it safe.
             </p>
 
             {notice && (
@@ -276,8 +272,8 @@ export default function Account() {
             <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
               {mode === "signup" && (
                 <label className="block">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-mist-600">Display name</span>
-                  <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-[#080c19] px-3 py-2.5 focus-within:border-violet-400/50">
+                  <span className="text-[9px] font-semibold text-mist-600">Display name</span>
+                  <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-violet-400/50">
                     <UserRound size={14} className="text-mist-600" />
                     <input
                       value={name}
@@ -292,8 +288,8 @@ export default function Account() {
               )}
 
               <label className="block">
-                <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-mist-600">Email</span>
-                <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-[#080c19] px-3 py-2.5 focus-within:border-violet-400/50">
+                <span className="text-[9px] font-semibold text-mist-600">Email</span>
+                <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-violet-400/50">
                   <Mail size={14} className="text-mist-600" />
                   <input
                     type="email"
@@ -308,8 +304,8 @@ export default function Account() {
               </label>
 
               <label className="block">
-                <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-mist-600">Password</span>
-                <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-[#080c19] px-3 py-2.5 focus-within:border-violet-400/50">
+                <span className="text-[9px] font-semibold text-mist-600">Password</span>
+                <span className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-paper-3 px-3 py-2.5 focus-within:border-violet-400/50">
                   <LockKeyhole size={14} className="text-mist-600" />
                   <input
                     type="password"
@@ -332,7 +328,7 @@ export default function Account() {
               )}
 
               <button type="submit" disabled={busy} className="btn btn-primary w-full py-3 text-xs">
-                {busy ? <Loader2 size={14} className="animate-spin" /> : mode === "signup" ? <ArrowRight size={14} /> : <UserRound size={14} />}
+                {busy ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : mode === "signup" ? <ArrowRight size={14} /> : <UserRound size={14} />}
                 {mode === "signup" ? "Create account" : "Sign in"}
               </button>
 
@@ -355,5 +351,5 @@ export default function Account() {
 }
 
 function CoinsLabel() {
-  return <span className="grid size-3 place-items-center rounded-full bg-gold text-[8px] font-black text-[#271c07]">P</span>;
+  return <span className="grid size-3 place-items-center rounded-full bg-gold text-[8px] font-black text-accent-ink">P</span>;
 }

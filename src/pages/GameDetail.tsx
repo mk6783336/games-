@@ -36,10 +36,16 @@ export default function GameDetail() {
   });
   const other = Object.values(GAMES).find((g) => g.id !== game.id)!;
   const sectionId = "how-to-play";
+  const isCycle = game.id === "cycle";
+  const clearedChapters = isCycle ? state.cycle.levelsCleared : state.room.completedLevels;
+  const furthestChapter = isCycle
+    ? Math.min(game.chapters?.length ?? 5, Math.max(0, ...state.cycle.levelsCleared) + 1)
+    : state.room.unlocked;
+  const chapterTime = (n: number) => (isCycle ? state.cycle.bestMs[n] : state.room.bestTimes[n]);
 
   return (
     <div className="container-page pt-5 sm:pt-8">
-      <Link to="/games" className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-mist-500 transition hover:text-white">
+      <Link to="/games" className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-mist-500 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-accent">
         <ArrowLeft size={13} /> All games
       </Link>
 
@@ -47,8 +53,8 @@ export default function GameDetail() {
       <section className="art-vignette relative mt-4 overflow-hidden rounded-[2rem] border border-white/10">
         <div className="relative aspect-[4/3] sm:aspect-[16/8] lg:aspect-[16/6.4]">
           <GameArt art={game.art} className="absolute inset-0 h-full w-full" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#05070f]/95 via-[#05070f]/55 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#05070f] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-shade/95 via-shade/55 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-shade via-transparent to-transparent" />
         </div>
         <div className="absolute inset-0 z-10 flex flex-col justify-end p-5 sm:p-8 lg:p-10">
           <div className="flex flex-wrap items-center gap-2">
@@ -74,8 +80,7 @@ export default function GameDetail() {
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.55fr_0.9fr]">
         <div className="space-y-6">
           <section className="panel p-5 sm:p-7">
-            <p className="eyebrow">The game</p>
-            <h2 className="mt-2 font-display text-2xl font-bold text-white">{game.tagline}</h2>
+                        <h2 className="mt-2 font-display text-2xl font-bold text-white">{game.tagline}</h2>
             <p className="mt-3 text-sm leading-relaxed text-mist-400">{game.description}</p>
             <div className="mt-6 grid gap-2.5 sm:grid-cols-2">
               {game.features.map((feature) => (
@@ -91,17 +96,16 @@ export default function GameDetail() {
             <section className="panel p-5 sm:p-7">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="eyebrow">Chapters</p>
-                  <h2 className="mt-1.5 font-display text-xl font-bold text-white">The way out</h2>
+                                    <h2 className="mt-1.5 font-display text-xl font-bold text-white">{isCycle ? "The five roads" : "The way out"}</h2>
                 </div>
                 <span className="chip border-gold/20 bg-gold/[0.06] text-gold">
-                  {state.room.completedLevels.length} / 3 cleared
+                  {clearedChapters.length} / {game.chapters.length} cleared
                 </span>
               </div>
               <div className="mt-4 space-y-2.5">
                 {game.chapters.map((ch) => {
-                  const cleared = state.room.completedLevels.includes(ch.number);
-                  const locked = ch.number > state.room.unlocked;
+                  const cleared = clearedChapters.includes(ch.number);
+                  const locked = ch.number > furthestChapter;
                   return (
                     <div key={ch.number} className={`flex items-center gap-3.5 rounded-xl border px-3.5 py-3 ${cleared ? "border-gold/20 bg-gold/[0.035]" : "border-white/7 bg-white/[0.02]"}`}>
                       <span className={`grid size-9 shrink-0 place-items-center rounded-xl border font-display text-[11px] font-bold ${cleared ? "border-gold/30 bg-gold/10 text-gold" : locked ? "border-white/8 bg-white/[0.02] text-mist-600" : "border-violet-400/25 bg-violet-500/10 text-violet-300"}`}>
@@ -109,10 +113,12 @@ export default function GameDetail() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className={`text-[13px] font-bold ${locked ? "text-mist-500" : "text-mist-100"}`}>{ch.name}</p>
-                        <p className="truncate text-[11px] text-mist-600">{locked ? "Complete the previous chapter to unlock." : ch.subtitle}</p>
+                        <p className="truncate text-[11px] text-mist-600">
+                          {locked ? (isCycle ? "Clear the previous road to unlock." : "Complete the previous chapter to unlock.") : ch.subtitle}
+                        </p>
                       </div>
-                      {cleared && state.room.bestTimes[ch.number] != null && (
-                        <span className="shrink-0 font-display text-[11px] font-bold tabular-nums text-mist-500">{formatDuration(state.room.bestTimes[ch.number])}</span>
+                      {cleared && chapterTime(ch.number) != null && (
+                        <span className="shrink-0 font-display text-[11px] font-bold tabular-nums text-mist-500">{formatDuration(chapterTime(ch.number)!)}</span>
                       )}
                     </div>
                   );
@@ -122,8 +128,7 @@ export default function GameDetail() {
           )}
 
           <section id={sectionId} className="panel scroll-mt-24 p-5 sm:p-7">
-            <p className="eyebrow">Controls</p>
-            <h2 className="mt-1.5 font-display text-xl font-bold text-white">Built for thumbs and keyboards</h2>
+                        <h2 className="mt-1.5 font-display text-xl font-bold text-white">Built for thumbs and keyboards</h2>
             <div className="mt-4 divide-y divide-white/6">
               {game.controls.map((control) => (
                 <div key={control.action} className="flex items-center justify-between gap-4 py-3">
@@ -150,10 +155,10 @@ export default function GameDetail() {
 
         <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
           <div className="panel p-5">
-            <p className="eyebrow">Your record</p>
+            <p className="label">Your record</p>
             <div className="mt-4 flex items-end justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-mist-600">{game.scoreLabel}</p>
+                <p className="text-[10px] font-bold text-mist-600">{game.scoreLabel}</p>
                 <p className="mt-1 font-display text-3xl font-extrabold tabular-nums text-white">
                   {formatScore(game.id, stat.best)}
                 </p>
@@ -164,11 +169,11 @@ export default function GameDetail() {
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
               <div className="rounded-xl border border-white/7 bg-white/[0.025] px-3 py-2.5">
-                <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-mist-600">Runs</p>
+                <p className="text-[9px] font-bold text-mist-600">Runs</p>
                 <p className="mt-0.5 font-display text-sm font-bold text-white">{stat.plays}</p>
               </div>
               <div className="rounded-xl border border-white/7 bg-white/[0.025] px-3 py-2.5">
-                <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-mist-600">Coins earned</p>
+                <p className="text-[9px] font-bold text-mist-600">Coins earned</p>
                 <p className="mt-0.5 font-display text-sm font-bold text-gold">{stat.coinsEarned.toLocaleString()}</p>
               </div>
             </div>
@@ -181,6 +186,15 @@ export default function GameDetail() {
                 <ProgressBar value={(state.room.completedLevels.length / 3) * 100} tone="gold" className="mt-1.5" />
               </div>
             )}
+            {game.id === "cycle" && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-[10px] font-semibold text-mist-600">
+                  <span>Roads cleared</span>
+                  <span>{state.cycle.levelsCleared.length}/5</span>
+                </div>
+                <ProgressBar value={(state.cycle.levelsCleared.length / 5) * 100} tone="gold" className="mt-1.5" />
+              </div>
+            )}
             <Link to={game.route} className="btn btn-primary mt-5 w-full py-3 text-xs">
               <Play size={14} fill="currentColor" /> {stat.plays === 0 ? "Start your first run" : "Play again"}
             </Link>
@@ -188,7 +202,7 @@ export default function GameDetail() {
 
           <div className="panel panel-glow overflow-hidden p-5">
             <div className="flex items-center justify-between gap-2">
-              <span className="eyebrow text-gold"><Target size={12} /> Daily challenge</span>
+              <span className="label text-gold"><Target size={12} /> Daily challenge</span>
               <span className="text-gold"><Countdown className="text-[10px]" /></span>
             </div>
             <h3 className="mt-2.5 font-display text-lg font-bold text-white">{daily.title}</h3>
@@ -206,14 +220,14 @@ export default function GameDetail() {
 
           <div className="panel p-5">
             <div className="flex items-center justify-between">
-              <p className="eyebrow">Next up</p>
+              <p className="label">Next up</p>
               <Swords size={14} className="text-mist-600" />
             </div>
             <Link to={`/games/${other.id}`} className="group mt-3 block overflow-hidden rounded-xl border border-white/8">
               <div className="art-vignette relative aspect-[16/8]">
-                <GameArt art={other.art} className="absolute inset-0 h-full w-full transition duration-700 group-hover:scale-105" />
+                <GameArt art={other.art} className="absolute inset-0 h-full w-full transition-transform duration-700 motion-reduce:transition-none group-hover:scale-105" />
                 <div className="absolute inset-0 z-10 flex flex-col justify-end p-3">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/50">Game {other.index}</p>
+                  <p className="text-[9px] font-bold text-white/50">Game {other.index}</p>
                   <p className="font-display text-lg font-extrabold uppercase leading-none text-white">{other.title}</p>
                 </div>
               </div>

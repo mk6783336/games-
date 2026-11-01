@@ -25,32 +25,23 @@ export function Logo({
       >
         <svg viewBox="0 0 44 44" width={size} height={size} className="relative z-10 overflow-visible">
           <defs>
-            <linearGradient id={`${gid}-a`} x1="10%" y1="0%" x2="90%" y2="100%">
-              <stop offset="0%" stopColor="#e9d5ff" />
-              <stop offset="34%" stopColor="#a855f7" />
-              <stop offset="72%" stopColor="#7c3aed" />
-              <stop offset="100%" stopColor="#3b82f6" />
-            </linearGradient>
-            <linearGradient id={`${gid}-b`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
-              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-            </linearGradient>
+            <clipPath id={`${gid}-clip`}>
+              <rect x="1" y="1" width="42" height="42" rx="8" />
+            </clipPath>
           </defs>
-          <path
-            d="M8.5 3.5h26.8c1 0 1.6 1.1 1.1 2L28.3 19.4c-.4.8.2 1.7 1 1.7h3.8c1.7 0 2.5 2 1.3 3.2L14.6 40.1c-1.6 1.5-3.9-.7-2.7-2.5l8-12.4c.5-.8-.1-1.8-1-1.8H7.1c-1.5 0-2.3-1.7-1.3-2.8L7.4 4.6c.2-.6.6-1.1 1.1-1.1Z"
-            fill={`url(#${gid}-a)`}
-          />
-          <path
-            d="M13 7h17.2l-6.3 10.5H30c.8 0 1.2 1 .6 1.6L17 31.2l4.6-8.4H13.9c-.8 0-1.2-1-.6-1.6L13 7Z"
-            fill={`url(#${gid}-b)`}
-            opacity="0.5"
-          />
+          <g clipPath={`url(#${gid}-clip)`}>
+            <rect x="1" y="1" width="42" height="42" rx="8" className="fill-paper-3" />
+            <path
+              d="M8.5 3.5h26.8c1 0 1.6 1.1 1.1 2L28.3 19.4c-.4.8.2 1.7 1 1.7h3.8c1.7 0 2.5 2 1.3 3.2L14.6 40.1c-1.6 1.5-3.9-.7-2.7-2.5l8-12.4c.5-.8-.1-1.8-1-1.8H7.1c-1.5 0-2.3-1.7-1.3-2.8L7.4 4.6c.2-.6.6-1.1 1.1-1.1Z"
+              className="fill-gold"
+            />
+            <path
+              d="M13 7h17.2l-6.3 10.5H30c.8 0 1.2 1 .6 1.6L17 31.2l4.6-8.4H13.9c-.8 0-1.2-1-.6-1.6L13 7Z"
+              fill="#05070f"
+              opacity="0.28"
+            />
+          </g>
         </svg>
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 rounded-full blur-xl opacity-60"
-          style={{ background: "radial-gradient(circle, #8b5cf6 0%, transparent 68%)" }}
-        />
       </span>
       {wordmark && (
         <span className="flex flex-col leading-none">
@@ -62,10 +53,10 @@ export function Logo({
           </span>
           {subtitle && (
             <span
-              className="mt-1 font-semibold uppercase text-mist-500"
-              style={{ fontSize: Math.max(6.5, size * 0.18), letterSpacing: "0.31em" }}
+              className="mt-1 font-semibold text-mist-500"
+              style={{ fontSize: Math.max(8, size * 0.2) }}
             >
-              Play · Challenge · Compete
+              Play, challenge, compete
             </span>
           )}
         </span>
@@ -94,12 +85,13 @@ export function Avatar({
   ring?: boolean;
   className?: string;
 }) {
-  const initials = name
-    .split(/[\s_-]+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? "")
-    .join("") || "P";
+  const initials =
+    name
+      .split(/[\s_-]+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase() ?? "")
+      .join("") || "P";
 
   return (
     <span
@@ -108,13 +100,12 @@ export function Avatar({
         width: size,
         height: size,
         fontSize: size * 0.36,
-        background: `radial-gradient(120% 120% at 28% 16%, hsl(${hue} 92% 74%) 0%, hsl(${hue + 24} 74% 48%) 42%, hsl(${hue + 44} 72% 24%) 100%)`,
-        boxShadow: ring ? `0 0 0 2px rgba(255,255,255,0.08), 0 0 0 4px hsla(${hue}, 80%, 60%, 0.16)` : undefined,
+        background: `radial-gradient(120% 120% at 28% 16%, hsl(${hue} 74% 62%) 0%, hsl(${hue} 66% 44%) 46%, hsl(${hue} 70% 24%) 100%)`,
+        boxShadow: ring ? `0 0 0 2px var(--color-paper), 0 0 0 4px hsl(${hue} 70% 55% / 0.35)` : undefined,
       }}
       aria-hidden="true"
     >
-      <span className="absolute inset-0 bg-[radial-gradient(circle_at_70%_85%,rgba(4,6,16,0.55),transparent_58%)]" />
-      <span className="relative drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">{initials}</span>
+      <span className="relative score-legible">{initials}</span>
     </span>
   );
 }

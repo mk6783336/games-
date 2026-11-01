@@ -74,7 +74,7 @@ export function AchievementRow({
         <p className={`truncate text-[13px] font-bold ${unlocked ? "text-mist-100" : "text-mist-500"}`}>{def.name}</p>
         <p className="truncate text-[11px] text-mist-600">{def.description}</p>
       </div>
-      <span className={`shrink-0 text-[9px] font-extrabold uppercase tracking-[0.14em] ${unlocked ? "text-gold" : "text-mist-600"}`}>
+      <span className={`shrink-0 text-[9px] font-extrabold ${unlocked ? "text-gold" : "text-mist-600"}`}>
         {unlocked ? "Earned" : "Locked"}
       </span>
     </div>

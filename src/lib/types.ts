@@ -1,4 +1,4 @@
-export type GameId = "impossible-room" | "one-chance";
+export type GameId = "impossible-room" | "one-chance" | "cycle";
 
 export type PlayMode = "solo" | "daily" | "challenge";
 
@@ -24,6 +24,12 @@ export interface RoomProgress {
   hintsUsed: number;
   lastEscapeHints: number | null;
   fastestEscapeMs: number | null;
+}
+
+export interface CycleProgress {
+  levelsCleared: number[];
+  bestMs: Record<number, number>;
+  totalRuns: number;
 }
 
 export interface DailyRecord {
@@ -68,6 +74,7 @@ export interface PlayerState {
   achievements: Record<string, number>;
   stats: Record<GameId, GameStat>;
   room: RoomProgress;
+  cycle: CycleProgress;
   dailies: Record<string, DailyRecord>;
   challenges: ChallengeRecord[];
   history: HistoryEntry[];

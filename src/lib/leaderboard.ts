@@ -47,14 +47,18 @@ const FRIEND_IDS = ["turboplayer", "neonnova", "zaraplays", "legendgamer", "vant
 function rivalScore(game: GameId, rival: Rival, timeframe: LeaderboardTimeframe): number {
   const rng = mulberry32(hashString(`${rival.id}:${game}:${timeframe}:v3`));
   const jitter = 0.94 + rng() * 0.12;
+  const factor = timeframe === "all" ? 1 : timeframe === "week" ? 0.84 : 0.66;
   if (game === "one-chance") {
     const base = 780 + rival.skill * 2650;
-    const factor = timeframe === "all" ? 1 : timeframe === "week" ? 0.84 : 0.66;
     return Math.round((base * factor * jitter) / 5) * 5;
   }
+  if (game === "cycle") {
+    const base = 8_000 + rival.skill * 36_000;
+    return Math.round((base * factor * jitter) / 10) * 10;
+  }
   const base = 322_000 - rival.skill * 205_000;
-  const factor = timeframe === "all" ? 1 : timeframe === "week" ? 1.05 : 1.12;
-  return Math.round((base * factor * jitter) / 100) * 100;
+  const timeFactor = timeframe === "all" ? 1 : timeframe === "week" ? 1.05 : 1.12;
+  return Math.round((base * timeFactor * jitter) / 100) * 100;
 }
 
 export interface LeaderboardOptions {

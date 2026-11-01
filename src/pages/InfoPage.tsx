@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ArrowLeft, FileText, LifeBuoy, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, FileText, LifeBuoy, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Logo } from "../components/Brand";
 
@@ -10,7 +10,7 @@ const CONTENT: Record<Kind, { eyebrow: string; title: string; intro: string }> =
     eyebrow: "Support",
     title: "You're not stuck. You're between solutions.",
     intro:
-      "Answers to the questions players ask most. If something is broken, tell us where it hurts — fixes ship before new content does.",
+      "Answers to the questions players ask most. If something is broken, tell us where it hurts; fixes ship before new content does.",
   },
   privacy: {
     eyebrow: "Privacy",
@@ -53,7 +53,7 @@ const FAQ = [
   },
   {
     q: "Can I turn off sound or animation?",
-    a: "Yes. Open your profile and adjust Sound effects and Reduced motion. Both settings apply immediately across both games.",
+    a: "Yes. Open your profile and adjust Sound effects and Reduced motion. Both settings apply immediately across every game.",
   },
   {
     q: "I found a bug. What should I do?",
@@ -82,10 +82,10 @@ export default function InfoPage({ kind }: { kind: Kind }) {
         <span className="grid size-11 place-items-center rounded-xl border border-violet-400/25 bg-violet-500/10 text-violet-300">
           <Icon size={20} />
         </span>
-        <p className="eyebrow mt-5">{content.eyebrow}</p>
+        <p className="label mt-5">{content.eyebrow}</p>
         <h1 className="mt-2 font-display text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[1] tracking-[-0.045em] text-white">{content.title}</h1>
         <p className="mt-3 text-sm leading-relaxed text-mist-400">{content.intro}</p>
-        <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-mist-600">Last updated · October 2026</p>
+        <p className="mt-2 text-[10px] font-semibold text-mist-600">Last updated, October 2026</p>
       </header>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_280px]">
@@ -96,7 +96,7 @@ export default function InfoPage({ kind }: { kind: Kind }) {
                 <details key={item.q} className="group py-4 first:pt-0 last:pb-0">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[13px] font-semibold text-mist-100 marker:hidden">
                     {item.q}
-                    <span className="grid size-6 shrink-0 place-items-center rounded-full border border-white/10 text-mist-500 transition group-open:rotate-45 group-open:border-violet-400/30 group-open:text-violet-300">+</span>
+                    <span className="grid size-6 shrink-0 place-items-center rounded-full border border-white/10 text-mist-500 transition-transform duration-300 motion-reduce:transition-none group-open:rotate-45 group-open:border-violet-400/30 group-open:text-violet-300">+</span>
                   </summary>
                   <p className="mt-2.5 max-w-2xl text-[12px] leading-relaxed text-mist-500">{item.a}</p>
                 </details>
@@ -144,7 +144,7 @@ export default function InfoPage({ kind }: { kind: Kind }) {
               sections={[
                 {
                   title: "Using PLAYFLIX",
-                  body: "PLAYFLIX is a free gaming destination. You may play both games, share challenge links and appear on leaderboards. You may not attempt to disrupt the service, reverse-engineer security controls, or use the platform to harass other players.",
+                  body: "PLAYFLIX is a free gaming destination. You may play every game, share challenge links and appear on leaderboards. You may not attempt to disrupt the service, reverse-engineer security controls, or use the platform to harass other players.",
                 },
                 {
                   title: "Local profiles",
@@ -183,12 +183,13 @@ export default function InfoPage({ kind }: { kind: Kind }) {
             </div>
           </div>
           <div className="rounded-2xl border border-white/7 bg-white/[0.02] p-4">
-            <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-mist-600">Need a human?</p>
+            <p className="text-[9px] font-bold text-mist-600">Need a human?</p>
             <p className="mt-1.5 text-[11px] leading-relaxed text-mist-500">
-              A support inbox and account sync are part of the next platform milestone. Until then, everything you need to reset or recover play is in your profile.
+              A support inbox and account sync arrive in the next platform milestone. Until then, your profile holds every option to reset or recover play.
             </p>
             <Link to="/profile" className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold text-violet-300 hover:text-violet-200">
-              Open profile <span aria-hidden="true">→</span>
+              <span className="inline-flex items-center gap-1.5">Open profile <ArrowRight size={13} aria-hidden="true" />
+              </span>
             </Link>
           </div>
         </aside>

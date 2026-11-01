@@ -4,6 +4,7 @@ import { SiteLayout } from "./components/SiteChrome";
 import { capturePageview } from "./lib/analytics";
 import Account from "./pages/Account";
 import Challenges from "./pages/Challenges";
+import Cycle from "./pages/Cycle";
 import GameDetail from "./pages/GameDetail";
 import Games from "./pages/Games";
 import Home from "./pages/Home";
@@ -44,6 +45,7 @@ export default function App() {
         </Route>
         <Route path="/play/impossible-room" element={<ImpossibleRoom />} />
         <Route path="/play/one-chance" element={<OneChance />} />
+        <Route path="/play/cycle" element={<Cycle />} />
       </Routes>
     </>
   );
